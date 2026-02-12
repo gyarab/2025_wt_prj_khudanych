@@ -1,1 +1,1 @@
-# 2025_wt_prj_khudanych
+#  Web App in Django
