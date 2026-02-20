@@ -1,0 +1,394 @@
+{% extends 'base.html' %}
+
+{% block title %}World Geography & Flags Database - Explore the World{% endblock %}
+
+{% block head %}
+<style>
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 5rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        font-weight: 300;
+        opacity: 0.95;
+        margin-bottom: 2rem;
+    }
+
+    .stats-section {
+        margin-top: -3rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-icon {
+        font-size: 3rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .stat-label {
+        color: #718096;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    /* Featured Countries */
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 3rem;
+        color: #2d3748;
+    }
+
+    .gradient-underline {
+        height: 4px;
+        width: 100px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 1rem auto 3rem;
+        border-radius: 2px;
+    }
+
+    .country-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .country-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .flag-container {
+        width: 100%;
+        height: 180px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .flag-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .country-info {
+        padding: 1.5rem;
+    }
+
+    .country-name {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+
+    .country-detail {
+        color: #718096;
+        font-size: 0.9rem;
+        margin: 0.25rem 0;
+    }
+
+    .country-detail i {
+        color: #667eea;
+        margin-right: 0.5rem;
+    }
+
+    /* Regions Section */
+    .region-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .region-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .region-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .region-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+
+    .region-count {
+        color: #718096;
+        font-size: 0.9rem;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0;
+        margin: 4rem 0 0;
+        text-align: center;
+        border-radius: 24px;
+    }
+
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-description {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        margin-bottom: 2rem;
+    }
+
+    .btn-white {
+        background: white;
+        color: #667eea;
+        padding: 0.75rem 2.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .btn-white:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        color: #764ba2;
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container hero-content">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="hero-title animate-fade-in">🌍 Discover the World</h1>
+                <p class="hero-subtitle animate-fade-in">
+                    Explore comprehensive database of countries, flags, capitals, and geographic information from around the globe
+                </p>
+                <div class="mt-4">
+                    <a href="/countries/" class="btn-gradient me-3">
+                        <i class="bi bi-map"></i> Browse Countries
+                    </a>
+                    <a href="/flags/" class="btn btn-outline-light btn-lg" style="border-radius: 50px;">
+                        <i class="bi bi-flag"></i> View Flags
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-globe-americas"></i>
+                    </div>
+                    <h2 class="stat-number">{{ total_countries }}</h2>
+                    <p class="stat-label">Countries & Territories</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-flag-fill"></i>
+                    </div>
+                    <h2 class="stat-number">{{ total_flags }}+</h2>
+                    <p class="stat-label">Unique Flags</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-map-fill"></i>
+                    </div>
+                    <h2 class="stat-number">{{ total_regions }}</h2>
+                    <p class="stat-label">Geographic Regions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Countries Section -->
+<section class="py-5 mt-5">
+    <div class="container">
+        <h2 class="section-title">Most Populous Countries</h2>
+        <div class="gradient-underline"></div>
+        
+        <div class="row g-4">
+            {% for country in featured_countries %}
+            <div class="col-md-6 col-lg-4">
+                <a href="/country/{{ country.cca3 }}/" class="text-decoration-none">
+                    <div class="country-card">
+                        <div class="flag-container">
+                            {% if country.flag_png %}
+                                <img src="{{ country.flag_png }}" alt="Flag of {{ country.name_common }}" class="flag-image">
+                            {% else %}
+                                <div style="font-size: 6rem;">{{ country.flag_emoji }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="country-info">
+                            <h3 class="country-name">{{ country.flag_emoji }} {{ country.name_common }}</h3>
+                            {% if country.capital %}
+                                <p class="country-detail">
+                                    <i class="bi bi-building"></i> Capital: {{ country.capital }}
+                                </p>
+                            {% endif %}
+                            <p class="country-detail">
+                                <i class="bi bi-people-fill"></i> Population: {{ country.population|floatformat:0 }}
+                            </p>
+                            {% if country.region %}
+                                <p class="country-detail">
+                                    <i class="bi bi-geo-alt-fill"></i> Region: {{ country.region.name }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No countries yet. Please populate the database.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Regions Section -->
+{% if regions %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title">Explore by Region</h2>
+        <div class="gradient-underline"></div>
+        
+        <div class="row g-4">
+            {% for region in regions %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="/countries/?region={{ region.slug }}" class="text-decoration-none">
+                    <div class="region-card">
+                        <div class="region-icon">
+                            {% if region.name == "Africa" %}🌍
+                            {% elif region.name == "Americas" %}🌎
+                            {% elif region.name == "Asia" %}🌏
+                            {% elif region.name == "Europe" %}🇪🇺
+                            {% elif region.name == "Oceania" %}🏝️
+                            {% else %}🗺️
+                            {% endif %}
+                        </div>
+                        <h4 class="region-name">{{ region.name }}</h4>
+                        <p class="region-count">{{ region.country_count }} countries</p>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="container mb-5">
+    <div class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">Ready to Explore?</h2>
+            <p class="cta-description">
+                Dive into our comprehensive database and discover fascinating facts about countries around the world
+            </p>
+            <a href="/countries/" class="btn-white">
+                <i class="bi bi-compass"></i> Start Exploring
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}    
