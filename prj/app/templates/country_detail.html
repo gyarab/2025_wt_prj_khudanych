@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ country.name_common }} - Country Details{% endblock %}
+
+{% block head %}
+<style>
+    .country-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+    }
+
+    .flag-showcase {
+        max-width: 400px;
+        width: 100%;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        border: 4px solid white;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+
+    .detail-row {
+        padding: 1rem 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-value {
+        color: #2d3748;
+        font-size: 1.1rem;
+    }
+
+    .neighbor-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .neighbor-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .neighbor-flag {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .section-heading {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid #667eea;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="country-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-4 mb-3">{{ country.flag_emoji }} {{ country.name_common }}</h1>
+                <p class="lead">{{ country.name_official }}</p>
+            </div>
+            <div class="col-md-4 text-center">
+                {% if country.flag_svg %}
+                    <img src="{{ country.flag_svg }}" alt="Flag of {{ country.name_common }}" class="flag-showcase">
+                {% elif country.flag_png %}
+                    <img src="{{ country.flag_png }}" alt="Flag of {{ country.name_common }}" class="flag-showcase">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <!-- Basic Information -->
+    <div class="detail-card">
+        <h2 class="section-heading"><i class="bi bi-info-circle"></i> Basic Information</h2>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="detail-row">
+                    <div class="detail-label"><i class="bi bi-building"></i> Capital</div>
+                    <div class="detail-value">{{ country.capital|default:"N/A" }}</div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label"><i class="bi bi-map"></i> Region</div>
+                    <div class="detail-value">
+                        {% if country.region %}
+                            {{ country.region.name }}
+                            {% if country.subregion %} / {{ country.subregion }}{% endif %}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label"><i class="bi bi-people-fill"></i> Population</div>
+                    <div class="detail-value">{{ country.population|floatformat:0 }}</div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="detail-row">
+                    <div class="detail-label"><i class="bi bi-rulers"></i> Area</div>
+                    <div class="detail-value">
+                        {% if country.area %}{{ country.area|floatformat:0 }} km²{% else %}N/A{% endif %}
+                    </div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label"><i class="bi bi-credit-card"></i> Currencies</div>
+                    <div class="detail-value">{{ country.currencies_display }}</div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label"><i class="bi bi-translate"></i> Languages</div>
+                    <div class="detail-value">{{ country.languages_display }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Codes & Identifiers -->
+    <div class="detail-card">
+        <h2 class="section-heading"><i class="bi bi-upc-scan"></i> Codes & Identifiers</h2>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="detail-row">
+                    <div class="detail-label">ISO 3166-1 Alpha-2</div>
+                    <div class="detail-value"><code>{{ country.cca2 }}</code></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="detail-row">
+                    <div class="detail-label">ISO 3166-1 Alpha-3</div>
+                    <div class="detail-value"><code>{{ country.cca3 }}</code></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="detail-row">
+                    <div class="detail-label">Flag Emoji</div>
+                    <div class="detail-value" style="font-size: 2rem;">{{ country.flag_emoji }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Political Information -->
+    <div class="detail-card">
+        <h2 class="section-heading"><i class="bi bi-globe"></i> Political Information</h2>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="detail-row">
+                    <div class="detail-label">Independent</div>
+                    <div class="detail-value">
+                        {% if country.independent %}
+                            <span class="badge bg-success">Yes</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="detail-row">
+                    <div class="detail-label">UN Member</div>
+                    <div class="detail-value">
+                        {% if country.un_member %}
+                            <span class="badge bg-primary">Yes</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Neighboring Countries -->
+    {% if neighbors %}
+    <div class="detail-card">
+        <h2 class="section-heading"><i class="bi bi-signpost-2"></i> Neighboring Countries</h2>
+        
+        <div class="row g-3">
+            {% for neighbor in neighbors %}
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="/country/{{ neighbor.cca3 }}/" class="text-decoration-none">
+                    <div class="neighbor-card">
+                        <div class="neighbor-flag">{{ neighbor.flag_emoji }}</div>
+                        <div style="font-size: 0.9rem; color: #4a5568;">{{ neighbor.name_common }}</div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Additional Flags -->
+    {% if additional_flags %}
+    <div class="detail-card">
+        <h2 class="section-heading"><i class="bi bi-flag"></i> Additional Flags & Symbols</h2>
+        
+        <div class="row g-3">
+            {% for flag in additional_flags %}
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{{ flag.flag_image }}" alt="{{ flag.name }}" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ flag.name }}</h5>
+                        <p class="card-text"><small class="text-muted">{{ flag.get_category_display }}</small></p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a href="/countries/" class="btn btn-gradient btn-lg">
+            <i class="bi bi-arrow-left"></i> Back to Countries
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Flags Gallery - World Geography{% endblock %}
+
+{% block head %}
+<style>
+    .gallery-header {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+    }
+
+    .flag-item {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+
+    .flag-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .flag-display {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .flag-emoji-display {
+        width: 100%;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .flag-caption {
+        padding: 0.75rem;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #2d3748;
+    }
+
+    .category-pills {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+        justify-content: center;
+    }
+
+    .category-pill {
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        border: 2px solid #e2e8f0;
+        background: white;
+        color: #4a5568;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .category-pill:hover, .category-pill.active {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        border-color: #fa709a;
+        color: white;
+    }
+
+    .section-divider {
+        margin: 3rem 0 2rem;
+        text-align: center;
+    }
+
+    .section-divider h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d3748;
+        display: inline-block;
+        padding: 0 2rem;
+        background: #f7fafc;
+        position: relative;
+    }
+
+    .section-divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+        z-index: -1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="gallery-header">
+    <div class="container text-center">
+        <h1><i class="bi bi-flag-fill"></i> Flags Gallery</h1>
+        <p class="lead">Browse through our extensive collection of flags from around the world</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <!-- Category Filter -->
+    <div class="category-pills">
+        <a href="/flags/?category=all" class="category-pill {% if selected_category == 'all' %}active{% endif %}">
+            All Flags
+        </a>
+        <a href="/flags/?category=territory" class="category-pill {% if selected_category == 'territory' %}active{% endif %}">
+            Territories
+        </a>
+        <a href="/flags/?category=historical" class="category-pill {% if selected_category == 'historical' %}active{% endif %}">
+            Historical
+        </a>
+        <a href="/flags/?category=state" class="category-pill {% if selected_category == 'state' %}active{% endif %}">
+            States & Provinces
+        </a>
+        <a href="/flags/?category=international" class="category-pill {% if selected_category == 'international' %}active{% endif %}">
+            International
+        </a>
+    </div>
+
+    <!-- Country Flags -->
+    <div class="section-divider">
+        <h3><i class="bi bi-globe-americas"></i> Country Flags</h3>
+    </div>
+
+    <div class="row g-3">
+        {% for country in countries %}
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a href="/country/{{ country.cca3 }}/" class="text-decoration-none">
+                <div class="flag-item">
+                    {% if country.flag_svg %}
+                        <img src="{{ country.flag_svg }}" alt="{{ country.name_common }}" class="flag-display">
+                    {% elif country.flag_png %}
+                        <img src="{{ country.flag_png }}" alt="{{ country.name_common }}" class="flag-display">
+                    {% else %}
+                        <div class="flag-emoji-display">{{ country.flag_emoji }}</div>
+                    {% endif %}
+                    <div class="flag-caption">{{ country.name_common }}</div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> No country flags available yet. Please populate the database.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Additional Flags -->
+    {% if additional_flags %}
+    <div class="section-divider">
+        <h3><i class="bi bi-stars"></i> Additional Flags</h3>
+    </div>
+
+    <div class="row g-3">
+        {% for flag in additional_flags %}
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <div class="flag-item">
+                <img src="{{ flag.flag_image }}" alt="{{ flag.name }}" class="flag-display">
+                <div class="flag-caption">
+                    {{ flag.name }}
+                    <br>
+                    <small class="text-muted">{{ flag.get_category_display }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

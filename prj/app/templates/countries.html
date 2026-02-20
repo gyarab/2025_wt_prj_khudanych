@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Countries Database - World Geography{% endblock %}
+
+{% block head %}
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+    }
+
+    .search-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+
+    .filter-btn {
+        margin: 0.25rem;
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        border: 2px solid #e2e8f0;
+        background: white;
+        color: #4a5568;
+        transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: #667eea;
+        color: white;
+    }
+
+    .country-grid-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .country-grid-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .flag-thumbnail {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .country-card-body {
+        padding: 1.25rem;
+    }
+
+    .country-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.75rem;
+    }
+
+    .info-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: #edf2f7;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        color: #4a5568;
+        margin: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container text-center">
+        <h1><i class="bi bi-globe-americas"></i> Countries Database</h1>
+        <p class="lead">Explore {{ countries.count }} countries and territories</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <!-- Search and Filter Section -->
+    <div class="search-section">
+        <form method="get" action="">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label for="search" class="form-label">
+                        <i class="bi bi-search"></i> Search Countries
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-control form-control-lg" 
+                        id="search" 
+                        name="search" 
+                        placeholder="Search by name or capital..."
+                        value="{{ search_query|default:'' }}"
+                    >
+                </div>
+                <div class="col-md-4">
+                    <label for="region" class="form-label">
+                        <i class="bi bi-funnel"></i> Filter by Region
+                    </label>
+                    <select class="form-select form-select-lg" id="region" name="region">
+                        <option value="">All Regions</option>
+                        {% for region in regions %}
+                            <option value="{{ region.slug }}" {% if selected_region == region.slug %}selected{% endif %}>
+                                {{ region.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-gradient w-100">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Countries Grid -->
+    <div class="row g-4">
+        {% for country in countries %}
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <a href="/country/{{ country.cca3 }}/" class="text-decoration-none">
+                <div class="country-grid-card">
+                    {% if country.flag_png %}
+                        <img src="{{ country.flag_png }}" alt="Flag of {{ country.name_common }}" class="flag-thumbnail">
+                    {% else %}
+                        <div class="flag-thumbnail d-flex align-items-center justify-content-center" style="font-size: 4rem;">
+                            {{ country.flag_emoji }}
+                        </div>
+                    {% endif %}
+                    <div class="country-card-body">
+                        <h3 class="country-title">{{ country.name_common }}</h3>
+                        {% if country.capital %}
+                            <div class="info-badge">
+                                <i class="bi bi-building"></i> {{ country.capital }}
+                            </div>
+                        {% endif %}
+                        {% if country.region %}
+                            <div class="info-badge">
+                                <i class="bi bi-geo-alt"></i> {{ country.region.name }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> No countries found. Try adjusting your search or filters.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
