@@ -84,23 +84,34 @@ class Country(models.Model):
 
 class FlagCollection(models.Model):
     """Additional flag collection for territories, historical flags, etc."""
-    name = models.CharField(max_length=200)
-    category = models.CharField(max_length=100, choices=[
+    CATEGORY_CHOICES = [
         ('territory', 'Territory'),
         ('historical', 'Historical'),
         ('state', 'State/Province'),
+        ('city', 'City / Municipality'),
         ('international', 'International Organization'),
+        ('region', 'Region / Subdivision'),
         ('other', 'Other'),
-    ])
+    ]
+
+    name = models.CharField(max_length=200)
+    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
     description = models.TextField(blank=True)
-    
+
     flag_image = models.URLField(max_length=500)
-    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True, related_name='additional_flags')
-    
+    wikidata_id = models.CharField(max_length=20, blank=True, db_index=True,
+                                   help_text='Wikidata QID for deduplication')
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL,
+                                null=True, blank=True,
+                                related_name='additional_flags')
+
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ['name']
-    
+        indexes = [
+            models.Index(fields=['category']),
+        ]
+
     def __str__(self):
-        return f"{self.name} ({self.category})"
+        return f"{self.name} ({self.get_category_display()})"

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}World Geography & Flags Database - Explore the World{% endblock %}
+{% block title %}Just Enough Flags - Explore the World{% endblock %}
 
 {% block head %}
 <style>
@@ -311,7 +311,7 @@
                     <div class="country-card">
                         <div class="flag-container">
                             {% if country.flag_png %}
-                                <img src="{{ country.flag_png }}" alt="Flag of {{ country.name_common }}" class="flag-image">
+                                <img src="{{ country.flag_png }}" alt="Flag of {{ country.name_common }}" class="flag-image" loading="lazy" decoding="async">
                             {% else %}
                                 <div style="font-size: 6rem;">{{ country.flag_emoji }}</div>
                             {% endif %}

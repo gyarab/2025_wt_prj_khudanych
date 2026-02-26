@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Flags Gallery - World Geography{% endblock %}
+{% block title %}Flags Gallery - Just Enough Flags{% endblock %}
 
 {% block head %}
 <style>
@@ -8,7 +8,7 @@
         background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
         color: white;
         padding: 3rem 0;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
     }
 
     .flag-item {
@@ -18,6 +18,7 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
         margin-bottom: 1.5rem;
+        cursor: pointer;
     }
 
     .flag-item:hover {
@@ -25,41 +26,56 @@
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
-    .flag-display {
+    .flag-img-wrap {
         width: 100%;
-        height: 120px;
-        object-fit: cover;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
-
-    .flag-emoji-display {
-        width: 100%;
-        height: 120px;
+        height: 110px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 4rem;
         background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 6px;
+    }
+
+    .flag-display {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .flag-emoji-display {
+        font-size: 3.5rem;
     }
 
     .flag-caption {
-        padding: 0.75rem;
+        padding: 0.5rem;
         text-align: center;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         font-weight: 500;
         color: #2d3748;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .flag-badge {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 50px;
+        background: #edf2f7;
+        color: #718096;
+        display: inline-block;
     }
 
     .category-pills {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         justify-content: center;
     }
 
     .category-pill {
-        padding: 0.5rem 1.5rem;
+        padding: 0.4rem 1.2rem;
         border-radius: 50px;
         border: 2px solid #e2e8f0;
         background: white;
@@ -67,6 +83,7 @@
         cursor: pointer;
         transition: all 0.3s ease;
         text-decoration: none;
+        font-size: 0.85rem;
     }
 
     .category-pill:hover, .category-pill.active {
@@ -75,30 +92,78 @@
         color: white;
     }
 
-    .section-divider {
-        margin: 3rem 0 2rem;
+    .pagination .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+        color: #667eea;
+        border: none;
+        padding: 0.5rem 0.85rem;
+    }
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        border: none;
+        color: white;
+    }
+
+    .search-box {
+        max-width: 400px;
+        margin: 0 auto 1.5rem;
+    }
+
+    /* Lightbox modal */
+    #flagModal .modal-content {
+        background: transparent;
+        border: none;
+    }
+    #flagModal .modal-body {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
         text-align: center;
     }
-
-    .section-divider h3 {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #2d3748;
-        display: inline-block;
-        padding: 0 2rem;
-        background: #f7fafc;
-        position: relative;
+    #flagModal .lightbox-img {
+        max-width: 100%;
+        max-height: 65vh;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
     }
-
-    .section-divider::before {
-        content: '';
+    #flagModal .lightbox-title {
+        margin-top: 1rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+    #flagModal .lightbox-badge {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        background: #edf2f7;
+        color: #718096;
+        display: inline-block;
+        margin-top: 0.4rem;
+    }
+    #flagModal .btn-close-custom {
         position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
-        z-index: -1;
+        top: 10px;
+        right: 14px;
+        font-size: 1.5rem;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+    }
+    #flagModal .btn-close-custom:hover { background: rgba(0,0,0,0.7); }
+    #flagModal .lightbox-link {
+        display: inline-block;
+        margin-top: 0.75rem;
     }
 </style>
 {% endblock %}
@@ -107,80 +172,185 @@
 <div class="gallery-header">
     <div class="container text-center">
         <h1><i class="bi bi-flag-fill"></i> Flags Gallery</h1>
-        <p class="lead">Browse through our extensive collection of flags from around the world</p>
+        <p class="lead mb-0">{{ total_flags }} flags from around the world</p>
     </div>
 </div>
 
 <div class="container mb-5">
+    <!-- Search -->
+    <div class="search-box">
+        <form method="get" action="/flags/">
+            <input type="hidden" name="category" value="{{ selected_category }}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="q" placeholder="Search flags..." value="{{ search_query }}">
+                <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+            </div>
+        </form>
+    </div>
+
     <!-- Category Filter -->
     <div class="category-pills">
         <a href="/flags/?category=all" class="category-pill {% if selected_category == 'all' %}active{% endif %}">
-            All Flags
+            All ({{ total_flags }})
         </a>
-        <a href="/flags/?category=territory" class="category-pill {% if selected_category == 'territory' %}active{% endif %}">
-            Territories
+        <a href="/flags/?category=country" class="category-pill {% if selected_category == 'country' %}active{% endif %}">
+            🌍 Countries ({{ country_count }})
         </a>
-        <a href="/flags/?category=historical" class="category-pill {% if selected_category == 'historical' %}active{% endif %}">
-            Historical
-        </a>
+        {% if cat_counts.state %}
         <a href="/flags/?category=state" class="category-pill {% if selected_category == 'state' %}active{% endif %}">
-            States & Provinces
+            🏛️ States ({{ cat_counts.state }})
         </a>
+        {% endif %}
+        {% if cat_counts.city %}
+        <a href="/flags/?category=city" class="category-pill {% if selected_category == 'city' %}active{% endif %}">
+            🏙️ Cities ({{ cat_counts.city }})
+        </a>
+        {% endif %}
+        {% if cat_counts.region %}
+        <a href="/flags/?category=region" class="category-pill {% if selected_category == 'region' %}active{% endif %}">
+            📍 Regions ({{ cat_counts.region }})
+        </a>
+        {% endif %}
+        {% if cat_counts.territory %}
+        <a href="/flags/?category=territory" class="category-pill {% if selected_category == 'territory' %}active{% endif %}">
+            🏝️ Territories ({{ cat_counts.territory }})
+        </a>
+        {% endif %}
+        {% if cat_counts.historical %}
+        <a href="/flags/?category=historical" class="category-pill {% if selected_category == 'historical' %}active{% endif %}">
+            📜 Historical ({{ cat_counts.historical }})
+        </a>
+        {% endif %}
+        {% if cat_counts.international %}
         <a href="/flags/?category=international" class="category-pill {% if selected_category == 'international' %}active{% endif %}">
-            International
+            🤝 International ({{ cat_counts.international }})
         </a>
+        {% endif %}
     </div>
 
-    <!-- Country Flags -->
-    <div class="section-divider">
-        <h3><i class="bi bi-globe-americas"></i> Country Flags</h3>
-    </div>
-
+    <!-- Flags Grid -->
     <div class="row g-3">
-        {% for country in countries %}
+        {% for item in page_obj %}
         <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-            <a href="/country/{{ country.cca3 }}/" class="text-decoration-none">
-                <div class="flag-item">
-                    {% if country.flag_svg %}
-                        <img src="{{ country.flag_svg }}" alt="{{ country.name_common }}" class="flag-display">
-                    {% elif country.flag_png %}
-                        <img src="{{ country.flag_png }}" alt="{{ country.name_common }}" class="flag-display">
+            <div class="flag-item"
+                 onclick="openFlag('{{ item.img|escapejs }}', '{{ item.name|escapejs }}', '{{ item.badge|escapejs }}', '{{ item.link|escapejs }}')"
+                 role="button" tabindex="0"
+                 onkeydown="if(event.key==='Enter')this.click()">
+                <div class="flag-img-wrap">
+                    {% if item.img %}
+                        <img src="{{ item.img }}" alt="{{ item.name }}" class="flag-display" loading="lazy" decoding="async">
+                    {% elif item.emoji %}
+                        <span class="flag-emoji-display">{{ item.emoji }}</span>
                     {% else %}
-                        <div class="flag-emoji-display">{{ country.flag_emoji }}</div>
+                        <span class="flag-emoji-display">🏁</span>
                     {% endif %}
-                    <div class="flag-caption">{{ country.name_common }}</div>
                 </div>
-            </a>
+                <div class="flag-caption" title="{{ item.name }}">
+                    {{ item.name }}
+                    <br><span class="flag-badge">{{ item.badge }}</span>
+                </div>
+            </div>
         </div>
         {% empty %}
-        <div class="col-12 text-center">
+        <div class="col-12 text-center py-5">
             <div class="alert alert-info">
-                <i class="bi bi-info-circle"></i> No country flags available yet. Please populate the database.
+                <i class="bi bi-info-circle"></i> No flags found. Try a different search or category.
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Additional Flags -->
-    {% if additional_flags %}
-    <div class="section-divider">
-        <h3><i class="bi bi-stars"></i> Additional Flags</h3>
-    </div>
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4" aria-label="Gallery pagination">
+        <ul class="pagination justify-content-center flex-wrap">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?category={{ selected_category }}&q={{ search_query }}&page={{ page_obj.previous_page_number }}">&laquo;</a>
+            </li>
+            {% endif %}
 
-    <div class="row g-3">
-        {% for flag in additional_flags %}
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-            <div class="flag-item">
-                <img src="{{ flag.flag_image }}" alt="{{ flag.name }}" class="flag-display">
-                <div class="flag-caption">
-                    {{ flag.name }}
-                    <br>
-                    <small class="text-muted">{{ flag.get_category_display }}</small>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:"-4" and num < page_obj.number|add:"4" %}
+                <li class="page-item">
+                    <a class="page-link" href="?category={{ selected_category }}&q={{ search_query }}&page={{ num }}">{{ num }}</a>
+                </li>
+                {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="?category={{ selected_category }}&q={{ search_query }}&page={{ num }}">{{ num }}</a>
+                </li>
+                {% elif num == page_obj.number|add:"-4" or num == page_obj.number|add:"4" %}
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?category={{ selected_category }}&q={{ search_query }}&page={{ page_obj.next_page_number }}">&raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    <p class="text-center text-muted small">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        ({{ page_obj.paginator.count }} flags)
+    </p>
     {% endif %}
 </div>
+
+<!-- Lightbox Modal -->
+<div class="modal fade" id="flagModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-body position-relative">
+        <button class="btn-close-custom" onclick="document.getElementById('flagModal')._modal.hide()">&times;</button>
+        <img id="lbImg" class="lightbox-img" src="" alt="">
+        <div class="lightbox-title" id="lbTitle"></div>
+        <span class="lightbox-badge" id="lbBadge"></span>
+        <div id="lbLinkWrap" class="lightbox-link" style="display:none">
+          <a id="lbLink" href="#" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-box-arrow-up-right"></i> View country details
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Bootstrap modal instance (lazy init)
+  let _flagModal = null;
+  function getFlagModal() {
+    if (!_flagModal) {
+      const el = document.getElementById('flagModal');
+      _flagModal = new bootstrap.Modal(el);
+      el._modal = _flagModal;
+    }
+    return _flagModal;
+  }
+
+  function openFlag(img, name, badge, link) {
+    document.getElementById('lbImg').src = img || '';
+    document.getElementById('lbTitle').textContent = name;
+    document.getElementById('lbBadge').textContent = badge;
+
+    const linkWrap = document.getElementById('lbLinkWrap');
+    const linkEl = document.getElementById('lbLink');
+    if (link) {
+      linkEl.href = link;
+      linkWrap.style.display = '';
+    } else {
+      linkWrap.style.display = 'none';
+    }
+
+    // Use higher-res image for lightbox (640px instead of 320px)
+    if (img && img.includes('width=320')) {
+      document.getElementById('lbImg').src = img.replace('width=320', 'width=640');
+    }
+
+    getFlagModal().show();
+  }
+</script>
 {% endblock %}
