@@ -32,7 +32,6 @@ HEADERS = {
 REGION_DESCRIPTIONS = {
     "Africa":    "The second-largest and second-most populous continent.",
     "Americas":  "Comprising North America, Central America, South America and the Caribbean.",
-    "Antarctic": "The southernmost continent, surrounding the South Pole.",
     "Asia":      "The largest and most populous continent.",
     "Europe":    "The second-smallest continent, known for its rich history.",
     "Oceania":   "A geographic region including Australasia, Melanesia, Micronesia and Polynesia.",
@@ -42,14 +41,14 @@ CONTINENT_QID_MAP = {
     "Q15": "Africa", "Q48": "Asia", "Q46": "Europe",
     "Q49": "Americas", "Q828": "Americas", "Q18": "Americas",
     "Q27611": "Americas", "Q664609": "Americas",
-    "Q538": "Oceania", "Q51": "Antarctic",
+    "Q538": "Oceania",
 }
 CONTINENT_LABEL_MAP = {
     "africa": "Africa", "asia": "Asia", "europe": "Europe",
     "north america": "Americas", "south america": "Americas",
     "central america": "Americas", "caribbean": "Americas",
     "americas": "Americas", "oceania": "Oceania",
-    "australia": "Oceania", "antarctica": "Antarctic",
+    "australia": "Oceania",
 }
 
 

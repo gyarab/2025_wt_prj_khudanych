@@ -22,6 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.render_homepage, name="homepage"),
     path('countries/', views.countries_list, name="countries"),
+    path('territories/', views.territories_list, name="territories"),
+    path('historical/', views.historical_list, name="historical"),
     path('country/<str:cca3>/', views.country_detail, name="country_detail"),
     path('flags/', views.flags_gallery, name="flags_gallery"),
     path('about/', views.render_about, name="about"),
