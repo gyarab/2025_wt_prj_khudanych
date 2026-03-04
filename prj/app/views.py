@@ -21,18 +21,24 @@ COUNTRIES_PER_PAGE = 48
 def render_homepage(request):
     """Beautiful geography-themed homepage"""
     # Get statistics
-    total_countries = Country.objects.count()
-    total_flags = total_countries + FlagCollection.objects.count()
+    total_countries = Country.objects.filter(status='sovereign').count()
+    total_territories = Country.objects.filter(status='territory').count()
+    total_historical = Country.objects.filter(status='historical').count() + FlagCollection.objects.filter(category='historical').count()
+    total_flags = Country.objects.count() + FlagCollection.objects.count()
     total_regions = Region.objects.count()
     
-    # Get featured countries (most populous)
-    featured_countries = Country.objects.order_by('-population')[:6]
+    # Get featured countries (most populous sovereign states)
+    featured_countries = Country.objects.filter(status='sovereign').order_by('-population')[:6]
     
-    # Get all regions with country counts
-    regions = Region.objects.annotate(country_count=Count('countries')).order_by('-country_count')
+    # Get all regions with sovereign country counts
+    regions = Region.objects.annotate(
+        country_count=Count('countries', filter=Q(countries__status='sovereign'))
+    ).order_by('-country_count')
     
     context = {
         'total_countries': total_countries,
+        'total_territories': total_territories,
+        'total_historical': total_historical,
         'total_flags': total_flags,
         'total_regions': total_regions,
         'featured_countries': featured_countries,
@@ -41,8 +47,8 @@ def render_homepage(request):
     return render(request, 'home.html', context)
 
 def countries_list(request):
-    """List all countries with filtering and pagination"""
-    countries = Country.objects.select_related('region').only(
+    """List all sovereign countries with filtering and pagination"""
+    countries = Country.objects.filter(status='sovereign').select_related('region').only(
         'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji',
         'population', 'region__name', 'region__slug',
     )
@@ -69,8 +75,76 @@ def countries_list(request):
         'regions': regions,
         'selected_region': region_filter,
         'search_query': search_query,
+        'page_title': 'Sovereign Countries',
     }
     return render(request, 'countries.html', context)
+
+def territories_list(request):
+    """List all territories and dependencies"""
+    countries = Country.objects.filter(status='territory').select_related('region').only(
+        'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji',
+        'population', 'region__name', 'region__slug',
+    )
+
+    search_query = request.GET.get('search')
+    if search_query:
+        countries = countries.filter(Q(name_common__icontains=search_query))
+
+    paginator = Paginator(countries, COUNTRIES_PER_PAGE)
+    page = paginator.get_page(request.GET.get('page'))
+
+    context = {
+        'countries': page,
+        'page_obj': page,
+        'search_query': search_query,
+        'page_title': 'Territories & Dependencies',
+    }
+    return render(request, 'countries.html', context)
+
+def historical_list(request):
+    """List historical flags and former countries"""
+    # 1. Historical entities from Country model
+    hist_countries = Country.objects.filter(status='historical').only(
+        'name_common', 'cca3', 'flag_png', 'flag_emoji'
+    )
+    
+    # 2. Historical items from FlagCollection
+    hist_flags = FlagCollection.objects.filter(category='historical').only(
+        'name', 'flag_image'
+    )
+
+    items = []
+    for c in hist_countries:
+        items.append({
+            'name': c.name_common,
+            'img': c.flag_png,
+            'emoji': c.flag_emoji,
+            'link': f'/country/{c.cca3}/',
+            'type': 'Former Country'
+        })
+    
+    for f in hist_flags:
+        items.append({
+            'name': f.name,
+            'img': f.flag_image,
+            'emoji': '',
+            'link': '',
+            'type': 'Historical Flag'
+        })
+
+    search_query = request.GET.get('search')
+    if search_query:
+        items = [i for i in items if search_query.lower() in i['name'].lower()]
+
+    paginator = Paginator(items, GALLERY_PER_PAGE)
+    page = paginator.get_page(request.GET.get('page'))
+
+    context = {
+        'page_obj': page,
+        'search_query': search_query,
+        'page_title': 'Historical Flags & Former States',
+    }
+    return render(request, 'historical_gallery.html', context)
 
 def country_detail(request, cca3):
     """Detailed view of a single country"""

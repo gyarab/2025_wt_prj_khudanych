@@ -52,6 +52,14 @@ class Country(models.Model):
     independent = models.BooleanField(default=True)
     un_member = models.BooleanField(default=False)
     
+    STATUS_CHOICES = [
+        ('sovereign', 'Sovereign State'),
+        ('territory', 'Territory'),
+        ('historical', 'Historical'),
+        ('other', 'Other'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='sovereign', db_index=True)
+
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -71,14 +79,14 @@ class Country(models.Model):
     @property
     def currencies_display(self):
         """Return formatted currency string"""
-        if not self.currencies:
+        if not self.currencies or not isinstance(self.currencies, dict):
             return "N/A"
-        return ", ".join([f"{v.get('name', '')} ({k})" for k, v in self.currencies.items()])
+        return ", ".join([f"{v.get('name', '') if isinstance(v, dict) else v} ({k})" for k, v in self.currencies.items()])
     
     @property
     def languages_display(self):
         """Return formatted languages string"""
-        if not self.languages:
+        if not self.languages or not isinstance(self.languages, dict):
             return "N/A"
         return ", ".join(self.languages.values())
 
@@ -96,7 +104,7 @@ class FlagCollection(models.Model):
 
     name = models.CharField(max_length=200)
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
-    description = models.TextField(blank=True)
+    description = models.JSONField(default=dict, blank=True)
 
     flag_image = models.URLField(max_length=500)
     wikidata_id = models.CharField(max_length=20, blank=True, db_index=True,

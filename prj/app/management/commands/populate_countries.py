@@ -14,7 +14,6 @@ from app.models import Region, Country, FlagCollection
 REGION_DESCRIPTIONS = {
     'Africa': 'The second-largest and second-most populous continent, home to 54 countries.',
     'Americas': 'Comprising North America, Central America, South America and the Caribbean.',
-    'Antarctic': 'The southernmost continent, surrounding the South Pole.',
     'Asia': 'The largest and most populous continent, spanning from the Middle East to the Pacific.',
     'Europe': 'The second-smallest continent, known for its rich history and cultural diversity.',
     'Oceania': 'A geographic region including Australasia, Melanesia, Micronesia and Polynesia.',
