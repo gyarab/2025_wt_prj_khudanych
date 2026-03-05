@@ -734,15 +734,26 @@ class Command(BaseCommand):
         removed = 0
 
         # 1. Remove entries whose flag_image matches a Country.flag_png
-        country_pngs = set(
-            Country.objects.exclude(flag_png="").values_list("flag_png", flat=True)
-        )
-        qs = FlagCollection.objects.filter(flag_image__in=country_pngs)
-        n = qs.count()
-        if n:
-            qs.delete()
-            removed += n
-            self.stdout.write(f"    Removed {n} entries duplicating Country flags")
+        # BUT ONLY if the names are similar or if it's NOT a historical flag.
+        # This preserves Czechoslovakia (same flag as Czech Republic) while removing
+        # duplicates like "French Republic" when "France" is already in Country.
+        country_data = list(Country.objects.exclude(flag_png="").values('name_common', 'flag_png'))
+        country_pngs = {c['flag_png'] for c in country_data}
+        country_names = {c['name_common'].lower() for c in country_data}
+
+        # Instead of a bulk delete, we'll check more carefully
+        for entry in FlagCollection.objects.filter(flag_image__in=country_pngs):
+            # If the name is basically the same, delete the duplicate
+            if entry.name.lower() in country_names or entry.name.lower() == "republic of " + entry.name.lower():
+                 entry.delete()
+                 removed += 1
+            # If it's NOT historical and has the same flag, it's likely a duplicate subdivision/territory
+            elif entry.category != 'historical':
+                 entry.delete()
+                 removed += 1
+        
+        if removed:
+            self.stdout.write(f"    Removed {removed} duplicate-image entries (name matches or non-historical)")
 
         # 2. Remove sports teams / noise entries
         NOISE = [
