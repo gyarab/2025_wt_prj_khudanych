@@ -5,7 +5,7 @@ A database-driven geography and flags web application built with Django. Browse 
 ---
 
 ## Odborný článek
-Projekt Just Enough Flags představuje moderní webovou <u>aplikaci</u>, která slouží jako komplexní <u>databáze</u> světových <u>států</u> a jejich <u>vlajek</u>. Z pohledu <u>vexilologie</u> a <u>geografie</u> platforma agreguje klíčová <u>data</u>, mezi něž patří <u>hlavní město</u>, celková <u>populace</u>, <u>rozloha</u> a příslušný <u>kontinent</u> či geografický <u>region</u>. Systém je navržen tak, aby efektivně obsluhoval různé typy interakcí prostřednictvím striktního oddělení přístupových práv.
+Projekt Just Enough Flags představuje moderní webovou <ins>aplikaci</ins>, která slouží jako komplexní <u>databáze</u> světových <u>států</u> a jejich <u>vlajek</u>. Z pohledu <u>vexilologie</u> a <u>geografie</u> platforma agreguje klíčová <u>data</u>, mezi něž patří <u>hlavní město</u>, celková <u>populace</u>, <u>rozloha</u> a příslušný <u>kontinent</u> či geografický <u>region</u>. Systém je navržen tak, aby efektivně obsluhoval různé typy interakcí prostřednictvím striktního oddělení přístupových práv.
 
 Základní úrovní v systému je anonymní <u>návštěvník</u>. Tento typ přístupu umožňuje volné prohlížení veřejného <u>obsahu</u>, vyhledávání specifických <u>entit</u> a používání <u>filtrů</u> v <u>galerii</u>. Návštěvník si může zobrazit detailní <u>informace</u> o konkrétní <u>zemi</u>, ale nemá možnost do systému nijak zasahovat ani zanechávat trvalou stopu.
 
