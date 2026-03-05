@@ -194,7 +194,7 @@
             All ({{ total_flags }})
         </a>
         <a href="/flags/?category=country" class="category-pill {% if selected_category == 'country' %}active{% endif %}">
-            🌍 Countries ({{ country_count }})
+            🌍 Countries ({{ cat_counts.country }})
         </a>
         {% if cat_counts.state %}
         <a href="/flags/?category=state" class="category-pill {% if selected_category == 'state' %}active{% endif %}">

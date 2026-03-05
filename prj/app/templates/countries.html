@@ -131,32 +131,45 @@
 
     <!-- Countries Grid -->
     <div class="row g-4">
-        {% for country in page_obj %}
+        {% for item in page_obj %}
         <div class="col-sm-6 col-md-4 col-lg-3">
-            <a href="/country/{{ country.cca3 }}/" class="text-decoration-none">
+            {% if item.cca3 or item.link %}
+            <a href="{% if item.cca3 %}/country/{{ item.cca3 }}/{% else %}{{ item.link }}{% endif %}" class="text-decoration-none">
+            {% else %}
+            <div class="text-decoration-none">
+            {% endif %}
                 <div class="country-grid-card">
-                    {% if country.flag_png %}
-                        <img src="{{ country.flag_png }}" alt="Flag of {{ country.name_common }}" class="flag-thumbnail" loading="lazy" decoding="async">
+                    {% if item.flag_png or item.img %}
+                        <img src="{{ item.flag_png|default:item.img }}" alt="Flag of {{ item.name_common|default:item.name }}" class="flag-thumbnail" loading="lazy" decoding="async">
                     {% else %}
                         <div class="flag-thumbnail d-flex align-items-center justify-content-center" style="font-size: 4rem;">
-                            {{ country.flag_emoji }}
+                            {{ item.flag_emoji|default:item.emoji }}
                         </div>
                     {% endif %}
                     <div class="country-card-body">
-                        <h3 class="country-title">{{ country.name_common }}</h3>
-                        {% if country.capital %}
+                        <h3 class="country-title">{{ item.name_common|default:item.name }}</h3>
+                        {% if item.type %}
                             <div class="info-badge">
-                                <i class="bi bi-building"></i> {{ country.capital }}
+                                <i class="bi bi-tag"></i> {{ item.type }}
                             </div>
                         {% endif %}
-                        {% if country.region %}
+                        {% if item.capital %}
                             <div class="info-badge">
-                                <i class="bi bi-geo-alt"></i> {{ country.region.name }}
+                                <i class="bi bi-building"></i> {{ item.capital }}
+                            </div>
+                        {% endif %}
+                        {% if item.region %}
+                            <div class="info-badge">
+                                <i class="bi bi-geo-alt"></i> {{ item.region.name|default:item.region }}
                             </div>
                         {% endif %}
                     </div>
                 </div>
+            {% if item.cca3 or item.link %}
             </a>
+            {% else %}
+            </div>
+            {% endif %}
         </div>
         {% empty %}
         <div class="col-12">

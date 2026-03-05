@@ -13,16 +13,33 @@ def _strip_accents(text: str) -> str:
 
 def _accent_insensitive_match(haystack: str, needle: str) -> bool:
     """Case- and accent-insensitive substring match."""
+    if not haystack or not needle:
+        return False
     return _strip_accents(needle).lower() in _strip_accents(haystack).lower()
 
 GALLERY_PER_PAGE = 60
 COUNTRIES_PER_PAGE = 48
 
+def _normalize_and_paginate(items_list, request, per_page=GALLERY_PER_PAGE):
+    """Shared helper for search, normalization and pagination across views."""
+    search_query = request.GET.get('search') or request.GET.get('q')
+    if search_query:
+        search_query = search_query.strip()
+        items_list = [i for i in items_list if _accent_insensitive_match(i.get('name', ''), search_query)]
+
+    paginator = Paginator(items_list, per_page)
+    page = paginator.get_page(request.GET.get('page'))
+    return page, search_query
+
 def render_homepage(request):
     """Beautiful geography-themed homepage"""
     # Get statistics
     total_countries = Country.objects.filter(status='sovereign').count()
-    total_territories = Country.objects.filter(status='territory').count()
+    # Total territories is sum of Country(territory) and FlagCollection(territory)
+    total_territories = (
+        Country.objects.filter(status='territory').count() + 
+        FlagCollection.objects.filter(category='territory').count()
+    )
     total_historical = Country.objects.filter(status='historical').count() + FlagCollection.objects.filter(category='historical').count()
     total_flags = Country.objects.count() + FlagCollection.objects.count()
     total_regions = Region.objects.count()
@@ -48,25 +65,28 @@ def render_homepage(request):
 
 def countries_list(request):
     """List all sovereign countries with filtering and pagination"""
-    countries = Country.objects.filter(status='sovereign').select_related('region').only(
+    region_filter = request.GET.get('region')
+    countries_qs = Country.objects.filter(status='sovereign').select_related('region').only(
         'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji',
         'population', 'region__name', 'region__slug',
     )
 
-    region_filter = request.GET.get('region')
-    search_query = request.GET.get('search')
-
     if region_filter:
-        countries = countries.filter(region__slug=region_filter)
-    if search_query:
-        countries = countries.filter(
-            Q(name_common__icontains=search_query) |
-            Q(name_official__icontains=search_query) |
-            Q(capital__icontains=search_query)
-        )
+        countries_qs = countries_qs.filter(region__slug=region_filter)
 
-    paginator = Paginator(countries, COUNTRIES_PER_PAGE)
-    page = paginator.get_page(request.GET.get('page'))
+    items = []
+    for c in countries_qs:
+        items.append({
+            'name': c.name_common,
+            'cca3': c.cca3,
+            'capital': c.capital,
+            'img': c.flag_png,
+            'emoji': c.flag_emoji,
+            'region': c.region.name if c.region else '',
+            'type': 'Sovereign State'
+        })
+
+    page, search_query = _normalize_and_paginate(items, request, COUNTRIES_PER_PAGE)
     regions = Region.objects.all()
 
     context = {
@@ -80,18 +100,24 @@ def countries_list(request):
     return render(request, 'countries.html', context)
 
 def territories_list(request):
-    """List all territories and dependencies"""
+    """List all territories and dependencies from both tables"""
     countries = Country.objects.filter(status='territory').select_related('region').only(
         'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji',
         'population', 'region__name', 'region__slug',
     )
+    extra_territories = FlagCollection.objects.filter(category='territory').only('name', 'flag_image')
 
-    search_query = request.GET.get('search')
-    if search_query:
-        countries = countries.filter(Q(name_common__icontains=search_query))
+    items = []
+    for c in countries:
+        items.append({
+            'name': c.name_common, 'cca3': c.cca3, 'img': c.flag_png,
+            'emoji': c.flag_emoji, 'type': 'Major Territory', 'capital': c.capital,
+            'region': c.region.name if c.region else ''
+        })
+    for f in extra_territories:
+        items.append({'name': f.name, 'img': f.flag_image, 'type': 'Territory / Dependency'})
 
-    paginator = Paginator(countries, COUNTRIES_PER_PAGE)
-    page = paginator.get_page(request.GET.get('page'))
+    page, search_query = _normalize_and_paginate(items, request, COUNTRIES_PER_PAGE)
 
     context = {
         'countries': page,
@@ -103,41 +129,17 @@ def territories_list(request):
 
 def historical_list(request):
     """List historical flags and former countries"""
-    # 1. Historical entities from Country model
-    hist_countries = Country.objects.filter(status='historical').only(
-        'name_common', 'cca3', 'flag_png', 'flag_emoji'
-    )
-    
-    # 2. Historical items from FlagCollection
-    hist_flags = FlagCollection.objects.filter(category='historical').only(
-        'name', 'flag_image'
-    )
+    hist_countries = Country.objects.filter(status='historical').only('name_common', 'cca3', 'flag_png', 'flag_emoji')
+    hist_flags = FlagCollection.objects.filter(category='historical').only('name', 'flag_image')
 
     items = []
     for c in hist_countries:
-        items.append({
-            'name': c.name_common,
-            'img': c.flag_png,
-            'emoji': c.flag_emoji,
-            'link': f'/country/{c.cca3}/',
-            'type': 'Former Country'
-        })
-    
+        items.append({'name': c.name_common, 'img': c.flag_png, 'emoji': c.flag_emoji,
+                      'link': f'/country/{c.cca3}/', 'type': 'Former Country'})
     for f in hist_flags:
-        items.append({
-            'name': f.name,
-            'img': f.flag_image,
-            'emoji': '',
-            'link': '',
-            'type': 'Historical Flag'
-        })
+        items.append({'name': f.name, 'img': f.flag_image, 'type': 'Historical Flag'})
 
-    search_query = request.GET.get('search')
-    if search_query:
-        items = [i for i in items if search_query.lower() in i['name'].lower()]
-
-    paginator = Paginator(items, GALLERY_PER_PAGE)
-    page = paginator.get_page(request.GET.get('page'))
+    page, search_query = _normalize_and_paginate(items, request)
 
     context = {
         'page_obj': page,
@@ -168,72 +170,61 @@ def country_detail(request, cca3):
 def flags_gallery(request):
     """Gallery view with pagination, search, and category filter"""
     category = request.GET.get('category', 'all')
-    search_query = request.GET.get('q', '').strip()
 
-    # Category counts (cached per request, quick aggregate)
-    cat_counts = dict(
-        FlagCollection.objects.values_list('category')
-        .annotate(n=Count('id')).values_list('category', 'n')
-    )
-    country_count = Country.objects.count()
-    fc_total = sum(cat_counts.values())
-    total_flags = country_count + fc_total
+    # 1. Calculate merged counts for the category filter
+    fc_counts = dict(FlagCollection.objects.values_list('category').annotate(n=Count('id')))
+    c_counts = dict(Country.objects.values_list('status').annotate(n=Count('id')))
+    
+    pill_country_count = c_counts.get('sovereign', 0)
+    pill_territory_count = c_counts.get('territory', 0) + fc_counts.get('territory', 0)
+    pill_historical_count = c_counts.get('historical', 0) + fc_counts.get('historical', 0)
+    total_flags = Country.objects.count() + FlagCollection.objects.count()
 
-    # Build a unified list of dicts for the template so we can paginate
-    # everything together instead of two separate querysets.
-    items = []  # list of lightweight dicts: {name, url, link, type}
+    cat_counts = {
+        'state': fc_counts.get('state', 0),
+        'city': fc_counts.get('city', 0),
+        'region': fc_counts.get('region', 0),
+        'international': fc_counts.get('international', 0),
+        'territory': pill_territory_count,
+        'historical': pill_historical_count,
+        'country': pill_country_count,
+    }
 
-    show_countries = category in ('all', 'country')
-    show_extras = category != 'country'
+    items = []
 
+    # 2. Gather countries
+    show_countries = category in ('all', 'country', 'territory', 'historical')
     if show_countries:
-        qs = Country.objects.only('name_common', 'cca3', 'flag_png', 'flag_emoji')
-        if search_query:
-            # Try SQL first for exact/ascii matches; fall back to Python for accents
-            qs_sql = qs.filter(name_common__icontains=search_query)
-            if qs_sql.exists():
-                qs = qs_sql
-            else:
-                # Accent-insensitive: filter in Python (fast for ~260 countries)
-                qs = [c for c in qs if _accent_insensitive_match(c.name_common, search_query)]
+        country_filter = Q()
+        if category == 'country': country_filter = Q(status='sovereign')
+        elif category == 'territory': country_filter = Q(status='territory')
+        elif category == 'historical': country_filter = Q(status='historical')
+        
+        qs = Country.objects.filter(country_filter).only('name_common', 'cca3', 'flag_png', 'flag_emoji', 'status')
         for c in qs:
             items.append({
-                'name': c.name_common,
-                'img': c.flag_png,
-                'emoji': c.flag_emoji,
+                'name': c.name_common, 'img': c.flag_png, 'emoji': c.flag_emoji,
                 'link': f'/country/{c.cca3}/',
-                'badge': 'Country',
+                'badge': 'Country' if c.status == 'sovereign' else c.get_status_display(),
             })
 
-    if show_extras:
+    # 3. Gather extras
+    if category != 'country':
         qs = FlagCollection.objects.only('name', 'flag_image', 'category')
-        if category not in ('all', 'country'):
+        if category != 'all':
             qs = qs.filter(category=category)
-        if search_query:
-            # Try SQL first; fall back to Python for accent-insensitive
-            qs_sql = qs.filter(name__icontains=search_query)
-            if qs_sql.exists():
-                qs = qs_sql
-            else:
-                qs = [f for f in qs if _accent_insensitive_match(f.name, search_query)]
         for f in qs:
             items.append({
-                'name': f.name,
-                'img': f.flag_image,
-                'emoji': '',
-                'link': '',
-                'badge': f.get_category_display(),
+                'name': f.name, 'img': f.flag_image, 'badge': f.get_category_display()
             })
 
-    paginator = Paginator(items, GALLERY_PER_PAGE)
-    page = paginator.get_page(request.GET.get('page'))
+    page, search_query = _normalize_and_paginate(items, request)
 
     context = {
         'page_obj': page,
         'selected_category': category,
         'search_query': search_query,
         'cat_counts': cat_counts,
-        'country_count': country_count,
         'total_flags': total_flags,
     }
     return render(request, 'flags_gallery.html', context)
