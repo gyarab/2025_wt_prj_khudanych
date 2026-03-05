@@ -83,7 +83,10 @@ def run_sparql(query: str, retries: int = 3) -> list:
 
 
 def val(row: dict, key: str) -> str:
-    return row.get(key, {}).get("value", "")
+    v = row.get(key, {}).get("value", "")
+    if row.get(key, {}).get("datatype") == "http://www.w3.org/2001/XMLSchema#boolean":
+        return "true" if v in ("1", "true") else "false"
+    return v
 
 
 def qid(uri: str) -> str:
@@ -118,9 +121,17 @@ SELECT ?country ?isoA2
        (SAMPLE(?continent_)     AS ?continentQID)
        (SAMPLE(?continentName_) AS ?continentLabel)
        (GROUP_CONCAT(DISTINCT ?type_; separator=",") AS ?types)
+       (MAX(?isUN_) AS ?isUNMember)
+       (MAX(?isSov_) AS ?isSovereignClass)
 WHERE {
   ?country wdt:P297 ?isoA2.
   OPTIONAL { ?country wdt:P31 ?type_. }
+  BIND(IF(EXISTS { 
+    ?country (wdt:P463|wdt:P361|wdt:P17|wdt:P31)* wd:Q1065 .
+  }, 1, 0) AS ?isUN_)
+  BIND(IF(EXISTS { 
+    ?country (wdt:P31|wdt:P279|wdt:P361|wdt:P17)* wd:Q3624078 .
+  }, 1, 0) AS ?isSov_)
   OPTIONAL { ?country wdt:P298 ?isoA3_. }
   OPTIONAL { ?country rdfs:label ?nameEn_. FILTER(LANG(?nameEn_) = "en") }
   OPTIONAL { ?country wdt:P1082 ?pop_. }
@@ -274,17 +285,21 @@ class Command(BaseCommand):
 
             # Determine status
             types_str = val(row, "types")
-            status = 'territory'
-            if "Q3624078" in types_str or name == "Kosovo":
-                status = 'sovereign'
-            elif any(q in types_str for q in ["Q1790360", "Q3024240", "Q133311", "Q3624078"]) and "Q3624078" not in types_str and name != "Kosovo":
-                # Check if it has a dissolution date would be better, but we rely on types
-                # If it's a historical type and NOT currently a sovereign state
-                status = 'historical'
+            is_un = val(row, "isUNMember") == "1"
+            is_sov = val(row, "isSovereignClass") == "1" or name == "Kosovo"
             
-            # Refine historical check: if it's DD (GDR) it's historical
-            if iso2 == "DD":
+            status = 'territory'
+            # 1. Historical priority
+            if iso2 in ("DD", "YU", "SU", "CS", "AN", "ZR"):
                 status = 'historical'
+            elif any(q in types_str for q in ["Q1790360", "Q3024240", "Q133311"]) and name != "Kosovo":
+                status = 'historical'
+            # 2. Sovereign priority
+            elif is_sov or is_un:
+                status = 'sovereign'
+                # Exception: Gibraltar is a territory, but might match sovereign class transitively
+                if name == "Gibraltar":
+                    status = 'territory'
 
             defaults = {
                 "name_common": name, "name_official": name,
@@ -293,6 +308,7 @@ class Command(BaseCommand):
                 "flag_svg": flag_svg, "flag_png": flag_png,
                 "flag_emoji": iso2_to_emoji(iso2),
                 "status": status,
+                "un_member": is_un,
             }
             if area is not None:
                 defaults["area"] = area
