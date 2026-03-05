@@ -119,6 +119,14 @@ class Command(BaseCommand):
                         independent = False
                     un_member = entry.get('unMember', False)
 
+                    # Determine status
+                    if name_common == 'German Democratic Republic':
+                        status = 'historical'
+                    elif independent or name_common == 'Kosovo':
+                        status = 'sovereign'
+                    else:
+                        status = 'territory'
+
                     # Continents  (derive from region)
                     continents = [region_name] if region_name else []
 
@@ -148,6 +156,7 @@ class Command(BaseCommand):
                             'borders': borders,
                             'independent': independent,
                             'un_member': un_member,
+                            'status': status,
                         }
                     )
 

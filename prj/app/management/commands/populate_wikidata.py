@@ -117,8 +117,10 @@ SELECT ?country ?isoA2
        (MAX(?area_)             AS ?areaKm2)
        (SAMPLE(?continent_)     AS ?continentQID)
        (SAMPLE(?continentName_) AS ?continentLabel)
+       (GROUP_CONCAT(DISTINCT ?type_; separator=",") AS ?types)
 WHERE {
   ?country wdt:P297 ?isoA2.
+  OPTIONAL { ?country wdt:P31 ?type_. }
   OPTIONAL { ?country wdt:P298 ?isoA3_. }
   OPTIONAL { ?country rdfs:label ?nameEn_. FILTER(LANG(?nameEn_) = "en") }
   OPTIONAL { ?country wdt:P1082 ?pop_. }
@@ -270,12 +272,27 @@ class Command(BaseCommand):
             region_name = CONTINENT_QID_MAP.get(cont_qid) or CONTINENT_LABEL_MAP.get(cont_label)
             region = regions.get(region_name)
 
+            # Determine status
+            types_str = val(row, "types")
+            status = 'territory'
+            if "Q3624078" in types_str or name == "Kosovo":
+                status = 'sovereign'
+            elif any(q in types_str for q in ["Q1790360", "Q3024240", "Q133311", "Q3624078"]) and "Q3624078" not in types_str and name != "Kosovo":
+                # Check if it has a dissolution date would be better, but we rely on types
+                # If it's a historical type and NOT currently a sovereign state
+                status = 'historical'
+            
+            # Refine historical check: if it's DD (GDR) it's historical
+            if iso2 == "DD":
+                status = 'historical'
+
             defaults = {
                 "name_common": name, "name_official": name,
                 "cca2": iso2, "capital": capital, "region": region,
                 "population": population,
                 "flag_svg": flag_svg, "flag_png": flag_png,
                 "flag_emoji": iso2_to_emoji(iso2),
+                "status": status,
             }
             if area is not None:
                 defaults["area"] = area
