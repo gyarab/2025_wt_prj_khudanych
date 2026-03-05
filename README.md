@@ -15,10 +15,10 @@ Nejvyšší privilegia v <ins>hierarchii</ins> drží <ins>administrátor</ins>.
 
 Tato <ins>architektura</ins> zajižduje, že projekt je otevřený pro širokou veřejnost, ale zároveň poskytuje bezpečný a interaktivní prostor pro aktivní objevovatele.
 
-### User Flow Diagram
+### Wireframes
 ![User Flow Diagram](docs/assets/user-flow.jpg)
 
-### Wireframes
+### User Flow Diagram
 ![Wireframes](docs/assets/wireframes.jpg)
 
 ## ✨ Features
