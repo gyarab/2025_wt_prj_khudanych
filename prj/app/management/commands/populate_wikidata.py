@@ -134,7 +134,7 @@ WHERE {
   }, 1, 0) AS ?isSov_)
   OPTIONAL { ?country wdt:P298 ?isoA3_. }
   OPTIONAL { ?country rdfs:label ?nameEn_. FILTER(LANG(?nameEn_) = "en") }
-  OPTIONAL { ?country wdt:P1082 ?pop_. }
+  OPTIONAL { ?country p:P1082/ps:P1082 ?pop_. }
   OPTIONAL { ?country wdt:P41  ?flag_. }
   OPTIONAL {
     ?country wdt:P36 ?cap_.

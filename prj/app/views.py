@@ -22,7 +22,7 @@ COUNTRIES_PER_PAGE = 48
 
 def _normalize_and_paginate(items_list, request, per_page=GALLERY_PER_PAGE):
     """Shared helper for search, normalization and pagination across views."""
-    search_query = request.GET.get('search') or request.GET.get('q')
+    search_query = request.GET.get('search') or request.GET.get('q') or ''
     if search_query:
         search_query = search_query.strip()
         items_list = [i for i in items_list if _accent_insensitive_match(i.get('name', ''), search_query)]
