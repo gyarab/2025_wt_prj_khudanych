@@ -21,6 +21,9 @@ Tato <ins>architektura</ins> zajižduje, že projekt je otevřený pro širokou 
 ### User Flow Diagram
 ![Wireframes](docs/assets/wireframes.jpg)
 
+### Entity-relationship diagram
+![Entity-relationship diagram](ER.jpg)
+
 ## ✨ Features
 
 | Feature | Details |
