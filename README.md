@@ -22,7 +22,7 @@ Tato <ins>architektura</ins> zajižduje, že projekt je otevřený pro širokou 
 ![Wireframes](docs/assets/wireframes.jpg)
 
 ### Entity-relationship diagram
-![Entity-relationship diagram](docs/assets/ER.jpg)
+![Entity-relationship diagram](docs/assets/FixedER.png)
 
 ## ✨ Features
 
