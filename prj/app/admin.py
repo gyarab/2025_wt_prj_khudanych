@@ -17,9 +17,18 @@ admin.site.register(User, UserAdmin)
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'display_name', 'unique_id')
+    list_display = ('user', 'display_name', 'nickname_change_count', 'last_nickname_change')
     search_fields = ('user__username', 'user__email', 'display_name', 'unique_id')
     readonly_fields = ('unique_id',)
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'unique_id', 'display_name', 'profile_picture')
+        }),
+        ('Nickname Change History', {
+            'fields': ('nickname_change_count', 'last_nickname_change'),
+            'classes': ('collapse',)
+        }),
+    )
 
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):

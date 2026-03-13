@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+from datetime import timedelta
 
 class Profile(models.Model):
     """Extended user profile"""
@@ -11,9 +14,47 @@ class Profile(models.Model):
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     display_name = models.CharField(max_length=255, blank=True)
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    
+    # Nickname change tracking
+    nickname_change_count = models.PositiveIntegerField(default=0)
+    last_nickname_change = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username}'s profile"
+
+    def clean(self):
+        super().clean()
+        if self.pk:
+            old_profile = Profile.objects.get(pk=self.pk)
+            if self.display_name != old_profile.display_name:
+                now = timezone.now()
+                # Cooldown check: 7 days
+                if self.last_nickname_change:
+                    cooldown_period = timedelta(days=7)
+                    if now < self.last_nickname_change + cooldown_period:
+                        days_left = (self.last_nickname_change + cooldown_period - now).days
+                        raise ValidationError({
+                            'display_name': f"Please wait {days_left + 1} more day(s) before changing your nickname again."
+                        })
+
+                    # Monthly limit check: 2 times per month
+                    if self.last_nickname_change.month == now.month and self.last_nickname_change.year == now.year:
+                        if self.nickname_change_count >= 2:
+                            raise ValidationError({
+                                'display_name': "You have already changed your nickname twice this month. Please try again next month."
+                            })
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_profile = Profile.objects.get(pk=self.pk)
+            if self.display_name != old_profile.display_name:
+                now = timezone.now()
+                if self.last_nickname_change and (self.last_nickname_change.month != now.month or self.last_nickname_change.year != now.year):
+                    self.nickname_change_count = 1
+                else:
+                    self.nickname_change_count += 1
+                self.last_nickname_change = now
+        super().save(*args, **kwargs)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
