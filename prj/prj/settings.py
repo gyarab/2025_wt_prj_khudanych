@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-yh4c&01(-v(vw7pr*8y@k@79*lsjbx$mreccjh+x#w1n3^e^rb
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+CSRF_TRUSTED_ORIGINS = ['https://jef.svs.gyarab.cz']
 
 # Application definition
 
@@ -174,3 +174,5 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'app' / 'static',
 ]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
