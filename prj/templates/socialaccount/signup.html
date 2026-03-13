@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Sign Up" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in">
+    <div class="row justify-content-center px-3">
+        <div class="col-md-8 col-lg-5">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-white py-4 text-center border-0">
+                    <div class="mb-3">
+                        <i class="bi bi-person-plus text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h3 class="fw-bold mb-0">Almost There</h3>
+                    <p class="text-muted">Finish creating your account</p>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-center text-muted mb-4 small">
+                        {% blocktrans with provider_name=account.get_provider.name %}
+                        You are about to use your {{ provider_name }} account to login.
+                        As a final step, please complete the form below.
+                        {% endblocktrans %}
+                    </p>
+
+                    <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            {% include "partials/_form_field.html" with field=field %}
+                        {% endfor %}
+                        
+                        {% if redirect_field_value %}
+                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-gradient py-2" type="submit">{% trans "Sign Up" %}</button>
+                            <a href="{% url 'account_login' %}" class="btn btn-light rounded-pill mt-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

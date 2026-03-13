@@ -1,8 +1,30 @@
 import unicodedata
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Count
 from django.core.paginator import Paginator
 from .models import Country, Region, FlagCollection
+from .forms import ProfileForm
+
+
+@login_required
+def profile_view(request):
+    """View user profile"""
+    return render(request, 'profile.html', {'profile': request.user.profile})
+
+@login_required
+def profile_edit(request):
+    """Edit user profile"""
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile)
+    
+    return render(request, 'profile_edit.html', {'form': form})
 
 
 def _strip_accents(text: str) -> str:

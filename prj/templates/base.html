@@ -44,18 +44,19 @@
 
         /* Navigation */
         .navbar {
-            background: white;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-            padding: 1rem 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            padding: 0.8rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            transition: all 0.3s ease;
         }
 
         .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: -0.5px;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -65,32 +66,66 @@
         }
 
         .navbar-logo {
-            height: 52px;
-            width: 52px;
-            margin-right: 10px;
-        }
-
-        .navbar-brand i {
-            -webkit-text-fill-color: #667eea;
+            height: 42px;
+            width: 42px;
+            margin-right: 8px;
+            filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2));
         }
 
         .nav-link {
             color: #4a5568 !important;
-            font-weight: 500;
-            margin: 0 0.5rem;
-            padding: 0.5rem 1rem !important;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            margin: 0 0.3rem;
+            padding: 0.6rem 1rem !important;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
         }
 
         .nav-link:hover {
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(102, 126, 234, 0.08);
             color: #667eea !important;
+            transform: translateY(-1px);
         }
 
-        .nav-link.active {
-            background: var(--primary-gradient);
-            color: white !important;
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            padding: 0.8rem;
+            margin-top: 10px !important;
+        }
+
+        .dropdown-item {
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            font-weight: 500;
+            color: #4a5568;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.08);
+            color: #667eea;
+            transform: translateX(4px);
+        }
+
+        /* Responsive Navbar Fix */
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background: white;
+                margin-top: 1rem;
+                padding: 1rem;
+                border-radius: 20px;
+                box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            }
+            .nav-link {
+                margin: 0.2rem 0;
+                padding: 0.8rem 1.2rem !important;
+            }
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
         }
 
         /* Main Content */
@@ -166,8 +201,45 @@
             }
         }
 
-        .animate-fade-in {
-            animation: fadeInUp 0.6s ease forwards;
+        /* Form Styling */
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group-text {
+            background-color: #f8fafc;
+            border-color: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            .navbar-logo {
+                height: 40px;
+                width: 40px;
+            }
+            .btn-gradient {
+                padding: 0.6rem 1.5rem;
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
     
@@ -204,12 +276,48 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/about/"><i class="bi bi-info-circle"></i> About</a>
                     </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person"></i> Profile</a></li>
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="/admin/"><i class="bi bi-shield-lock"></i> Admin</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'account_logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-sm btn-outline-primary ms-lg-2 rounded-pill px-3" href="{% url 'account_signup' %}">Sign Up</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
 
-    <main>
+    <main class="container my-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </main>
