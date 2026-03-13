@@ -1,5 +1,25 @@
 from django.contrib import admin
-from .models import Region, Country, FlagCollection
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
+from .models import Country, Region, FlagCollection, Profile
+
+class ProfileInline(admin.StackedInline):
+    model = Profile
+    can_delete = False
+    verbose_name_plural = 'Profiles'
+
+class UserAdmin(BaseUserAdmin):
+    inlines = (ProfileInline,)
+
+# Re-register UserAdmin
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'display_name', 'unique_id')
+    search_fields = ('user__username', 'user__email', 'display_name', 'unique_id')
+    readonly_fields = ('unique_id',)
 
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):

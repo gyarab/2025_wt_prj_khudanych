@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Profile - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg overflow-hidden">
+                <div class="card-header bg-primary py-4 text-center border-0" style="background: var(--primary-gradient) !important;">
+                    <div class="position-relative d-inline-block">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" class="rounded-circle border border-4 border-white shadow-sm" style="width: 120px; height: 120px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle border border-4 border-white shadow-sm d-flex align-items-center justify-content-center bg-white text-primary mx-auto" style="width: 120px; height: 120px;">
+                                <i class="bi bi-person-fill" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h3 class="text-white mt-3 mb-0">{{ profile.display_name|default:user.username }}</h3>
+                    <p class="text-white-50 mb-0">@{{ user.username }}</p>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <label class="text-muted small text-uppercase fw-bold mb-1 d-block">Unique ID</label>
+                        <div class="p-2 bg-light rounded border-dashed text-monospace small text-break">
+                            <code>{{ profile.unique_id }}</code>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="text-muted small text-uppercase fw-bold mb-1 d-block">Email Address</label>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-envelope me-2 text-primary"></i>
+                            <span>{{ user.email }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="text-muted small text-uppercase fw-bold mb-1 d-block">Member Since</label>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-calendar-event me-2 text-primary"></i>
+                            <span>{{ user.date_joined|date:"F j, Y" }}</span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <a href="{% url 'profile_edit' %}" class="btn btn-gradient">
+                            <i class="bi bi-pencil-square me-2"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-dashed {
+        border: 1px dashed #cbd5e0;
+    }
+</style>
+{% endblock %}
