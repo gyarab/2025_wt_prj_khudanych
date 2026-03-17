@@ -179,13 +179,17 @@ def country_detail(request, cca3):
     if country.borders:
         neighbors = Country.objects.filter(cca3__in=country.borders)
     
-    # Get additional flags for this country
-    additional_flags = FlagCollection.objects.filter(country=country)
+    # Get additional flags for this country with pagination
+    additional_flags_qs = FlagCollection.objects.filter(country=country).order_by('name')
+    paginator = Paginator(additional_flags_qs, 48)  # 48 flags per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     context = {
         'country': country,
         'neighbors': neighbors,
-        'additional_flags': additional_flags,
+        'additional_flags': page_obj,  # This is now a page object
+        'page_obj': page_obj,
     }
     return render(request, 'country_detail.html', context)
 

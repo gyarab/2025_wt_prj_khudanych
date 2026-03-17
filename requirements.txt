@@ -10,3 +10,4 @@ PyJWT
 oauthlib
 requests-oauthlib
 cryptography
+SPARQLWrapper

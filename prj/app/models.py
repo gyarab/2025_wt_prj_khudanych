@@ -173,7 +173,9 @@ class FlagCollection(models.Model):
     description = models.JSONField(default=dict, blank=True)
 
     flag_image = models.URLField(max_length=500)
-    wikidata_id = models.CharField(max_length=20, blank=True, db_index=True,
+    image_file = models.FileField(upload_to='flags/', blank=True, null=True,
+                                 help_text='Local copy of the flag image')
+    wikidata_id = models.CharField(max_length=20, blank=True, null=True, unique=True,
                                    help_text='Wikidata QID for deduplication')
     country = models.ForeignKey(Country, on_delete=models.SET_NULL,
                                 null=True, blank=True,
