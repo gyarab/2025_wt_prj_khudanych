@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ flag.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-4">{{ flag.name }}</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body text-center p-4">
+                    {% if flag.image_file %}
+                        <img src="{{ flag.image_file.url }}" alt="{{ flag.name }}" class="img-fluid shadow-sm" style="max-height: 400px; border: 1px solid #eee;">
+                    {% else %}
+                        <img src="{{ flag.flag_image }}" alt="{{ flag.name }}" class="img-fluid shadow-sm" style="max-height: 400px; border: 1px solid #eee;">
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="h5 mb-3">{% trans "Flag Details" %}</h3>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th class="bg-light" style="width: 30%;">{% trans "Category" %}</th>
+                                <td>{{ flag.get_category_display }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">{% trans "Country" %}</th>
+                                <td>
+                                    {% if flag.country %}
+                                        <a href="{% url 'country_detail' flag.country.cca3 %}">{{ flag.country.name_common }}</a>
+                                    {% else %}
+                                        {% trans "N/A" %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">{% trans "Wikidata ID" %}</th>
+                                <td>
+                                    {% if flag.wikidata_id %}
+                                        <a href="https://www.wikidata.org/wiki/{{ flag.wikidata_id }}" target="_blank" rel="noopener">{{ flag.wikidata_id }}</a>
+                                    {% else %}
+                                        {% trans "N/A" %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {# Nomenclature & Geography Section #}
+            <div class="mt-5">
+                <h2 class="h4 border-bottom pb-2">{% trans "Nomenclature & Geography" %}</h2>
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <div class="row">
+                            {% if label_en and label_en != flag.name %}
+                            <div class="col-md-6 mb-3">
+                                <span class="text-muted d-block small">{% trans "English Name" %}</span>
+                                <strong>{{ label_en }}</strong>
+                            </div>
+                            {% endif %}
+                            
+                            {% if native_label and native_label != flag.name %}
+                            <div class="col-md-6 mb-3">
+                                <span class="text-muted d-block small">{% trans "Native Name" %}</span>
+                                <strong>{{ native_label }}</strong>
+                            </div>
+                            {% endif %}
+
+                            {% if wikidata_type %}
+                            <div class="col-md-12">
+                                <span class="text-muted d-block small">{% trans "Specific Type" %}</span>
+                                <span class="badge bg-secondary text-capitalize">{{ wikidata_type }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# SEO Placeholder: Flag Colors #}
+            <div class="mt-5">
+                <h2 class="h4 border-bottom pb-2">{% trans "Flag Colors (HEX/RGB)" %}</h2>
+                <div class="p-3 bg-light border rounded">
+                    <p class="text-muted small">{% trans "Color data processing in progress..." %}</p>
+                </div>
+            </div>
+
+            {# SEO Placeholder: Location Map #}
+            <div class="mt-5 mb-5">
+                <h2 class="h4 border-bottom pb-2">{% trans "Location Map" %}</h2>
+                <div class="p-3 bg-light border rounded" style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                    <p class="text-muted small">{% trans "Map visualization for" %} {{ flag.name }} {% trans "is loading..." %}</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0">{% trans "Quick Actions" %}</h3>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'flags_gallery' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-grid-3x3"></i> {% trans "Back to Gallery" %}
+                    </a>
+                    {% if flag.country %}
+                    <a href="{% url 'country_detail' flag.country.cca3 %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-globe"></i> {% trans "View Country Info" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# External Links Section #}
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="h5 mb-0">{% trans "External Resources" %}</h3>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-3">{% trans "Learn more about" %} {{ flag.name }} {% trans "on external platforms:" %}</p>
+                    <div class="d-grid gap-2">
+                        {% if wiki_url %}
+                        <a href="{{ wiki_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-wikipedia"></i> {% trans "Read on Wikipedia" %}
+                        </a>
+                        {% endif %}
+                        
+                        {% if flag.wikidata_id %}
+                        <a href="https://www.wikidata.org/wiki/{{ flag.wikidata_id }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-database-fill"></i> {% trans "View on Wikidata" %}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

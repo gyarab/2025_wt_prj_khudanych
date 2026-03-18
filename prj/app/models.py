@@ -1,3 +1,4 @@
+from enum import unique
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
@@ -142,6 +143,10 @@ class Country(models.Model):
     def __str__(self):
         return f"{self.flag_emoji} {self.name_common}"
     
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('country_detail', kwargs={'cca3': self.cca3})
+    
     @property
     def currencies_display(self):
         """Return formatted currency string"""
@@ -169,6 +174,7 @@ class FlagCollection(models.Model):
     ]
 
     name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
     description = models.JSONField(default=dict, blank=True)
 
@@ -191,3 +197,21 @@ class FlagCollection(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_category_display()})"
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('flag_detail', kwargs={'slug': self.slug})
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            from django.utils.text import slugify
+            import re
+            
+            # Extract English name from JSON description for a universal slug
+            description = self.description if isinstance(self.description, dict) else {}
+            en_name = description.get('label_en')
+            
+            # Use English name if available and not a Q-ID; otherwise fallback to self.name
+            base_name = en_name if en_name and not re.match(r'^Q\d+$', en_name) else self.name
+            self.slug = slugify(f"{base_name}-{self.wikidata_id or ''}")
+        super().save(*args, **kwargs)

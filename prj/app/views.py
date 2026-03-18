@@ -193,6 +193,29 @@ def country_detail(request, cca3):
     }
     return render(request, 'country_detail.html', context)
 
+
+def flag_detail(request, slug):
+    """SEO-friendly detail page for a specific flag with rich data parsing"""
+    flag = get_object_or_404(FlagCollection, slug=slug)
+    
+    # Parse description JSON for rich context
+    desc = flag.description if isinstance(flag.description, dict) else {}
+    label_en = desc.get('label_en', '')
+    native_label = desc.get('native_label', '')
+    wikidata_type = desc.get('wikidata_type', '')
+    
+    # Construct Wikipedia search URL
+    wiki_url = f"https://en.wikipedia.org/wiki/{label_en.replace(' ', '_')}" if label_en else None
+    
+    context = {
+        'flag': flag,
+        'label_en': label_en,
+        'native_label': native_label,
+        'wikidata_type': wikidata_type,
+        'wiki_url': wiki_url,
+    }
+    return render(request, 'flag_detail.html', context)
+
 def flags_gallery(request):
     """Gallery view with pagination, search, and category filter"""
     category = request.GET.get('category', 'all')
