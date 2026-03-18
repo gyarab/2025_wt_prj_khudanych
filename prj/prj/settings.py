@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-yh4c&01(-v(vw7pr*8y@k@79*lsjbx$mreccjh+x#w1n3^e^rb
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://jef.svs.gyarab.cz']
+CSRF_TRUSTED_ORIGINS = ['https://jef.world-quiz.com']
 
 # Application definition
 
