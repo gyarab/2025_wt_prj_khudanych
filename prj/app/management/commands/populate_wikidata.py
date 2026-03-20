@@ -2,20 +2,23 @@
 Management command: populate_wikidata
 --------------------------------------
 Phase 1 – Countries  (~260 rows, stored in Country model)
-Phase 2 – Subdivisions, historical entities, cities, organisations …
-           (stored in FlagCollection, typically 800-1500+ rows)
+Phase 2 – Subdivisions and cities by default (stored in FlagCollection)
+
+Historical and international entities are optional via --extras-scope all.
 
 Everything comes from the Wikidata SPARQL endpoint.
 
 Usage:
-    python manage.py populate_wikidata              # update all
-    python manage.py populate_wikidata --clear      # wipe & re-import
-    python manage.py populate_wikidata --phase 1    # only countries
-    python manage.py populate_wikidata --phase 2    # only extra flags
+    python manage.py populate_wikidata                         # countries + geographic extras
+    python manage.py populate_wikidata --extras-scope all      # include historical + international
+    python manage.py populate_wikidata --clear                 # wipe & re-import
+    python manage.py populate_wikidata --phase 1               # only countries
+    python manage.py populate_wikidata --phase 2               # only extra flags
 """
 
 import time
 import requests
+from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.text import slugify
 from app.models import Region, Country, FlagCollection
@@ -157,13 +160,28 @@ ORDER BY ?isoA2
 # No FILTER NOT EXISTS (too expensive) — we skip countries in Python instead.
 QUERY_FLAGS_BY_COUNTRIES = """
 SELECT ?item ?itemLabel ?flag ?countryISO
+             (GROUP_CONCAT(DISTINCT ?typeLabel; separator=", ") AS ?typeLabels)
 WHERE {{
   VALUES ?countryISO {{ {values} }}
   ?country wdt:P297 ?countryISO .
   ?item wdt:P17 ?country .
   ?item wdt:P41 ?flag .
+    ?item wdt:P31 ?type .
+
+    # Keep only geographic/admin entities (cities, municipalities, regions, districts...).
+    FILTER EXISTS {{ ?type wdt:P279* wd:Q56061 }}
+
+    # Exclude non-geographic/noise classes.
+    FILTER NOT EXISTS {{ ?item wdt:P31/wdt:P279* wd:Q6256 }}
+    FILTER NOT EXISTS {{ ?item wdt:P31/wdt:P279* wd:Q3624078 }}
+    FILTER NOT EXISTS {{ ?item wdt:P31/wdt:P279* wd:Q43229 }}
+    FILTER NOT EXISTS {{ ?item wdt:P31/wdt:P279* wd:Q783794 }}
+    FILTER NOT EXISTS {{ ?item wdt:P31/wdt:P279* wd:Q16334295 }}
+    FILTER NOT EXISTS {{ ?item wdt:P31/wdt:P279* wd:Q41710 }}
+
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
 }}
+GROUP BY ?item ?itemLabel ?flag ?countryISO
 LIMIT 400
 """
 
@@ -232,6 +250,18 @@ class Command(BaseCommand):
                             help="Wipe all data before importing")
         parser.add_argument("--phase", type=int, default=0,
                             help="Run only phase 1 (countries) or 2 (extras). 0 = both.")
+        parser.add_argument(
+            "--extras-scope",
+            type=str,
+            default="geographic",
+            choices=["geographic", "all"],
+            help="Phase 2 scope: geographic only (default) or all (includes historical/international).",
+        )
+        parser.add_argument(
+            "--prune-non-geographic",
+            action="store_true",
+            help="Delete non-geographic FlagCollection rows (ethnic groups, orgs, companies, military, parties).",
+        )
 
     # ─────────────────────────────────────────────────────────────────────────
     # Phase 1 – Countries
@@ -379,9 +409,18 @@ class Command(BaseCommand):
             )
         return created
 
-    def _classify_name(self, name):
-        """Guess a category from the entity label."""
+    def _classify(self, name, type_labels=""):
+        """Classify by type labels first, then fallback to name heuristics."""
+        tl = (type_labels or "").lower()
         nl = name.lower()
+
+        if any(w in tl for w in ("municipality", "city", "town", "village", "human settlement", "borough", "commune")):
+            return "city"
+        if any(w in tl for w in ("province", "state", "region", "district", "county", "canton", "prefecture", "voivodeship", "oblast", "governorate")):
+            return "state"
+        if any(w in tl for w in ("territory", "dependency", "special administrative region", "autonomous")):
+            return "territory"
+
         if any(w in nl for w in (" city", " town", " municipal", " commune",
                                   " borough", " metropol")):
             return "city"
@@ -394,7 +433,45 @@ class Command(BaseCommand):
             return "territory"
         return "region"  # default for subdivision-like entities
 
-    def phase2_extras(self):
+    def _is_noise_entity(self, name, type_labels=""):
+        text = f"{name} {type_labels}".lower()
+        blocked = [
+            "ethnic group", "diaspora", "people", "nation", "tribe",
+            "company", "corporation", "business", "enterprise",
+            "organization", "organisation", "club",
+            "football", "basketball", "hockey", "volleyball", "olympic",
+            "political party", "movement", "army", "navy",
+        ]
+        return any(k in text for k in blocked)
+
+    def prune_non_geographic(self):
+        self.stdout.write(self.style.MIGRATE_HEADING("\n=== Pruning non-geographic flags ==="))
+
+        type_noise = [
+            "ethnic group", "human population", "inhabitant", "diaspora", "tribe",
+            "organization", "organisation", "company", "corporation", "business",
+            "political party", "armed forces", "army", "navy", "military unit",
+            "sports team", "football club", "basketball team", "olympic",
+        ]
+        name_noise = [
+            "national team", "political party", "army", "navy", "ethnic",
+        ]
+
+        q = Q()
+        for token in type_noise:
+            q |= Q(description__icontains=token)
+        for token in name_noise:
+            q |= Q(name__icontains=token)
+
+        qs = FlagCollection.objects.filter(q)
+        count = qs.count()
+        if count:
+            qs.delete()
+            self.stdout.write(self.style.SUCCESS(f"  Removed {count} non-geographic entries."))
+        else:
+            self.stdout.write("  No non-geographic entries found.")
+
+    def phase2_extras(self, extras_scope="geographic"):
         self.stdout.write(self.style.MIGRATE_HEADING("\n=== Phase 2: Extra Flags ==="))
         country_map = self._country_lookup()
         # Build set of Wikidata QIDs for countries (to skip them in phase 2a)
@@ -416,10 +493,13 @@ class Command(BaseCommand):
                 for row in rows:
                     wid = qid(val(row, "item"))
                     entity_name = val(row, "itemLabel").strip()
+                    type_labels = val(row, "typeLabels")
                     # Skip if this is actually a country (already in Phase 1)
                     if entity_name in country_names:
                         continue
-                    cat = self._classify_name(entity_name)
+                    if self._is_noise_entity(entity_name, type_labels):
+                        continue
+                    cat = self._classify(entity_name, type_labels)
                     batch_created += self._save_flag(
                         name=entity_name,
                         flag_url=val(row, "flag"),
@@ -436,6 +516,14 @@ class Command(BaseCommand):
             time.sleep(2)
 
         time.sleep(3)
+
+        if extras_scope != "all":
+            fc_total = FlagCollection.objects.count()
+            self.stdout.write(self.style.SUCCESS(
+                f"  Phase 2 done (geographic only) -- new flags created: {total_created}, "
+                f"total in FlagCollection: {fc_total}"
+            ))
+            return
 
         # ── 2b: historical ──────────────────────────────────────────
         self.stdout.write("  [2b] Historical countries ...")
@@ -502,10 +590,14 @@ class Command(BaseCommand):
             regions[name] = obj
 
         phase = options.get("phase", 0)
+        extras_scope = options.get("extras_scope", "geographic")
         if phase in (0, 1):
             self.phase1_countries(regions)
         if phase in (0, 2):
-            self.phase2_extras()
+            self.phase2_extras(extras_scope=extras_scope)
+
+        if options.get("prune_non_geographic"):
+            self.prune_non_geographic()
 
         # Final summary
         c_count = Country.objects.count()
