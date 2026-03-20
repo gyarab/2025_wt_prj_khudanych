@@ -179,7 +179,7 @@
 <div class="container mb-5">
     <!-- Search -->
     <div class="search-box">
-        <form method="get" action="/flags/">
+        <form method="get" action="{% url 'flags_gallery' %}">
             <input type="hidden" name="category" value="{{ selected_category }}">
             <div class="input-group">
                 <input type="text" class="form-control" name="q" placeholder="Search flags..." value="{{ search_query }}">
@@ -190,39 +190,39 @@
 
     <!-- Category Filter -->
     <div class="category-pills">
-        <a href="/flags/?category=all" class="category-pill {% if selected_category == 'all' %}active{% endif %}">
+        <a href="{% url 'flags_gallery' %}?category=all" class="category-pill {% if selected_category == 'all' %}active{% endif %}">
             All ({{ total_flags }})
         </a>
-        <a href="/flags/?category=country" class="category-pill {% if selected_category == 'country' %}active{% endif %}">
+        <a href="{% url 'flags_gallery' %}?category=country" class="category-pill {% if selected_category == 'country' %}active{% endif %}">
             🌍 Countries ({{ cat_counts.country }})
         </a>
         {% if cat_counts.state %}
-        <a href="/flags/?category=state" class="category-pill {% if selected_category == 'state' %}active{% endif %}">
+        <a href="{% url 'flags_gallery' %}?category=state" class="category-pill {% if selected_category == 'state' %}active{% endif %}">
             🏛️ States ({{ cat_counts.state }})
         </a>
         {% endif %}
         {% if cat_counts.city %}
-        <a href="/flags/?category=city" class="category-pill {% if selected_category == 'city' %}active{% endif %}">
+        <a href="{% url 'flags_gallery' %}?category=city" class="category-pill {% if selected_category == 'city' %}active{% endif %}">
             🏙️ Cities ({{ cat_counts.city }})
         </a>
         {% endif %}
         {% if cat_counts.region %}
-        <a href="/flags/?category=region" class="category-pill {% if selected_category == 'region' %}active{% endif %}">
+        <a href="{% url 'flags_gallery' %}?category=region" class="category-pill {% if selected_category == 'region' %}active{% endif %}">
             📍 Regions ({{ cat_counts.region }})
         </a>
         {% endif %}
         {% if cat_counts.territory %}
-        <a href="/flags/?category=territory" class="category-pill {% if selected_category == 'territory' %}active{% endif %}">
+        <a href="{% url 'flags_gallery' %}?category=territory" class="category-pill {% if selected_category == 'territory' %}active{% endif %}">
             🏝️ Territories ({{ cat_counts.territory }})
         </a>
         {% endif %}
         {% if cat_counts.historical %}
-        <a href="/flags/?category=historical" class="category-pill {% if selected_category == 'historical' %}active{% endif %}">
+        <a href="{% url 'flags_gallery' %}?category=historical" class="category-pill {% if selected_category == 'historical' %}active{% endif %}">
             📜 Historical ({{ cat_counts.historical }})
         </a>
         {% endif %}
         {% if cat_counts.international %}
-        <a href="/flags/?category=international" class="category-pill {% if selected_category == 'international' %}active{% endif %}">
+        <a href="{% url 'flags_gallery' %}?category=international" class="category-pill {% if selected_category == 'international' %}active{% endif %}">
             🤝 International ({{ cat_counts.international }})
         </a>
         {% endif %}

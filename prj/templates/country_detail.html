@@ -214,7 +214,7 @@
         <div class="row g-3">
             {% for neighbor in neighbors %}
             <div class="col-6 col-md-4 col-lg-2">
-                <a href="/country/{{ neighbor.cca3 }}/" class="text-decoration-none">
+                <a href="{% url 'country_detail' neighbor.cca3 %}" class="text-decoration-none">
                     <div class="neighbor-card">
                         <div class="neighbor-flag">{{ neighbor.flag_emoji }}</div>
                         <div style="font-size: 0.9rem; color: #4a5568;">{{ neighbor.name_common }}</div>
@@ -336,7 +336,7 @@
 
     <!-- Back Button -->
     <div class="text-center mt-4">
-        <a href="/countries/" class="btn btn-gradient btn-lg">
+        <a href="{% url 'countries' %}" class="btn btn-gradient btn-lg">
             <i class="bi bi-arrow-left"></i> Back to Countries
         </a>
     </div>

@@ -4,6 +4,7 @@ sqlparse
 python-dotenv
 django-allauth
 psycopg2-binary
+Pillow
 pytz
 requests
 PyJWT

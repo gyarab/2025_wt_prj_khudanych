@@ -264,7 +264,7 @@
 
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="/">
+            <a class="navbar-brand" href="{% url 'homepage' %}">
                 <img src="{% static 'app/logo.svg' %}" alt="Logo" class="navbar-logo">
                 Just Enough Flags
             </a>
@@ -274,22 +274,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="bi bi-house-door"></i> Home</a>
+                        <a class="nav-link" href="{% url 'homepage' %}"><i class="bi bi-house-door"></i> Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/countries/"><i class="bi bi-globe"></i> Countries</a>
+                        <a class="nav-link" href="{% url 'countries' %}"><i class="bi bi-globe"></i> Countries</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/territories/"><i class="bi bi-map"></i> Territories</a>
+                        <a class="nav-link" href="{% url 'territories' %}"><i class="bi bi-map"></i> Territories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/historical/"><i class="bi bi-clock-history"></i> Historical</a>
+                        <a class="nav-link" href="{% url 'historical' %}"><i class="bi bi-clock-history"></i> Historical</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/flags/"><i class="bi bi-flag"></i> Gallery</a>
+                        <a class="nav-link" href="{% url 'flags_gallery' %}"><i class="bi bi-flag"></i> Gallery</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/about/"><i class="bi bi-info-circle"></i> About</a>
+                        <a class="nav-link" href="{% url 'about' %}"><i class="bi bi-info-circle"></i> About</a>
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">

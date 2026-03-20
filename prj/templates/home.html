@@ -253,10 +253,10 @@
                     Explore comprehensive database of countries, flags, capitals, and geographic information from around the globe
                 </p>
                 <div class="mt-4">
-                    <a href="/countries/" class="btn-gradient me-3">
+                    <a href="{% url 'countries' %}" class="btn-gradient me-3">
                         <i class="bi bi-map"></i> Browse Countries
                     </a>
-                    <a href="/flags/" class="btn btn-outline-light btn-lg" style="border-radius: 50px;">
+                    <a href="{% url 'flags_gallery' %}" class="btn btn-outline-light btn-lg" style="border-radius: 50px;">
                         <i class="bi bi-flag"></i> View Flags
                     </a>
                 </div>
@@ -318,7 +318,7 @@
         <div class="row g-4">
             {% for country in featured_countries %}
             <div class="col-md-6 col-lg-4">
-                <a href="/country/{{ country.cca3 }}/" class="text-decoration-none">
+                <a href="{% url 'country_detail' country.cca3 %}" class="text-decoration-none">
                     <div class="country-card">
                         <div class="flag-container">
                             {% if country.flag_png %}
@@ -365,7 +365,7 @@
         <div class="row g-4 justify-content-center">
             {% for region in regions %}
             <div class="col-6 col-md-4 col-lg-4">
-                <a href="/countries/?region={{ region.slug }}" class="text-decoration-none">
+                <a href="{% url 'countries' %}?region={{ region.slug }}" class="text-decoration-none">
                     <div class="region-card">
                         <div class="region-icon">
                             {% if region.name == "Africa" %}🌍
@@ -398,7 +398,7 @@
             <p class="cta-description">
                 Dive into our comprehensive database and discover fascinating facts about countries around the world
             </p>
-            <a href="/countries/" class="btn-white">
+            <a href="{% url 'countries' %}" class="btn-white">
                 <i class="bi bi-compass"></i> Start Exploring
             </a>
         </div>

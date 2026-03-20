@@ -1,8 +1,10 @@
 import unicodedata
+from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Count
 from django.core.paginator import Paginator
+from django.urls import reverse
 from .models import Country, Region, FlagCollection
 from .forms import ProfileForm
 
@@ -157,7 +159,7 @@ def historical_list(request):
     items = []
     for c in hist_countries:
         items.append({'name': c.name_common, 'img': c.flag_png, 'emoji': c.flag_emoji,
-                      'link': f'/country/{c.cca3}/', 'type': 'Former Country'})
+                      'link': reverse('country_detail', kwargs={'cca3': c.cca3}), 'type': 'Former Country'})
     for f in hist_flags:
         items.append({'name': f.name, 'img': f.flag_image, 'type': 'Historical Flag'})
 
@@ -203,9 +205,13 @@ def flag_detail(request, slug):
     label_en = desc.get('label_en', '')
     native_label = desc.get('native_label', '')
     wikidata_type = desc.get('wikidata_type', '')
+    if not label_en and isinstance(flag.description, str):
+        label_en = flag.description
     
     # Construct Wikipedia search URL
-    wiki_url = f"https://en.wikipedia.org/wiki/{label_en.replace(' ', '_')}" if label_en else None
+    wiki_url = None
+    if label_en and not (label_en.startswith('Q') and label_en[1:].isdigit()):
+        wiki_url = f"https://en.wikipedia.org/wiki/{quote(label_en.replace(' ', '_'))}"
     
     context = {
         'flag': flag,
@@ -253,7 +259,7 @@ def flags_gallery(request):
         for c in qs:
             items.append({
                 'name': c.name_common, 'img': c.flag_png, 'emoji': c.flag_emoji,
-                'link': f'/country/{c.cca3}/',
+                'link': reverse('country_detail', kwargs={'cca3': c.cca3}),
                 'badge': 'Country' if c.status == 'sovereign' else c.get_status_display(),
             })
 
