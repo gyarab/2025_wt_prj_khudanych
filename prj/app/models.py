@@ -1,10 +1,8 @@
-from enum import unique
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
@@ -181,6 +179,10 @@ class FlagCollection(models.Model):
     flag_image = models.URLField(max_length=500)
     image_file = models.FileField(upload_to='flags/', blank=True, null=True,
                                  help_text='Local copy of the flag image')
+    population = models.IntegerField(null=True, blank=True)
+    area_km2 = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
     wikidata_id = models.CharField(max_length=20, blank=True, null=True, unique=True,
                                    help_text='Wikidata QID for deduplication')
     country = models.ForeignKey(Country, on_delete=models.SET_NULL,
@@ -200,7 +202,7 @@ class FlagCollection(models.Model):
 
     def get_absolute_url(self):
         from django.urls import reverse
-        return reverse('flag_detail', kwargs={'slug': self.slug})
+        return reverse('flag_detail', kwargs={'category': self.category, 'slug': self.slug})
 
     def save(self, *args, **kwargs):
         if not self.slug:

@@ -60,6 +60,18 @@
 
     .country-card-body {
         padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        min-height: 150px;
+    }
+
+    .country-card-body.compact-territory {
+        min-height: auto;
+        padding: 1rem;
+    }
+
+    .country-card-body.compact-territory .country-title {
+        margin-bottom: 0.5rem;
     }
 
     .country-title {
@@ -133,8 +145,8 @@
     <div class="row g-4">
         {% for item in page_obj %}
         <div class="col-sm-6 col-md-4 col-lg-3">
-            {% if item.cca3 or item.link %}
-            <a href="{% if item.cca3 %}{% url 'country_detail' item.cca3 %}{% else %}{{ item.link }}{% endif %}" class="text-decoration-none">
+            {% if item.link %}
+            <a href="{{ item.link }}" class="text-decoration-none">
             {% else %}
             <div class="text-decoration-none">
             {% endif %}
@@ -146,26 +158,22 @@
                             {{ item.flag_emoji|default:item.emoji }}
                         </div>
                     {% endif %}
-                    <div class="country-card-body">
+                    <div class="country-card-body {% if compact_territory_cards %}compact-territory{% endif %}">
                         <h3 class="country-title">{{ item.name_common|default:item.name }}</h3>
-                        {% if item.type %}
-                            <div class="info-badge">
-                                <i class="bi bi-tag"></i> {{ item.type }}
+                        {% if compact_territory_cards and item.link %}
+                            <div class="d-grid">
+                                <span class="btn btn-sm btn-outline-primary">View Details</span>
                             </div>
-                        {% endif %}
-                        {% if item.capital %}
-                            <div class="info-badge">
-                                <i class="bi bi-building"></i> {{ item.capital }}
-                            </div>
-                        {% endif %}
-                        {% if item.region %}
-                            <div class="info-badge">
-                                <i class="bi bi-geo-alt"></i> {{ item.region.name|default:item.region }}
-                            </div>
+                        {% else %}
+                            {% if item.capital %}
+                                <div class="info-badge">
+                                    <i class="bi bi-building"></i> {{ item.capital }}
+                                </div>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>
-            {% if item.cca3 or item.link %}
+            {% if item.link %}
             </a>
             {% else %}
             </div>

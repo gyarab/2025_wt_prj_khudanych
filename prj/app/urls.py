@@ -9,7 +9,9 @@ urlpatterns = [
     path('territories/', views.territories_list, name="territories"),
     path('historical/', views.historical_list, name="historical"),
     path('country/<str:cca3>/', views.country_detail, name="country_detail"),
+    path('territory/<str:cca3>/', views.territory_detail, name="territory_detail"),
     path('flags/', views.flags_gallery, name="flags_gallery"),
-    path('flag/<slug:slug>/', views.flag_detail, name="flag_detail"),
+    path('flags/search-api/', views.flags_search_api, name="flags_search_api"),
+    path('flags/<str:category>/<slug:slug>/', views.flag_detail, name="flag_detail"),
     path('about/', views.render_about, name="about"),
 ]

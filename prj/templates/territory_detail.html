@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ territory.name_common }} - Territory Details{% endblock %}
+
+{% block head %}
+<style>
+    .territory-header {
+        background: linear-gradient(135deg, #0f766e 0%, #0ea5e9 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        border-radius: 1rem;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 14px;
+        padding: 1.5rem;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+        margin-bottom: 1.25rem;
+    }
+
+    .section-heading {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+
+    .flag-preview {
+        max-width: 380px;
+        width: 100%;
+        border-radius: 12px;
+        border: 3px solid #ffffff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="territory-header">
+        <div class="container">
+            <div class="row align-items-center g-3">
+                <div class="col-md-8">
+                    <h1 class="display-6 mb-2">{{ territory.flag_emoji }} {{ territory.name_common }}</h1>
+                    <p class="mb-0">{{ territory.name_official }}</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    {% if territory.flag_svg %}
+                        <img src="{{ territory.flag_svg }}" alt="Flag of {{ territory.name_common }}" class="flag-preview" loading="lazy" decoding="async">
+                    {% elif territory.flag_png %}
+                        <img src="{{ territory.flag_png }}" alt="Flag of {{ territory.name_common }}" class="flag-preview" loading="lazy" decoding="async">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <h2 class="section-heading">Territory and Sovereignty</h2>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <p class="mb-1"><strong>Status:</strong> {{ territory.get_status_display }}</p>
+                <p class="mb-1"><strong>Independent:</strong> {% if territory.independent %}Yes{% else %}No{% endif %}</p>
+                <p class="mb-0"><strong>UN Member:</strong> {% if territory.un_member %}Yes{% else %}No{% endif %}</p>
+            </div>
+            <div class="col-md-6">
+                <p class="mb-1"><strong>Owner Country:</strong>
+                    {% if owner_country %}
+                        <a href="{% url 'country_detail' owner_country.cca3 %}">{{ owner_country.name_common }}</a>
+                    {% else %}
+                        Not available
+                    {% endif %}
+                </p>
+                <p class="mb-0"><strong>Region:</strong> {% if territory.region %}{{ territory.region.name }}{% else %}Not available{% endif %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <h2 class="section-heading">Basic Information</h2>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <p class="mb-1"><strong>Capital:</strong> {{ territory.capital|default:'Not available' }}</p>
+                <p class="mb-0"><strong>Population:</strong> {{ territory.population|floatformat:0 }}</p>
+            </div>
+            <div class="col-md-6">
+                <p class="mb-1"><strong>Area:</strong> {% if territory.area %}{{ territory.area|floatformat:0 }} km²{% else %}Not available{% endif %}</p>
+                <p class="mb-0"><strong>Subregion:</strong> {{ territory.subregion|default:'Not available' }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if additional_flags %}
+    <div class="detail-card" id="flags">
+        <h2 class="section-heading">Additional Territory Flags</h2>
+        <div class="row g-3">
+            {% for flag in additional_flags %}
+            <div class="col-6 col-sm-4 col-md-3">
+                <div class="card h-100 shadow-sm border-0">
+                    <div style="height: 120px; display: flex; align-items: center; justify-content: center; background: #f8fafc; padding: 10px;">
+                        <img src="{{ flag.flag_image }}" alt="{{ flag.name }}"
+                             style="max-width: 100%; max-height: 100%; object-fit: contain;"
+                             loading="lazy" decoding="async">
+                    </div>
+                    <div class="card-body p-2 text-center">
+                        <div style="font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ flag.name }}">
+                            {{ flag.name }}
+                        </div>
+                        <div style="font-size: 0.7rem; color: #718096; margin-bottom: 8px;">{{ flag.get_category_display }}</div>
+                        <div class="d-grid">
+                            <a href="{% url 'flag_detail' flag.category flag.slug %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if additional_flags.has_other_pages %}
+        <nav class="mt-4" aria-label="Flags pagination">
+            <ul class="pagination justify-content-center flex-wrap">
+                {% if additional_flags.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ additional_flags.previous_page_number }}#flags">&laquo;</a>
+                </li>
+                {% endif %}
+
+                {% for num in additional_flags.paginator.page_range %}
+                    {% if additional_flags.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > additional_flags.number|add:"-3" and num < additional_flags.number|add:"3" %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}#flags">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if additional_flags.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ additional_flags.next_page_number }}#flags">&raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

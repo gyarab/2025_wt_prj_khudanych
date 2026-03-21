@@ -22,7 +22,7 @@ from app.models import Country, FlagCollection
 SPARQL_ENDPOINT = "https://query.wikidata.org/sparql"
 HEADERS = {
     "Accept": "application/sparql-results+json",
-    "User-Agent": "JustEnoughFlags/2.1 (educational project; https://github.com)",
+    "User-Agent": "JustEnoughFlags/2.2 (educational project; https://github.com)",
 }
 
 
@@ -72,15 +72,34 @@ def commons_thumb(svg_url, width=320):
     return f"https://commons.wikimedia.org/wiki/Special:FilePath/{filename}?width={width}"
 
 
+def _is_banner_url(flag_url):
+    lower = (flag_url or "").lower()
+    return any(
+        k in lower
+        for k in ["banner", "vertical", "hochformat", "hängeflagge", "haengeflagge", "knatterflagge"]
+    )
+
+
+def _is_noise_entity(name):
+    """Filters out political, military, and sports entities purely by name."""
+    text = (name or "").lower()
+    blocked = [
+        "team", "political party", "ethnic group", "human population",
+        "basketball", "football", "hockey", "volleyball", "rugby",
+        "olympic", "paralympic", "delegation", "sports club", "rowing club",
+        "yacht club", "marine", "navy", "army", "armed forces", "air force",
+        "party", "communist", "democrat", "republican", "socialist"
+    ]
+    return any(k in text for k in blocked)
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 # SPARQL QUERIES — small & focused to avoid Wikidata timeouts
 # ═══════════════════════════════════════════════════════════════════════════
 
 # ─── HISTORICAL ───────────────────────────────────────────────────────────
-# Multiple queries targeting different Wikidata classes for historical entities
 
 HISTORICAL_QUERIES = [
-    # 1. Historical countries (Q3024240) — broad, includes many former states
     (
         "Historical countries (Q3024240)",
         """
@@ -92,7 +111,6 @@ HISTORICAL_QUERIES = [
         LIMIT 500
         """,
     ),
-    # 2. Former countries (Q1790360)
     (
         "Former countries (Q1790360)",
         """
@@ -104,7 +122,6 @@ HISTORICAL_QUERIES = [
         LIMIT 300
         """,
     ),
-    # 3. Former sovereign states — dissolved (have P576 = dissolved date)
     (
         "Dissolved sovereign states",
         """
@@ -117,7 +134,6 @@ HISTORICAL_QUERIES = [
         LIMIT 300
         """,
     ),
-    # 4. Colonies (Q133156)
     (
         "Colonies (Q133156)",
         """
@@ -129,7 +145,6 @@ HISTORICAL_QUERIES = [
         LIMIT 300
         """,
     ),
-    # 5. Former administrative territorial entities (Q28171280)
     (
         "Former admin territories",
         """
@@ -141,7 +156,6 @@ HISTORICAL_QUERIES = [
         LIMIT 300
         """,
     ),
-    # 6. Ancient civilizations / historical states (Q839954)
     (
         "Ancient civilizations / city-states",
         """
@@ -153,7 +167,6 @@ HISTORICAL_QUERIES = [
         LIMIT 200
         """,
     ),
-    # 7. Former polities (Q15642541 = historical administrative division)
     (
         "Historical admin divisions",
         """
@@ -165,7 +178,6 @@ HISTORICAL_QUERIES = [
         LIMIT 300
         """,
     ),
-    # 8. Historical empires/kingdoms by P576 (dissolution date) + flag
     (
         "Entities with dissolution date + flag",
         """
@@ -178,7 +190,6 @@ HISTORICAL_QUERIES = [
         LIMIT 500
         """,
     ),
-    # 9. Client states / puppet states (Q1451600)
     (
         "Client states (Q1451600)",
         """
@@ -190,7 +201,6 @@ HISTORICAL_QUERIES = [
         LIMIT 200
         """,
     ),
-    # 10. Mandate territories (Q205895)
     (
         "Mandates/protectorates",
         """
@@ -203,7 +213,6 @@ HISTORICAL_QUERIES = [
         LIMIT 200
         """,
     ),
-    # 11. Directly request specific famous historical entities
     (
         "Famous historical entities (direct QIDs)",
         """
@@ -241,12 +250,9 @@ HISTORICAL_QUERIES = [
             wd:Q148540  # Mughal Empire
             wd:Q12536   # Mongol Empire
             wd:Q12564   # Holy Roman Empire
-            wd:Q148    # People's Republic of China (excluded - it's current!)
             wd:Q178038  # Republic of China (1912-1949)
             wd:Q170587  # Republic of Vietnam (South Vietnam)
             wd:Q172640  # North Vietnam
-            wd:Q26678   # North Korea? No, it's current — skip
-            wd:Q192     # South Korea? Current — skip
             wd:Q83860   # Zulu Kingdom
             wd:Q199442  # Abbasid Caliphate
             wd:Q12490   # Roman Empire
@@ -256,7 +262,6 @@ HISTORICAL_QUERIES = [
             wd:Q42585   # Kingdom of the Two Sicilies
             wd:Q107862  # Kingdom of Bohemia
             wd:Q4948    # Republic of Florence
-            wd:Q170072  # Ukrainian SSR
             wd:Q170467  # Georgian SSR
             wd:Q170460  # Uzbek SSR
             wd:Q170478  # Kazakh SSR
@@ -269,20 +274,17 @@ HISTORICAL_QUERIES = [
             wd:Q170350  # Armenian SSR
             wd:Q170236  # Turkmen SSR
             wd:Q170318  # Kirghiz SSR
-            wd:Q713750  # West Germany
             wd:Q116750  # Kingdom of Bavaria
             wd:Q152750  # Kingdom of Saxony
             wd:Q153015  # Kingdom of Hanover
-            wd:Q83286   # Kingdom of Yugoslavia
             wd:Q330672  # Second Spanish Republic
             wd:Q133346  # Kingdom of Greece
             wd:Q33946   # Czechoslovakia (alternative id)
             wd:Q1054923 # Manchukuo
             wd:Q859563  # Empire of Japan
             wd:Q129053  # French Indochina
-            wd:Q399      # Armenia
+            wd:Q399     # Armenia
             wd:Q174193  # United Kingdom of GB & Ireland
-            wd:Q174306  # Kingdom of Hungary
           }
           ?item wdt:P41 ?flag .
           SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
@@ -295,7 +297,6 @@ HISTORICAL_QUERIES = [
 # ─── INTERNATIONAL / ORGANIZATIONS ───────────────────────────────────────
 
 INTERNATIONAL_QUERIES = [
-    # 1. International organizations (Q484652) — broad class
     (
         "International organizations (Q484652)",
         """
@@ -307,7 +308,6 @@ INTERNATIONAL_QUERIES = [
         LIMIT 400
         """,
     ),
-    # 2. Supranational organisations (Q1335818)
     (
         "Supranational organisations (Q1335818)",
         """
@@ -319,7 +319,6 @@ INTERNATIONAL_QUERIES = [
         LIMIT 200
         """,
     ),
-    # 3. Intergovernmental organisations (Q245065)
     (
         "Intergovernmental organisations (Q245065)",
         """
@@ -331,7 +330,6 @@ INTERNATIONAL_QUERIES = [
         LIMIT 200
         """,
     ),
-    # 4. Military alliances (Q1127126) — NATO etc.
     (
         "Military alliances (Q1127126)",
         """
@@ -343,7 +341,6 @@ INTERNATIONAL_QUERIES = [
         LIMIT 100
         """,
     ),
-    # 5. Trade blocs (Q7781198)
     (
         "Trade blocs (Q7781198)",
         """
@@ -355,20 +352,6 @@ INTERNATIONAL_QUERIES = [
         LIMIT 100
         """,
     ),
-    # 6. International sports federations, Olympic committees, etc. with flags
-    (
-        "Sports organizations with flags",
-        """
-        SELECT ?item ?itemLabel ?flag WHERE {
-          VALUES ?type { wd:Q270028 wd:Q1194970 wd:Q4438121 }
-          ?item wdt:P31 ?type .
-          ?item wdt:P41 ?flag .
-          SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-        }
-        LIMIT 200
-        """,
-    ),
-    # 7. Direct famous international org QIDs
     (
         "Famous international orgs (direct QIDs)",
         """
@@ -387,44 +370,35 @@ INTERNATIONAL_QUERIES = [
             wd:Q7795    # WHO
             wd:Q1969730 # CERN (European Organization for Nuclear Research)
             wd:Q134102  # Interpol
-            wd:Q1065    # United Nations
             wd:Q340195  # OSCE
             wd:Q81299   # EFTA
             wd:Q170481  # COMECON
             wd:Q191384  # CIS (Commonwealth of Independent States)
             wd:Q7809    # WTO
             wd:Q8350    # OECD
-            wd:Q7825    # African Union
-            wd:Q33946   # BRICS? No this is Czecho...
             wd:Q899770  # Pacific Islands Forum
             wd:Q1779504 # CARICOM
             wd:Q189946  # Mercosur
             wd:Q156884  # Benelux
             wd:Q8680    # ESA
-            wd:Q7184    # NATO
-            wd:Q7159     # IOC
-            wd:Q40857    # FIFA
-            wd:Q131535   # World Scout Movement
-            wd:Q7804     # NAFTA? May not have flag
-            wd:Q193376   # Organization of American States
-            wd:Q129286   # Nordic Council
-            wd:Q47543    # Franc Zone? 
-            wd:Q975405   # GUAM
-            wd:Q1137381  # Shanghai Cooperation Organisation
-            wd:Q389867   # Visegrad Group
-            wd:Q28222    # European Space Agency
-            wd:Q742023   # Eurasian Economic Union
-            wd:Q1191332  # Organisation of Islamic Cooperation
-            wd:Q9072     # International Red Cross
-            wd:Q37470    # International Olympic Committee
-            wd:Q170481   # COMECON
-            wd:Q178122   # SEATO
-            wd:Q15042    # Warsaw Pact
-            wd:Q15042    # Warsaw Pact
-            wd:Q25277    # League of Nations
-            wd:Q487907   # Pacific Community
-            wd:Q45546    # G8 / G7
-            wd:Q28231    # Council of Europe
+            wd:Q131535  # World Scout Movement
+            wd:Q7804    # NAFTA
+            wd:Q193376  # Organization of American States
+            wd:Q129286  # Nordic Council
+            wd:Q47543   # Franc Zone
+            wd:Q975405  # GUAM
+            wd:Q1137381 # Shanghai Cooperation Organisation
+            wd:Q389867  # Visegrad Group
+            wd:Q28222   # European Space Agency
+            wd:Q742023  # Eurasian Economic Union
+            wd:Q1191332 # Organisation of Islamic Cooperation
+            wd:Q9072    # International Red Cross
+            wd:Q178122  # SEATO
+            wd:Q15042   # Warsaw Pact
+            wd:Q25277   # League of Nations
+            wd:Q487907  # Pacific Community
+            wd:Q45546   # G8 / G7
+            wd:Q28231   # Council of Europe
           }
           ?item wdt:P41 ?flag .
           SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
@@ -437,7 +411,6 @@ INTERNATIONAL_QUERIES = [
 # ─── TERRITORIES ──────────────────────────────────────────────────────────
 
 TERRITORY_QUERIES = [
-    # 1. Dependent territories (Q161243)
     (
         "Dependent territories (Q161243)",
         """
@@ -449,7 +422,6 @@ TERRITORY_QUERIES = [
         LIMIT 300
         """,
     ),
-    # 2. Overseas territory (Q783733)
     (
         "Overseas territories (Q783733)",
         """
@@ -461,7 +433,6 @@ TERRITORY_QUERIES = [
         LIMIT 200
         """,
     ),
-    # 3. Unincorporated territory (Q1763527)
     (
         "Unincorporated territories (Q1763527)",
         """
@@ -473,7 +444,6 @@ TERRITORY_QUERIES = [
         LIMIT 200
         """,
     ),
-    # 4. Crown Dependencies (Q185086)
     (
         "Crown dependencies (Q185086)",
         """
@@ -485,7 +455,6 @@ TERRITORY_QUERIES = [
         LIMIT 50
         """,
     ),
-    # 5. Autonomous territories / autonomous regions (various classes)
     (
         "Autonomous territories",
         """
@@ -498,7 +467,6 @@ TERRITORY_QUERIES = [
         LIMIT 300
         """,
     ),
-    # 6. Special administrative regions (Q779415)
     (
         "Special administrative regions",
         """
@@ -510,7 +478,6 @@ TERRITORY_QUERIES = [
         LIMIT 100
         """,
     ),
-    # 7. Disputed territories (Q15239622)
     (
         "Disputed territories",
         """
@@ -523,7 +490,6 @@ TERRITORY_QUERIES = [
         LIMIT 200
         """,
     ),
-    # 8. British Overseas Territories (Q46395) + French overseas territories
     (
         "British & French overseas territories",
         """
@@ -536,7 +502,6 @@ TERRITORY_QUERIES = [
         LIMIT 200
         """,
     ),
-    # 9. Direct QIDs for well-known territories
     (
         "Famous territories (direct QIDs)",
         """
@@ -569,11 +534,9 @@ TERRITORY_QUERIES = [
             wd:Q30971    # French Polynesia
             wd:Q17070    # Wallis and Futuna
             wd:Q3769     # French Guiana
-            wd:Q17054    # New Caledonia
             wd:Q126125   # Réunion
             wd:Q17063    # Mayotte
             wd:Q25362    # Guadeloupe
-            wd:Q17054    # Martinique wrong, fix below
             wd:Q17349    # Cook Islands
             wd:Q34020    # Niue
             wd:Q34754    # Tokelau
@@ -586,14 +549,11 @@ TERRITORY_QUERIES = [
             wd:Q34366    # Taiwan (Republic of China)
             wd:Q1246     # Kosovo
             wd:Q219      # Western Sahara (disputed)
-            wd:Q25279    # Curaçao
             wd:Q23427    # Svalbard
             wd:Q31057    # Jan Mayen
-            wd:Q2280    # Isle of Man
-            wd:Q25230    # BVI
+            wd:Q2280     # Isle of Man
             wd:Q3311     # Jersey
             wd:Q3405     # Guernsey
-            wd:Q9676     # Isle of Man
           }
           ?item wdt:P41 ?flag .
           SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
@@ -617,9 +577,17 @@ class Command(BaseCommand):
         """Save one FlagCollection row. Returns True if new row created."""
         if not name or not flag_url:
             return False
+            
+        # Security checks against noise and banners
+        if _is_noise_entity(name):
+            return False
+        if _is_banner_url(flag_url):
+            return False
+            
         # Skip QID-only labels (unresolved labels)
         if name.startswith("Q") and name[1:].isdigit():
             return False
+            
         dedup_key = wikidata_id or name
         if dedup_key in seen:
             return False
@@ -659,7 +627,6 @@ class Command(BaseCommand):
             f"\n{'=' * 60}\n  Category: {category.upper()}\n{'=' * 60}"
         ))
         cat_created = 0
-        cat_updated = 0
 
         for label, query in queries:
             self.stdout.write(f"  [{label}] ...")
@@ -734,20 +701,14 @@ class Command(BaseCommand):
         removed = 0
 
         # 1. Remove entries whose flag_image matches a Country.flag_png
-        # BUT ONLY if the names are similar or if it's NOT a historical flag.
-        # This preserves Czechoslovakia (same flag as Czech Republic) while removing
-        # duplicates like "French Republic" when "France" is already in Country.
         country_data = list(Country.objects.exclude(flag_png="").values('name_common', 'flag_png'))
         country_pngs = {c['flag_png'] for c in country_data}
         country_names = {c['name_common'].lower() for c in country_data}
 
-        # Instead of a bulk delete, we'll check more carefully
         for entry in FlagCollection.objects.filter(flag_image__in=country_pngs):
-            # If the name is basically the same, delete the duplicate
             if entry.name.lower() in country_names or entry.name.lower() == "republic of " + entry.name.lower():
                  entry.delete()
                  removed += 1
-            # If it's NOT historical and has the same flag, it's likely a duplicate subdivision/territory
             elif entry.category != 'historical':
                  entry.delete()
                  removed += 1
@@ -755,25 +716,15 @@ class Command(BaseCommand):
         if removed:
             self.stdout.write(f"    Removed {removed} duplicate-image entries (name matches or non-historical)")
 
-        # 2. Remove sports teams / noise entries
-        NOISE = [
-            "football team", "basketball team", "handball team",
-            "volleyball team", "hockey team", "rugby team",
-            "cricket team", "baseball team", "olympic", "paralympic",
-            "under-17", "under-18", "under-19", "under-20", "under-21",
-            "under-23", "women's national", "men's national",
-            "national team", "at the 20", "at the 19", "grand prix",
-            "marine corps", "coast guard", "national guard",
-        ]
-        q = Q()
-        for p in NOISE:
-            q |= Q(name__icontains=p)
-        qs = FlagCollection.objects.filter(q)
-        n = qs.count()
-        if n:
-            qs.delete()
-            removed += n
-            self.stdout.write(f"    Removed {n} sports/noise entries")
+        # 2. Remove noise entries using the same logic we use in the save block just in case
+        all_flags = FlagCollection.objects.all()
+        for flag in all_flags:
+            if _is_noise_entity(flag.name) or _is_banner_url(flag.flag_image):
+                flag.delete()
+                removed += 1
+
+        if removed:
+            self.stdout.write(f"    Removed sports/noise entries during cleanup")
 
         # 3. Deduplicate same flag_image — keep best name per image
         dupes = (
