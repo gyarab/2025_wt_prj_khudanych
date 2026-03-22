@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from .models import Country, Region, FlagCollection, Profile
 
+# --- USER & PROFILE SECTION ---
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
@@ -11,7 +12,6 @@ class ProfileInline(admin.StackedInline):
 class UserAdmin(BaseUserAdmin):
     inlines = (ProfileInline,)
 
-# Re-register UserAdmin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
@@ -30,6 +30,7 @@ class ProfileAdmin(admin.ModelAdmin):
         }),
     )
 
+# --- GEOGRAPHIC SECTION ---
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
@@ -64,8 +65,27 @@ class CountryAdmin(admin.ModelAdmin):
         }),
     )
 
+# --- THE CLEANING MACHINE (FlagCollection) ---
 @admin.register(FlagCollection)
 class FlagCollectionAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'country']
-    list_filter = ['category']
-    search_fields = ['name', 'description']
+    # 'list_editable' ti dovolí měnit checkboxy přímo v seznamu bez rozkliknutí!
+    list_display = ['name', 'category', 'country', 'is_verified', 'is_public', 'wikidata_id']
+    list_editable = ['is_verified', 'is_public'] 
+    list_filter = ['category', 'is_verified', 'is_public', 'country']
+    search_fields = ['name', 'wikidata_id']
+    
+    # Hromadné akce pro rychlé mazání/schovávání
+    actions = ['mark_as_verified', 'hide_from_public', 'show_on_public']
+
+    @admin.action(description='Verify selected flags')
+    def mark_as_verified(self, request, queryset):
+        queryset.update(is_verified=True)
+        self.stdout.write(f"Successfully verified {queryset.count()} flags.")
+
+    @admin.action(description='Hide selected flags from website')
+    def hide_from_public(self, request, queryset):
+        queryset.update(is_public=False)
+
+    @admin.action(description='Show selected flags on website')
+    def show_on_public(self, request, queryset):
+        queryset.update(is_public=True)

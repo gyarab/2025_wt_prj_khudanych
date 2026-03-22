@@ -1,0 +1,23 @@
+total_actions=327
+hide_junk=57
+category_changes=25
+ambiguous=246
+
+sample_hidden:
+- Q100143020: Infanterie-Regiment „Graf Schwerin“ (3. Pommersches) Nr. 14 | ['junk:milgov']
+- Q10512734: Göta Artillery Regiment | ['junk:milgov']
+- Q10512744: Göta Armoured Guards regiment | ['junk:milgov']
+- Q10542866: Kalmar Regiment | ['junk:milgov']
+- Q10543875: Karlskrona Grenadier Regiment | ['junk:milgov']
+- Q10547194: Fixed Infantry Regiment of Havana | ['junk:milgov']
+- Q10602644: Northern Scanian Regiment | ['junk:milgov']
+- Q10671160: Scanian Dragoon Regiment | ['junk:milgov']
+- Q10672505: Småland Artillery Regiment | ['junk:milgov']
+- Q10672508: Småland hussar regiment | ['junk:milgov']
+- Q1126102: Italian Social Movement - National Right | ['junk:political']
+- Q1142049: North West Company | ['junk:company']
+- Q11781502: Ministry of Military Affairs | ['junk:milgov']
+- Q1182613: Defense Commissary Agency | ['junk:milgov']
+- Q1185174: Rhodesian Front | ['junk:political']
+- Q12406729: Israeli Military Governorate | ['junk:milgov']
+- Q13646141: Malaysian Fire and Rescue Department | ['junk:milgov']

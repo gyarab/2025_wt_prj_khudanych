@@ -100,10 +100,7 @@ TERRITORY_OWNER_BY_CCA3 = {
 
 
 def _get_territory_owner_country(territory: Country):
-    """Resolve the sovereign owner country for a territory.
-
-    Uses explicit CCA3 mappings first, then a conservative name-based fallback.
-    """
+    """Resolve the sovereign owner country for a territory."""
     owner_cca3 = TERRITORY_OWNER_BY_CCA3.get(territory.cca3)
     if owner_cca3:
         owner = Country.objects.filter(cca3=owner_cca3).first()
@@ -135,8 +132,10 @@ def _get_territory_owner_country(territory: Country):
 
     return None
 
+
 GALLERY_PER_PAGE = 60
 COUNTRIES_PER_PAGE = 48
+
 
 def _normalize_and_paginate(items_list, request, per_page=GALLERY_PER_PAGE):
     """Shared helper for search, normalization and pagination across views."""
@@ -149,20 +148,21 @@ def _normalize_and_paginate(items_list, request, per_page=GALLERY_PER_PAGE):
     page = paginator.get_page(request.GET.get('page'))
     return page, search_query
 
+
 def render_homepage(request):
     """Beautiful geography-themed homepage"""
     sovereign_countries = [c for c in Country.objects.filter(status='sovereign').select_related('region') if _is_country_detail_eligible(c)]
     territory_countries = [c for c in Country.objects.filter(status='territory').select_related('region') if _is_territory_detail_eligible(c)]
     historical_countries = [c for c in Country.objects.filter(status='historical').select_related('region') if _is_country_detail_eligible(c)]
 
-    # Homepage counters should match what users can actually open.
+    # Homepage counters should match what users can actually open (filtered by is_public=True).
     total_countries = len(sovereign_countries)
-    total_territories = len(territory_countries) + FlagCollection.objects.filter(category='territory').count()
-    total_historical = len(historical_countries) + FlagCollection.objects.filter(category='historical').count()
-    total_flags = Country.objects.count() + FlagCollection.objects.count()
+    total_territories = len(territory_countries) + FlagCollection.objects.filter(category='territory', is_public=True).count()
+    total_historical = len(historical_countries) + FlagCollection.objects.filter(category='historical', is_public=True).count()
+    total_flags = Country.objects.count() + FlagCollection.objects.filter(is_public=True).count()
     total_regions = Region.objects.count()
     
-    # Get featured countries (most populous sovereign states) that have valid detail pages.
+    # Get featured countries
     featured_countries = sorted(sovereign_countries, key=lambda c: c.population, reverse=True)[:6]
     
     # Get all regions with sovereign country counts
@@ -180,6 +180,7 @@ def render_homepage(request):
         'regions': regions,
     }
     return render(request, 'home.html', context)
+
 
 def countries_list(request):
     """List all sovereign countries with filtering and pagination"""
@@ -220,13 +221,15 @@ def countries_list(request):
     }
     return render(request, 'countries.html', context)
 
+
 def territories_list(request):
     """List all territories and dependencies from both tables"""
     countries = Country.objects.filter(status='territory').select_related('region').only(
         'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji',
         'population', 'region__name', 'region__slug',
     )
-    extra_territories = FlagCollection.objects.filter(category='territory').only('name', 'flag_image')
+    # Added is_public=True filter
+    extra_territories = FlagCollection.objects.filter(category='territory', is_public=True).only('name', 'flag_image')
 
     items = []
     for c in countries:
@@ -253,10 +256,12 @@ def territories_list(request):
     }
     return render(request, 'countries.html', context)
 
+
 def historical_list(request):
     """List historical flags and former countries"""
     hist_countries = Country.objects.filter(status='historical').only('name_common', 'cca3', 'flag_png', 'flag_emoji')
-    hist_flags = FlagCollection.objects.filter(category='historical').only('name', 'flag_image')
+    # Added is_public=True filter
+    hist_flags = FlagCollection.objects.filter(category='historical', is_public=True).only('name', 'flag_image')
 
     items = []
     for c in hist_countries:
@@ -276,6 +281,7 @@ def historical_list(request):
     }
     return render(request, 'historical_gallery.html', context)
 
+
 def country_detail(request, cca3):
     """Detailed view of a single country"""
     country = get_object_or_404(Country, cca3=cca3.upper())
@@ -286,22 +292,21 @@ def country_detail(request, cca3):
             return redirect('historical')
         return redirect('countries')
     
-    # Get neighboring countries
     neighbors = []
     if country.borders:
         neighbor_candidates = Country.objects.filter(cca3__in=country.borders)
         neighbors = [n for n in neighbor_candidates if _is_country_detail_eligible(n)]
     
-    # Get additional flags for this country with pagination
-    additional_flags_qs = FlagCollection.objects.filter(country=country).order_by('name')
-    paginator = Paginator(additional_flags_qs, 48)  # 48 flags per page
+    # Added is_public=True filter
+    additional_flags_qs = FlagCollection.objects.filter(country=country, is_public=True).order_by('name')
+    paginator = Paginator(additional_flags_qs, 48)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     context = {
         'country': country,
         'neighbors': neighbors,
-        'additional_flags': page_obj,  # This is now a page object
+        'additional_flags': page_obj,
         'page_obj': page_obj,
     }
     return render(request, 'country_detail.html', context)
@@ -315,7 +320,8 @@ def territory_detail(request, cca3):
 
     owner_country = _get_territory_owner_country(territory)
 
-    additional_flags_qs = FlagCollection.objects.filter(country=territory).order_by('name')
+    # Added is_public=True filter
+    additional_flags_qs = FlagCollection.objects.filter(country=territory, is_public=True).order_by('name')
     paginator = Paginator(additional_flags_qs, 48)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -364,7 +370,8 @@ def _collect_gallery_items(category):
             })
 
     if category != 'country':
-        qs = FlagCollection.objects.only('name', 'flag_image', 'category', 'slug')
+        # Added is_public=True filter here!
+        qs = FlagCollection.objects.filter(is_public=True).only('name', 'flag_image', 'category', 'slug')
         if category != 'all':
             qs = qs.filter(category=category)
         for f in qs:
@@ -381,7 +388,8 @@ def _collect_gallery_items(category):
 
 def flag_detail(request, category, slug):
     """Detail page for a specific flag using category + slug URL."""
-    flag = get_object_or_404(FlagCollection, slug=slug)
+    # Added is_public=True so hidden flags return 404 even via direct URL
+    flag = get_object_or_404(FlagCollection, slug=slug, is_public=True)
     if category != flag.category:
         return redirect('flag_detail', category=flag.category, slug=flag.slug)
 
@@ -437,12 +445,13 @@ def flag_detail(request, category, slug):
     }
     return render(request, 'flag_detail.html', context)
 
+
 def flags_gallery(request):
     """Gallery view with pagination, search, and category filter"""
     category = request.GET.get('category', 'all')
 
-    # Calculate merged counts based on records that can actually be displayed.
-    fc_counts = dict(FlagCollection.objects.values_list('category').annotate(n=Count('id')))
+    # Added is_public=True to counts so category pills show correct numbers
+    fc_counts = dict(FlagCollection.objects.filter(is_public=True).values_list('category').annotate(n=Count('id')))
 
     eligible_country_count = sum(1 for c in Country.objects.filter(status='sovereign') if _is_country_detail_eligible(c))
     eligible_territory_count = sum(1 for c in Country.objects.filter(status='territory') if _is_territory_detail_eligible(c))
@@ -527,7 +536,8 @@ def flags_search_api(request):
                 break
 
     if category != 'country' and len(items) < max_items:
-        flag_qs = FlagCollection.objects.filter(name__icontains=search_query).only('name', 'flag_image', 'category', 'slug')
+        # Added is_public=True to search API
+        flag_qs = FlagCollection.objects.filter(name__icontains=search_query, is_public=True).only('name', 'flag_image', 'category', 'slug')
         if category != 'all':
             flag_qs = flag_qs.filter(category=category)
 
@@ -547,6 +557,7 @@ def flags_search_api(request):
         'total': total,
         'truncated': total >= max_items,
     })
+
 
 def render_about(request):
     """About page"""

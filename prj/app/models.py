@@ -191,6 +191,9 @@ class FlagCollection(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    is_verified = models.BooleanField(default=False, help_text="Checked by human or AI")
+    is_public = models.BooleanField(default=True, help_text="Visible on the website")
+
     class Meta:
         ordering = ['name']
         indexes = [
