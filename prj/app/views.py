@@ -99,35 +99,19 @@ TERRITORY_OWNER_BY_CCA3 = {
 
 
 def _get_territory_owner_country(territory: Country):
-    """Resolve the sovereign owner country for a territory."""
+    """Resolve the sovereign owner country for a territory using Rust optimization."""
+    # Rychlý lookup přes slovník O(1)
     owner_cca3 = TERRITORY_OWNER_BY_CCA3.get(territory.cca3)
+    
+    if not owner_cca3:
+        # Nasazení Rustu pro náročné prohledávání podřetězců
+        text = f"{territory.name_common or ''} {territory.name_official or ''}"
+        owner_cca3 = flag_search_core.identify_owner_cca3(text)
+
     if owner_cca3:
         owner = Country.objects.filter(cca3=owner_cca3).first()
         if owner and _is_country_detail_eligible(owner):
             return owner
-
-    owner_keywords = {
-        'french': 'FRA',
-        'british': 'GBR',
-        'dutch': 'NLD',
-        'netherlands': 'NLD',
-        'american': 'USA',
-        'united states': 'USA',
-        'danish': 'DNK',
-        'norwegian': 'NOR',
-        'australian': 'AUS',
-        'new zealand': 'NZL',
-        'chinese': 'CHN',
-        'hong kong': 'CHN',
-        'macao': 'CHN',
-        'macau': 'CHN',
-    }
-    text = f"{territory.name_common or ''} {territory.name_official or ''}".lower()
-    for token, cca3 in owner_keywords.items():
-        if token in text:
-            owner = Country.objects.filter(cca3=cca3).first()
-            if owner and _is_country_detail_eligible(owner):
-                return owner
 
     return None
 

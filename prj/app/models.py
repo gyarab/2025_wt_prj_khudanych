@@ -7,6 +7,9 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
 
+# Import naší zkompilované Rust knihovny pro zrychlení operací
+import flag_search_core
+
 class Profile(models.Model):
     """Extended user profile"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -210,13 +213,12 @@ class FlagCollection(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             from django.utils.text import slugify
-            import re
             
-            # Extract English name from JSON description for a universal slug
             description = self.description if isinstance(self.description, dict) else {}
-            en_name = description.get('label_en')
+            en_label = description.get('label_en')
             
-            # Use English name if available and not a Q-ID; otherwise fallback to self.name
-            base_name = en_name if en_name and not re.match(r'^Q\d+$', en_name) else self.name
+            # Předání výpočetní zátěže (regex a kontrola) do Rustu
+            base_name = flag_search_core.get_slug_base(self.name, en_label)
             self.slug = slugify(f"{base_name}-{self.wikidata_id or ''}")
+            
         super().save(*args, **kwargs)
