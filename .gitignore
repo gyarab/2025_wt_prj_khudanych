@@ -1,18 +1,22 @@
+# --- Python core ---
 __pycache__/
 *.py[cod]
 *$py.class
 
+# --- Virtuální prostředí ---
 .venv/
 venv/
 env/
 ENV/
 
+# --- Buildování a balíčky ---
 build/
 dist/
 *.egg-info/
 .eggs/
 pip-wheel-metadata/
 
+# --- Testování a linting ---
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -20,26 +24,42 @@ pip-wheel-metadata/
 .hypothesis/
 .tox/
 .nox/
-
 .coverage
 .coverage.*
 htmlcov/
 
+# --- Django lokální soubory ---
 *.log
 local_settings.py
 db.sqlite3
 *.sqlite3
-
 staticfiles/
-
 media/
 prj/media/
 
+# --- Proměnné prostředí ---
 .env
 .env.*
 *.env
 
+# --- Rust a Maturin (Zabrání logování stovek build souborů) ---
+target/
+Cargo.lock
+*.rs.bk
+
+# --- Zkompilované knihovny z Rustu pro Python ---
+*.so
+*.pyd
+*.pyd.map
+*.whl
+
+# --- Editory, IDE a systémové soubory ---
 .vscode/
 .idea/
+.history/
+*.swp
+*~
+*.bak
 .DS_Store
 Thumbs.db
+.gemini/

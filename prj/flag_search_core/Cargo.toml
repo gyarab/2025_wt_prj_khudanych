@@ -1,0 +1,13 @@
+[package]
+name = "flag_search_core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "flag_search_core"
+# cdylib říká kompilátoru, aby vytvořil dynamickou knihovnu pro jiný jazyk (Python)
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.20", features = ["extension-module"] }
+unicode-normalization = "0.1"

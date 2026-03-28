@@ -1,4 +1,3 @@
-import unicodedata
 from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
@@ -8,6 +7,9 @@ from django.core.paginator import Paginator
 from django.urls import reverse
 from .models import Country, Region, FlagCollection
 from .forms import ProfileForm
+
+# Import naší bleskové zkompilované Rust knihovny
+import flag_search_core
 
 
 @login_required
@@ -31,16 +33,13 @@ def profile_edit(request):
 
 
 def _strip_accents(text: str) -> str:
-    """Remove diacritics: Žilina → Zilina, São Paulo → Sao Paulo."""
-    nfkd = unicodedata.normalize('NFKD', text)
-    return ''.join(c for c in nfkd if not unicodedata.combining(c))
+    """Remove diacritics using Rust extension."""
+    return flag_search_core.strip_accents(text)
 
 
 def _accent_insensitive_match(haystack: str, needle: str) -> bool:
-    """Case- and accent-insensitive substring match."""
-    if not haystack or not needle:
-        return False
-    return _strip_accents(needle).lower() in _strip_accents(haystack).lower()
+    """Case- and accent-insensitive substring match using Rust extension."""
+    return flag_search_core.accent_insensitive_match(haystack, needle)
 
 
 def _has_complete_country_template_data(country: Country) -> bool:

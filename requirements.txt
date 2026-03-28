@@ -13,3 +13,4 @@ oauthlib
 requests-oauthlib
 cryptography
 SPARQLWrapper
+maturin
