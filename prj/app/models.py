@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
 
 # Import naší zkompilované Rust knihovny pro zrychlení operací
@@ -14,12 +15,12 @@ class Profile(models.Model):
     """Extended user profile"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    display_name = models.CharField(max_length=255, blank=True)
-    profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    display_name = models.CharField(max_length=255, blank=True, verbose_name=_("Display Name"))
+    profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True, verbose_name=_("Profile Picture"))
     
     # Nickname change tracking
-    nickname_change_count = models.PositiveIntegerField(default=0)
-    last_nickname_change = models.DateTimeField(null=True, blank=True)
+    nickname_change_count = models.PositiveIntegerField(default=0, verbose_name=_("Nickname Change Count"))
+    last_nickname_change = models.DateTimeField(null=True, blank=True, verbose_name=_("Last Nickname Change"))
 
     def __str__(self):
         return f"{self.user.username}'s profile"
@@ -36,14 +37,14 @@ class Profile(models.Model):
                     if now < self.last_nickname_change + cooldown_period:
                         days_left = (self.last_nickname_change + cooldown_period - now).days
                         raise ValidationError({
-                            'display_name': f"Please wait {days_left + 1} more day(s) before changing your nickname again."
+                            'display_name': _("Please wait %(days)s more day(s) before changing your nickname again.") % {'days': days_left + 1}
                         })
 
                     # Monthly limit check: 2 times per month
                     if self.last_nickname_change.month == now.month and self.last_nickname_change.year == now.year:
                         if self.nickname_change_count >= 2:
                             raise ValidationError({
-                                'display_name': "You have already changed your nickname twice this month. Please try again next month."
+                                'display_name': _("You have already changed your nickname twice this month. Please try again next month.")
                             })
 
     def save(self, *args, **kwargs):
@@ -71,12 +72,14 @@ def save_user_profile(sender, instance, **kwargs):
 
 class Region(models.Model):
     """Geographic region/continent"""
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Name"))
+    slug = models.SlugField(max_length=100, unique=True, verbose_name=_("Slug"))
+    description = models.TextField(blank=True, verbose_name=_("Description"))
     
     class Meta:
         ordering = ['name']
+        verbose_name = _("Region")
+        verbose_name_plural = _("Regions")
     
     def __str__(self):
         return self.name
@@ -84,57 +87,58 @@ class Region(models.Model):
 class Country(models.Model):
     """Country or territory with detailed information"""
     # Basic Info
-    name_common = models.CharField(max_length=200, db_index=True)
-    name_official = models.CharField(max_length=200)
-    cca2 = models.CharField(max_length=2, unique=True)  # ISO 3166-1 alpha-2
-    cca3 = models.CharField(max_length=3, unique=True)  # ISO 3166-1 alpha-3
+    name_common = models.CharField(max_length=200, db_index=True, verbose_name=_("Common Name"))
+    name_official = models.CharField(max_length=200, verbose_name=_("Official Name"))
+    cca2 = models.CharField(max_length=2, unique=True, verbose_name=_("ISO Alpha-2"))
+    cca3 = models.CharField(max_length=3, unique=True, verbose_name=_("ISO Alpha-3"))
     
     # Geographic Info
-    capital = models.CharField(max_length=200, blank=True)
-    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, related_name='countries')
-    subregion = models.CharField(max_length=100, blank=True)
+    capital = models.CharField(max_length=200, blank=True, verbose_name=_("Capital"))
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, related_name='countries', verbose_name=_("Region"))
+    subregion = models.CharField(max_length=100, blank=True, verbose_name=_("Subregion"))
     
     # Population and Area
-    population = models.BigIntegerField(default=0)
-    area = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    population = models.BigIntegerField(default=0, verbose_name=_("Population"))
+    area = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, verbose_name=_("Area"))
     
     # Coordinates
-    latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
+    latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True, verbose_name=_("Latitude"))
+    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True, verbose_name=_("Longitude"))
     
     # Flags
-    flag_svg = models.URLField(max_length=500, blank=True)
-    flag_png = models.URLField(max_length=500, blank=True)
-    flag_emoji = models.CharField(max_length=10, blank=True)
-    coat_of_arms_svg = models.URLField(max_length=500, blank=True)
-    coat_of_arms_png = models.URLField(max_length=500, blank=True)
+    flag_svg = models.URLField(max_length=500, blank=True, verbose_name=_("Flag SVG"))
+    flag_png = models.URLField(max_length=500, blank=True, verbose_name=_("Flag PNG"))
+    flag_emoji = models.CharField(max_length=10, blank=True, verbose_name=_("Flag Emoji"))
+    coat_of_arms_svg = models.URLField(max_length=500, blank=True, verbose_name=_("Coat of Arms SVG"))
+    coat_of_arms_png = models.URLField(max_length=500, blank=True, verbose_name=_("Coat of Arms PNG"))
     
     # Additional Info
-    currencies = models.JSONField(default=dict, blank=True)
-    languages = models.JSONField(default=dict, blank=True)
-    timezones = models.JSONField(default=list, blank=True)
-    continents = models.JSONField(default=list, blank=True)
-    borders = models.JSONField(default=list, blank=True)  # List of country codes
+    currencies = models.JSONField(default=dict, blank=True, verbose_name=_("Currencies"))
+    languages = models.JSONField(default=dict, blank=True, verbose_name=_("Languages"))
+    timezones = models.JSONField(default=list, blank=True, verbose_name=_("Timezones"))
+    continents = models.JSONField(default=list, blank=True, verbose_name=_("Continents"))
+    borders = models.JSONField(default=list, blank=True, verbose_name=_("Borders"))
     
     # Independence
-    independent = models.BooleanField(default=True)
-    un_member = models.BooleanField(default=False)
+    independent = models.BooleanField(default=True, verbose_name=_("Independent"))
+    un_member = models.BooleanField(default=False, verbose_name=_("UN Member"))
     
     STATUS_CHOICES = [
-        ('sovereign', 'Sovereign State'),
-        ('territory', 'Territory'),
-        ('historical', 'Historical'),
-        ('other', 'Other'),
+        ('sovereign', _('Sovereign State')),
+        ('territory', _('Territory')),
+        ('historical', _('Historical')),
+        ('other', _('Other')),
     ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='sovereign', db_index=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='sovereign', db_index=True, verbose_name=_("Status"))
 
     # Metadata
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
     
     class Meta:
         ordering = ['name_common']
-        verbose_name_plural = 'Countries'
+        verbose_name = _("Country")
+        verbose_name_plural = _("Countries")
         indexes = [
             models.Index(fields=['name_common']),
             models.Index(fields=['region']),
@@ -165,40 +169,42 @@ class Country(models.Model):
 class FlagCollection(models.Model):
     """Additional flag collection for territories, historical flags, etc."""
     CATEGORY_CHOICES = [
-        ('territory', 'Territory'),
-        ('historical', 'Historical'),
-        ('state', 'State/Province'),
-        ('city', 'City / Municipality'),
-        ('international', 'International Organization'),
-        ('region', 'Region / Subdivision'),
-        ('other', 'Other'),
+        ('territory', _('Territory')),
+        ('historical', _('Historical')),
+        ('state', _('State/Province')),
+        ('city', _('City / Municipality')),
+        ('international', _('International Organization')),
+        ('region', _('Region / Subdivision')),
+        ('other', _('Other')),
     ]
 
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=255, unique=True, blank=True)
-    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
-    description = models.JSONField(default=dict, blank=True)
+    name = models.CharField(max_length=200, verbose_name=_("Name"))
+    slug = models.SlugField(max_length=255, unique=True, blank=True, verbose_name=_("Slug"))
+    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, verbose_name=_("Category"))
+    description = models.JSONField(default=dict, blank=True, verbose_name=_("Description"))
 
-    flag_image = models.URLField(max_length=500)
+    flag_image = models.URLField(max_length=500, verbose_name=_("Flag Image URL"))
     image_file = models.FileField(upload_to='flags/', blank=True, null=True,
-                                 help_text='Local copy of the flag image')
-    population = models.IntegerField(null=True, blank=True)
-    area_km2 = models.FloatField(null=True, blank=True)
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
+                                 help_text=_('Local copy of the flag image'), verbose_name=_("Flag Image File"))
+    population = models.IntegerField(null=True, blank=True, verbose_name=_("Population"))
+    area_km2 = models.FloatField(null=True, blank=True, verbose_name=_("Area (km²)"))
+    latitude = models.FloatField(null=True, blank=True, verbose_name=_("Latitude"))
+    longitude = models.FloatField(null=True, blank=True, verbose_name=_("Longitude"))
     wikidata_id = models.CharField(max_length=20, blank=True, null=True, unique=True,
-                                   help_text='Wikidata QID for deduplication')
+                                   help_text=_('Wikidata QID for deduplication'), verbose_name=_("Wikidata ID"))
     country = models.ForeignKey(Country, on_delete=models.SET_NULL,
                                 null=True, blank=True,
-                                related_name='additional_flags')
+                                related_name='additional_flags', verbose_name=_("Country"))
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
 
-    is_verified = models.BooleanField(default=False, help_text="Checked by human or AI")
-    is_public = models.BooleanField(default=True, help_text="Visible on the website")
+    is_verified = models.BooleanField(default=False, help_text=_("Checked by human or AI"), verbose_name=_("Is Verified"))
+    is_public = models.BooleanField(default=True, help_text=_("Visible on the website"), verbose_name=_("Is Public"))
 
     class Meta:
         ordering = ['name']
+        verbose_name = _("Flag Collection")
+        verbose_name_plural = _("Flag Collections")
         indexes = [
             models.Index(fields=['category']),
         ]

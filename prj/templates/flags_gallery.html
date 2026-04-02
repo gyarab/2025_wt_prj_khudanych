@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Flags Gallery - Just Enough Flags{% endblock %}
+{% block title %}{% trans "Flags Gallery" %} - {% trans "Just Enough Flags" %}{% endblock %}
 
 {% block head %}
 <style>
@@ -110,8 +111,8 @@
 {% block content %}
 <div class="gallery-header">
     <div class="container text-center">
-        <h1><i class="bi bi-flag-fill"></i> Flags Gallery</h1>
-        <p class="lead mb-0">{{ total_flags }} flags from around the world</p>
+        <h1><i class="bi bi-flag-fill"></i> {% trans "Flags Gallery" %}</h1>
+        <p class="lead mb-0">{% blocktrans with total=total_flags %}{{ total }} flags from around the world{% endblocktrans %}</p>
     </div>
 </div>
 
@@ -121,7 +122,7 @@
         <form method="get" action="{% url 'flags_gallery' %}" id="flags-search-form">
             <input type="hidden" name="category" value="{{ selected_category }}">
             <div class="input-group">
-                <input type="text" class="form-control" id="flags-search-input" name="q" placeholder="Search flags..." value="{{ search_query }}" autocomplete="off">
+                <input type="text" class="form-control" id="flags-search-input" name="q" placeholder="{% trans 'Search flags...' %}" value="{{ search_query }}" autocomplete="off">
                 <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
             </div>
         </form>
@@ -130,39 +131,39 @@
     <!-- Category Filter -->
     <div class="category-pills">
         <a href="{% url 'flags_gallery' %}?category=all" class="category-pill {% if selected_category == 'all' %}active{% endif %}">
-            All ({{ total_flags }})
+            {% trans "All" %} ({{ total_flags }})
         </a>
         <a href="{% url 'flags_gallery' %}?category=country" class="category-pill {% if selected_category == 'country' %}active{% endif %}">
-            🌍 Countries ({{ cat_counts.country }})
+            🌍 {% trans "Countries" %} ({{ cat_counts.country }})
         </a>
         {% if cat_counts.state %}
         <a href="{% url 'flags_gallery' %}?category=state" class="category-pill {% if selected_category == 'state' %}active{% endif %}">
-            🏛️ States ({{ cat_counts.state }})
+            🏛️ {% trans "States" %} ({{ cat_counts.state }})
         </a>
         {% endif %}
         {% if cat_counts.city %}
         <a href="{% url 'flags_gallery' %}?category=city" class="category-pill {% if selected_category == 'city' %}active{% endif %}">
-            🏙️ Cities ({{ cat_counts.city }})
+            🏙️ {% trans "Cities" %} ({{ cat_counts.city }})
         </a>
         {% endif %}
         {% if cat_counts.region %}
         <a href="{% url 'flags_gallery' %}?category=region" class="category-pill {% if selected_category == 'region' %}active{% endif %}">
-            📍 Regions ({{ cat_counts.region }})
+            📍 {% trans "Regions" %} ({{ cat_counts.region }})
         </a>
         {% endif %}
         {% if cat_counts.territory %}
         <a href="{% url 'flags_gallery' %}?category=territory" class="category-pill {% if selected_category == 'territory' %}active{% endif %}">
-            🏝️ Territories ({{ cat_counts.territory }})
+            🏝️ {% trans "Territories" %} ({{ cat_counts.territory }})
         </a>
         {% endif %}
         {% if cat_counts.historical %}
         <a href="{% url 'flags_gallery' %}?category=historical" class="category-pill {% if selected_category == 'historical' %}active{% endif %}">
-            📜 Historical ({{ cat_counts.historical }})
+            📜 {% trans "Historical" %} ({{ cat_counts.historical }})
         </a>
         {% endif %}
         {% if cat_counts.international %}
         <a href="{% url 'flags_gallery' %}?category=international" class="category-pill {% if selected_category == 'international' %}active{% endif %}">
-            🤝 International ({{ cat_counts.international }})
+            🤝 {% trans "International" %} ({{ cat_counts.international }})
         </a>
         {% endif %}
     </div>
@@ -185,7 +186,7 @@
                     <div class="flag-caption" title="{{ item.name }}">{{ item.name }}</div>
                     {% if item.link %}
                     <div class="d-grid mt-2">
-                        <a class="btn btn-sm btn-outline-primary" href="{{ item.link }}">View Details</a>
+                        <a class="btn btn-sm btn-outline-primary" href="{{ item.link }}">{% trans "View Details" %}</a>
                     </div>
                     {% endif %}
                 </div>
@@ -194,7 +195,7 @@
         {% empty %}
         <div class="col-12 text-center py-5" id="flags-empty-state">
             <div class="alert alert-info">
-                <i class="bi bi-info-circle"></i> No flags found. Try a different search or category.
+                <i class="bi bi-info-circle"></i> {% trans "No flags found. Try a different search or category." %}
             </div>
         </div>
         {% endfor %}
@@ -202,7 +203,7 @@
 
     <div class="col-12 text-center py-5 d-none" id="flags-empty-filtered">
         <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> No matching flags on this page.
+            <i class="bi bi-info-circle"></i> {% trans "No matching flags on this page." %}
         </div>
     </div>
 
@@ -241,8 +242,8 @@
         </ul>
     </nav>
     <p class="text-center text-muted small">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        ({{ page_obj.paginator.count }} flags)
+        {% blocktrans with page=page_obj.number total_pages=page_obj.paginator.num_pages %}Page {{ page }} of {{ total_pages }}{% endblocktrans %}
+        {% blocktrans with total=page_obj.paginator.count %}({{ total }} flags){% endblocktrans %}
     </p>
         </div>
     {% endif %}
@@ -303,7 +304,7 @@
                             </div>
                             <div class="flag-body mt-auto">
                                 <div class="flag-caption" title="${name}">${name}</div>
-                                ${link ? `<div class="d-grid mt-2"><a class="btn btn-sm btn-outline-primary" href="${link}">View Details</a></div>` : ''}
+                                ${link ? `<div class="d-grid mt-2"><a class="btn btn-sm btn-outline-primary" href="${link}">{% trans "View Details" %}</a></div>` : ''}
                             </div>
                         </div>
                     </div>

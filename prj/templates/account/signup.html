@@ -10,8 +10,8 @@
         <div class="col-md-8 col-lg-5">
             <div class="card border-0 shadow-lg">
                 <div class="card-header bg-white py-4 text-center border-0">
-                    <h3 class="fw-bold mb-0">Create Account</h3>
-                    <p class="text-muted">Join our flag exploring community</p>
+                    <h3 class="fw-bold mb-0">{% trans "Create Account" %}</h3>
+                    <p class="text-muted">{% trans "Join our flag exploring community" %}</p>
                 </div>
                 <div class="card-body p-4">
                     {% get_providers as socialaccount_providers %}
@@ -20,12 +20,12 @@
                             {% for provider in socialaccount_providers %}
                             <a title="{{ provider.name }}" class="btn btn-outline-dark rounded-pill d-flex align-items-center justify-content-center py-2" 
                                href="{% provider_login_url provider.id process="login" scope=scope auth_params=auth_params %}">
-                                <i class="bi bi-google me-2"></i> Sign up with {{ provider.name }}
+                                <i class="bi bi-google me-2"></i> {% blocktrans with provider_name=provider.name %}Sign up with {{ provider_name }}{% endblocktrans %}
                             </a>
                             {% endfor %}
                         </div>
                         <div class="divider d-flex align-items-center my-4">
-                            <span class="text-center fw-bold mx-3 mb-0 text-muted small text-uppercase">or use email</span>
+                            <span class="text-center fw-bold mx-3 mb-0 text-muted small text-uppercase">{% trans "or use email" %}</span>
                         </div>
                     {% endif %}
 
@@ -45,7 +45,7 @@
                     </form>
                 </div>
                 <div class="card-footer bg-light py-3 text-center border-0">
-                    <p class="mb-0 small">Already have an account? <a href="{{ login_url }}" class="text-primary fw-bold text-decoration-none">Sign In</a></p>
+                    <p class="mb-0 small">{% trans "Already have an account?" %} <a href="{{ login_url }}" class="text-primary fw-bold text-decoration-none">{% trans "Sign In" %}</a></p>
                 </div>
             </div>
         </div>

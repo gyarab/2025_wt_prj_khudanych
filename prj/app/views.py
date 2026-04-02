@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.db.models import Q, Count
 from django.core.paginator import Paginator
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from .models import Country, Region, FlagCollection
 from .forms import ProfileForm
 from itertools import chain
@@ -121,6 +122,55 @@ GALLERY_PER_PAGE = 60
 COUNTRIES_PER_PAGE = 48
 
 
+class CountOnlyPaginator(Paginator):
+    """Paginator backed by an explicit count without materializing full item lists."""
+
+    def __init__(self, count, per_page):
+        self._count = count
+        super().__init__([], per_page)
+
+    @property
+    def count(self):
+        return self._count
+
+
+def _country_detail_quality_filter():
+    """Database-level constraints mirroring country/territory detail data requirements."""
+    return (
+        Q(name_common__isnull=False) & ~Q(name_common='') &
+        Q(name_official__isnull=False) & ~Q(name_official='') &
+        Q(cca2__isnull=False) & ~Q(cca2='') &
+        Q(cca3__isnull=False) & ~Q(cca3='') &
+        Q(flag_emoji__isnull=False) & ~Q(flag_emoji='') &
+        (Q(flag_svg__isnull=False) & ~Q(flag_svg='') | Q(flag_png__isnull=False) & ~Q(flag_png='')) &
+        Q(capital__isnull=False) & ~Q(capital='') &
+        Q(region__isnull=False) &
+        Q(area__isnull=False) &
+        Q(population__gt=0) &
+        Q(currencies__isnull=False) &
+        ~Q(currencies={}) &
+        Q(languages__isnull=False)
+        & ~Q(languages={})
+    )
+
+
+def _build_country_search_filter(search_query, *field_names):
+    """Build DB filter for search text and its accent-stripped variant."""
+    if not search_query:
+        return Q()
+
+    search_filter = Q()
+    for field_name in field_names:
+        search_filter |= Q(**{f"{field_name}__icontains": search_query})
+
+    stripped_query = _strip_accents(search_query)
+    if stripped_query and stripped_query != search_query:
+        for field_name in field_names:
+            search_filter |= Q(**{f"{field_name}__icontains": stripped_query})
+
+    return search_filter
+
+
 def _normalize_and_paginate(items_list, request, per_page=GALLERY_PER_PAGE):
     """Shared helper for search, normalization and pagination across views."""
     search_query = request.GET.get('search') or request.GET.get('q') or ''
@@ -167,21 +217,29 @@ def render_homepage(request):
 
 
 def countries_list(request):
-    """List all sovereign countries with filtering and pagination"""
+    """List sovereign countries with DB-level pagination and instant search support."""
+    page_number = int(request.GET.get('page', 1))
+    search_query = (request.GET.get('q') or request.GET.get('search') or '').strip()
     region_filter = request.GET.get('region')
-    countries_qs = Country.objects.filter(status='sovereign').select_related('region').only(
-        'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji',
-        'population', 'region__name', 'region__slug',
-    )
+
+    countries_qs = Country.objects.filter(status='sovereign').filter(
+        _country_detail_quality_filter()
+    ).select_related('region').only(
+        'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji', 'region__name', 'region__slug',
+    ).order_by('name_common')
 
     if region_filter:
         countries_qs = countries_qs.filter(region__slug=region_filter)
 
-    items = []
-    for c in countries_qs:
-        if not _is_country_detail_eligible(c):
-            continue
-        items.append({
+    if search_query:
+        countries_qs = countries_qs.filter(_build_country_search_filter(search_query, 'name_common', 'capital'))
+
+    paginator = Paginator(countries_qs, COUNTRIES_PER_PAGE)
+    page_obj = paginator.get_page(page_number)
+
+    page_items = []
+    for c in page_obj.object_list:
+        page_items.append({
             'name': c.name_common,
             'cca3': c.cca3,
             'link': reverse('country_detail', kwargs={'cca3': c.cca3}),
@@ -189,79 +247,177 @@ def countries_list(request):
             'img': c.flag_png,
             'emoji': c.flag_emoji,
             'region': c.region.name if c.region else '',
-            'type': 'Sovereign State'
+            'type': _('Sovereign State')
         })
+    page_obj.object_list = page_items
 
-    page, search_query = _normalize_and_paginate(items, request, COUNTRIES_PER_PAGE)
     regions = Region.objects.all()
 
     context = {
-        'countries': page,
-        'page_obj': page,
+        'countries': page_obj,
+        'page_obj': page_obj,
         'regions': regions,
         'selected_region': region_filter,
         'search_query': search_query,
-        'page_title': 'Sovereign Countries',
+        'search_api_url': reverse('countries_search_api'),
+        'search_placeholder': _('Search countries...'),
+        'page_title': _('Sovereign Countries'),
     }
     return render(request, 'countries.html', context)
 
 
 def territories_list(request):
-    """List all territories and dependencies from both tables"""
-    countries = Country.objects.filter(status='territory').select_related('region').only(
-        'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji',
-        'population', 'region__name', 'region__slug',
-    )
-    # Added is_public=True filter
-    extra_territories = FlagCollection.objects.filter(category='territory', is_public=True).only('name', 'flag_image')
+    """List territories and dependencies with DB-level pagination and instant search."""
+    page_number = int(request.GET.get('page', 1))
+    search_query = (request.GET.get('q') or request.GET.get('search') or '').strip()
+    per_page = COUNTRIES_PER_PAGE
 
-    items = []
-    for c in countries:
-        if not _is_territory_detail_eligible(c):
-            continue
-        items.append({
-            'name': c.name_common, 'cca3': c.cca3,
-            'link': reverse('territory_detail', kwargs={'cca3': c.cca3}),
-            'img': c.flag_png,
-            'emoji': c.flag_emoji, 'type': 'Major Territory', 'capital': c.capital,
-            'region': c.region.name if c.region else ''
-        })
-    for f in extra_territories:
-        items.append({'name': f.name, 'img': f.flag_image, 'type': 'Territory / Dependency'})
+    territory_qs = Country.objects.filter(status='territory').filter(
+        _country_detail_quality_filter()
+    ).select_related('region').only(
+        'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji', 'region__name',
+    ).order_by('name_common')
 
-    page, search_query = _normalize_and_paginate(items, request, COUNTRIES_PER_PAGE)
+    if search_query:
+        territory_qs = territory_qs.filter(_build_country_search_filter(search_query, 'name_common', 'capital'))
+
+    extra_territories_qs = FlagCollection.objects.filter(
+        category='territory',
+        is_public=True,
+    ).only('name', 'flag_image').order_by('name')
+    if search_query:
+        stripped_query = _strip_accents(search_query)
+        extra_filter = Q(name__icontains=search_query)
+        if stripped_query and stripped_query != search_query:
+            extra_filter |= Q(name__icontains=stripped_query)
+        extra_territories_qs = extra_territories_qs.filter(extra_filter)
+
+    total_territories_count = territory_qs.count()
+    total_extra_count = extra_territories_qs.count()
+    total_combined = total_territories_count + total_extra_count
+
+    start_index = (page_number - 1) * per_page
+    end_index = start_index + per_page
+
+    items_to_display = []
+
+    if start_index < total_territories_count:
+        territory_items = territory_qs[start_index:end_index]
+        for c in territory_items:
+            items_to_display.append({
+                'name': c.name_common,
+                'cca3': c.cca3,
+                'link': reverse('territory_detail', kwargs={'cca3': c.cca3}),
+                'img': c.flag_png,
+                'emoji': c.flag_emoji,
+                'type': _('Major Territory'),
+                'capital': c.capital,
+                'region': c.region.name if c.region else '',
+            })
+
+        remaining_slots = per_page - len(items_to_display)
+        if remaining_slots > 0:
+            for f in extra_territories_qs[:remaining_slots]:
+                items_to_display.append({
+                    'name': f.name,
+                    'img': f.flag_image,
+                    'type': _('Territory / Dependency'),
+                })
+    else:
+        db_offset = start_index - total_territories_count
+        for f in extra_territories_qs[db_offset:db_offset + per_page]:
+            items_to_display.append({
+                'name': f.name,
+                'img': f.flag_image,
+                'type': _('Territory / Dependency'),
+            })
+
+    paginator = CountOnlyPaginator(total_combined, per_page)
+    page_obj = paginator.get_page(page_number)
+    page_obj.object_list = items_to_display
 
     context = {
-        'countries': page,
-        'page_obj': page,
+        'countries': page_obj,
+        'page_obj': page_obj,
         'search_query': search_query,
-        'page_title': 'Territories & Dependencies',
+        'search_api_url': reverse('territories_search_api'),
+        'search_placeholder': _('Search territories...'),
+        'page_title': _('Territories & Dependencies'),
         'compact_territory_cards': True,
     }
     return render(request, 'countries.html', context)
 
 
 def historical_list(request):
-    """List historical flags and former countries"""
-    hist_countries = Country.objects.filter(status='historical').only('name_common', 'cca3', 'flag_png', 'flag_emoji')
-    # Added is_public=True filter
-    hist_flags = FlagCollection.objects.filter(category='historical', is_public=True).only('name', 'flag_image')
+    """List historical countries and flags with DB-level pagination and instant search."""
+    page_number = int(request.GET.get('page', 1))
+    search_query = (request.GET.get('q') or request.GET.get('search') or '').strip()
+    per_page = GALLERY_PER_PAGE
 
-    items = []
-    for c in hist_countries:
-        if not _is_country_detail_eligible(c):
-            continue
-        items.append({'name': c.name_common, 'img': c.flag_png, 'emoji': c.flag_emoji,
-                      'link': reverse('country_detail', kwargs={'cca3': c.cca3}), 'type': 'Former Country'})
-    for f in hist_flags:
-        items.append({'name': f.name, 'img': f.flag_image, 'type': 'Historical Flag'})
+    historical_country_qs = Country.objects.filter(status='historical').filter(
+        _country_detail_quality_filter()
+    ).only('name_common', 'cca3', 'flag_png', 'flag_emoji').order_by('name_common')
 
-    page, search_query = _normalize_and_paginate(items, request)
+    if search_query:
+        historical_country_qs = historical_country_qs.filter(_build_country_search_filter(search_query, 'name_common'))
+
+    historical_flag_qs = FlagCollection.objects.filter(
+        category='historical',
+        is_public=True,
+    ).only('name', 'flag_image').order_by('name')
+
+    if search_query:
+        stripped_query = _strip_accents(search_query)
+        hist_filter = Q(name__icontains=search_query)
+        if stripped_query and stripped_query != search_query:
+            hist_filter |= Q(name__icontains=stripped_query)
+        historical_flag_qs = historical_flag_qs.filter(hist_filter)
+
+    total_countries_count = historical_country_qs.count()
+    total_flags_count = historical_flag_qs.count()
+    total_combined = total_countries_count + total_flags_count
+
+    start_index = (page_number - 1) * per_page
+    end_index = start_index + per_page
+
+    items_to_display = []
+
+    if start_index < total_countries_count:
+        for c in historical_country_qs[start_index:end_index]:
+            items_to_display.append({
+                'name': c.name_common,
+                'img': c.flag_png,
+                'emoji': c.flag_emoji,
+                'link': reverse('country_detail', kwargs={'cca3': c.cca3}),
+                'type': _('Former Country'),
+            })
+
+        remaining_slots = per_page - len(items_to_display)
+        if remaining_slots > 0:
+            for f in historical_flag_qs[:remaining_slots]:
+                items_to_display.append({
+                    'name': f.name,
+                    'img': f.flag_image,
+                    'type': _('Historical Flag'),
+                })
+    else:
+        db_offset = start_index - total_countries_count
+        for f in historical_flag_qs[db_offset:db_offset + per_page]:
+            items_to_display.append({
+                'name': f.name,
+                'img': f.flag_image,
+                'type': _('Historical Flag'),
+            })
+
+    paginator = CountOnlyPaginator(total_combined, per_page)
+    page_obj = paginator.get_page(page_number)
+    page_obj.object_list = items_to_display
 
     context = {
-        'page_obj': page,
+        'page_obj': page_obj,
         'search_query': search_query,
-        'page_title': 'Historical Flags & Former States',
+        'search_api_url': reverse('historical_search_api'),
+        'page_title': _('Historical Flags & Former States'),
     }
     return render(request, 'historical_gallery.html', context)
 
@@ -435,7 +591,7 @@ def flags_gallery(request):
             'img': c.flag_png,
             'emoji': c.flag_emoji,
             'link': link,
-            'badge': 'Country' if c.status == 'sovereign' else c.get_status_display(),
+            'badge': _('Country') if c.status == 'sovereign' else c.get_status_display(),
             'item_category': 'country' if c.status == 'sovereign' else c.status,
         })
 
@@ -586,6 +742,147 @@ def flags_search_api(request):
 
     total = len(items)
 
+    return JsonResponse({
+        'items': items,
+        'total': total,
+        'truncated': total >= max_items,
+    })
+
+
+def countries_search_api(request):
+    """AJAX search endpoint for countries section with instant search"""
+    region_filter = request.GET.get('region', '')
+    search_query = (request.GET.get('q') or '').strip()
+    
+    if len(search_query) < 2:
+        return JsonResponse({'items': [], 'total': 0, 'truncated': False})
+    
+    max_items = 200
+    items = []
+    
+    countries_qs = Country.objects.filter(status='sovereign').filter(
+        _country_detail_quality_filter()
+    ).select_related('region').only(
+        'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji', 'region__name', 'region__slug'
+    ).order_by('name_common')
+
+    if region_filter:
+        countries_qs = countries_qs.filter(region__slug=region_filter)
+
+    countries_qs = countries_qs.filter(_build_country_search_filter(search_query, 'name_common', 'capital'))
+    for c in countries_qs[:max_items]:
+        items.append({
+            'name': c.name_common,
+            'cca3': c.cca3,
+            'link': reverse('country_detail', kwargs={'cca3': c.cca3}),
+            'capital': c.capital or '',
+            'img': c.flag_png,
+            'emoji': c.flag_emoji,
+            'region': c.region.name if c.region else '',
+        })
+    
+    total = len(items)
+    
+    return JsonResponse({
+        'items': items,
+        'total': total,
+        'truncated': total >= max_items,
+    })
+
+
+def territories_search_api(request):
+    """AJAX search endpoint for territories page."""
+    search_query = (request.GET.get('q') or '').strip()
+
+    if len(search_query) < 2:
+        return JsonResponse({'items': [], 'total': 0, 'truncated': False})
+
+    max_items = 200
+    items = []
+
+    territory_qs = Country.objects.filter(status='territory').filter(
+        _country_detail_quality_filter()
+    ).only('name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji').order_by('name_common')
+    territory_qs = territory_qs.filter(_build_country_search_filter(search_query, 'name_common', 'capital'))
+
+    for c in territory_qs[:max_items]:
+        items.append({
+            'name': c.name_common,
+            'cca3': c.cca3,
+            'link': reverse('territory_detail', kwargs={'cca3': c.cca3}),
+            'capital': c.capital or '',
+            'img': c.flag_png,
+            'emoji': c.flag_emoji,
+        })
+
+    if len(items) < max_items:
+        stripped_query = _strip_accents(search_query)
+        fc_filter = Q(name__icontains=search_query)
+        if stripped_query and stripped_query != search_query:
+            fc_filter |= Q(name__icontains=stripped_query)
+
+        extra_qs = FlagCollection.objects.filter(
+            category='territory',
+            is_public=True,
+        ).filter(fc_filter).only('name', 'flag_image').order_by('name')
+
+        for f in extra_qs[:max_items - len(items)]:
+            items.append({
+                'name': f.name,
+                'img': f.flag_image,
+            })
+
+    total = len(items)
+    return JsonResponse({
+        'items': items,
+        'total': total,
+        'truncated': total >= max_items,
+    })
+
+
+def historical_search_api(request):
+    """AJAX search endpoint for historical gallery page."""
+    search_query = (request.GET.get('q') or '').strip()
+
+    if len(search_query) < 2:
+        return JsonResponse({'items': [], 'total': 0, 'truncated': False})
+
+    max_items = 200
+    items = []
+
+    country_qs = Country.objects.filter(status='historical').filter(
+        _country_detail_quality_filter()
+    ).only('name_common', 'cca3', 'flag_png', 'flag_emoji').order_by('name_common')
+    country_qs = country_qs.filter(_build_country_search_filter(search_query, 'name_common'))
+
+    for c in country_qs[:max_items]:
+        items.append({
+            'name': c.name_common,
+            'link': reverse('country_detail', kwargs={'cca3': c.cca3}),
+            'img': c.flag_png,
+            'emoji': c.flag_emoji,
+            'type': _('Former Country'),
+        })
+
+    if len(items) < max_items:
+        stripped_query = _strip_accents(search_query)
+        flag_filter = Q(name__icontains=search_query)
+        if stripped_query and stripped_query != search_query:
+            flag_filter |= Q(name__icontains=stripped_query)
+
+        flag_qs = FlagCollection.objects.filter(
+            category='historical',
+            is_public=True,
+        ).filter(flag_filter).only('name', 'flag_image').order_by('name')
+
+        for f in flag_qs[:max_items - len(items)]:
+            items.append({
+                'name': f.name,
+                'img': f.flag_image,
+                'type': _('Historical Flag'),
+            })
+
+    total = len(items)
     return JsonResponse({
         'items': items,
         'total': total,

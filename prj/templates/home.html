@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block title %}Just Enough Flags - Explore the World{% endblock %}
 
@@ -248,16 +249,16 @@
     <div class="container hero-content">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center">
-                <h1 class="hero-title animate-fade-in">🌍 Discover the World</h1>
+                <h1 class="hero-title animate-fade-in">🌍 {% trans "Discover the World" %}</h1>
                 <p class="hero-subtitle animate-fade-in">
-                    Explore comprehensive database of countries, flags, capitals, and geographic information from around the globe
+                    {% trans "Explore comprehensive database of countries, flags, capitals, and geographic information from around the globe" %}
                 </p>
                 <div class="mt-4">
                     <a href="{% url 'countries' %}" class="btn-gradient me-3">
-                        <i class="bi bi-map"></i> Browse Countries
+                        <i class="bi bi-map"></i> {% trans "Browse Countries" %}
                     </a>
                     <a href="{% url 'flags_gallery' %}" class="btn btn-outline-light btn-lg" style="border-radius: 50px;">
-                        <i class="bi bi-flag"></i> View Flags
+                        <i class="bi bi-flag"></i> {% trans "View Flags" %}
                     </a>
                 </div>
             </div>
@@ -275,7 +276,7 @@
                         <i class="bi bi-globe-americas"></i>
                     </div>
                     <h2 class="stat-number">{{ total_countries }}</h2>
-                    <p class="stat-label">Sovereign Nations</p>
+                    <p class="stat-label">{% trans "Sovereign Nations" %}</p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -284,7 +285,7 @@
                         <i class="bi bi-map"></i>
                     </div>
                     <h2 class="stat-number">{{ total_territories }}</h2>
-                    <p class="stat-label">Territories & Dependencies</p>
+                    <p class="stat-label">{% trans "Territories & Dependencies" %}</p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -293,7 +294,7 @@
                         <i class="bi bi-clock-history"></i>
                     </div>
                     <h2 class="stat-number">{{ total_historical }}</h2>
-                    <p class="stat-label">Historical States</p>
+                    <p class="stat-label">{% trans "Historical States" %}</p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -302,7 +303,7 @@
                         <i class="bi bi-flag-fill"></i>
                     </div>
                     <h2 class="stat-number">{{ total_flags }}</h2>
-                    <p class="stat-label">Total Flags</p>
+                    <p class="stat-label">{% trans "Total Flags" %}</p>
                 </div>
             </div>
         </div>
@@ -312,7 +313,7 @@
 <!-- Featured Countries Section -->
 <section class="py-5 mt-5">
     <div class="container">
-        <h2 class="section-title">Most Populous Countries</h2>
+        <h2 class="section-title">{% trans "Most Populous Countries" %}</h2>
         <div class="gradient-underline"></div>
         
         <div class="row g-4">
@@ -331,15 +332,15 @@
                             <h3 class="country-name">{{ country.flag_emoji }} {{ country.name_common }}</h3>
                             {% if country.capital %}
                                 <p class="country-detail">
-                                    <i class="bi bi-building"></i> Capital: {{ country.capital }}
+                                    <i class="bi bi-building"></i> {% trans "Capital" %}: {{ country.capital }}
                                 </p>
                             {% endif %}
                             <p class="country-detail">
-                                <i class="bi bi-people-fill"></i> Population: {{ country.population|floatformat:0 }}
+                                <i class="bi bi-people-fill"></i> {% trans "Population" %}: {{ country.population|floatformat:0 }}
                             </p>
                             {% if country.region %}
                                 <p class="country-detail">
-                                    <i class="bi bi-geo-alt-fill"></i> Region: {{ country.region.name }}
+                                    <i class="bi bi-geo-alt-fill"></i> {% trans "Region" %}: {{ country.region.name }}
                                 </p>
                             {% endif %}
                         </div>
@@ -348,7 +349,7 @@
             </div>
             {% empty %}
             <div class="col-12 text-center">
-                <p class="text-muted">Stay tuned! Our global directory is currently being updated with new information.</p>
+                <p class="text-muted">{% trans "Stay tuned! Our global directory is currently being updated with new information." %}</p>
             </div>
             {% endfor %}
         </div>
@@ -359,7 +360,7 @@
 {% if regions %}
 <section class="py-5">
     <div class="container">
-        <h2 class="section-title">Explore by Region</h2>
+        <h2 class="section-title">{% trans "Explore by Region" %}</h2>
         <div class="gradient-underline"></div>
         
         <div class="row g-4 justify-content-center">
@@ -377,7 +378,7 @@
                             {% endif %}
                         </div>
                         <h4 class="region-name">{{ region.name }}</h4>
-                        <p class="region-count">{{ region.country_count }} countries</p>
+                        <p class="region-count">{{ region.country_count }} {% trans "countries" %}</p>
                     </div>
                 </a>
             </div>
@@ -394,12 +395,12 @@
 <section class="container mb-5">
     <div class="cta-section">
         <div class="container">
-            <h2 class="cta-title">Ready to Explore?</h2>
+            <h2 class="cta-title">{% trans "Ready to Explore?" %}</h2>
             <p class="cta-description">
-                Dive into our comprehensive database and discover fascinating facts about countries around the world
+                {% trans "Dive into our comprehensive database and discover fascinating facts about countries around the world" %}
             </p>
             <a href="{% url 'countries' %}" class="btn-white">
-                <i class="bi bi-compass"></i> Start Exploring
+                <i class="bi bi-compass"></i> {% trans "Start Exploring" %}
             </a>
         </div>
     </div>

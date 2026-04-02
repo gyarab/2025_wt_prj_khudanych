@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}{{ page_title }} - Just Enough Flags{% endblock %}
+{% block title %}{{ page_title }} - {% trans "Just Enough Flags" %}{% endblock %}
 
 {% block head %}
 <style>
@@ -133,25 +134,25 @@
 <div class="gallery-header">
     <div class="container text-center">
         <h1><i class="bi bi-clock-history"></i> {{ page_title }}</h1>
-        <p class="lead mb-0">Discover flags from former states and historical periods</p>
+        <p class="lead mb-0">{% trans "Discover flags from former states and historical periods" %}</p>
     </div>
 </div>
 
 <div class="container mb-5">
     <!-- Search -->
     <div class="search-box">
-        <form method="get" action="/historical/">
+        <form method="get" action="{% url 'historical' %}" id="historical-search-form">
             <div class="input-group">
-                <input type="text" class="form-control" name="search" placeholder="Search historical flags..." value="{{ search_query|default:'' }}">
+                <input type="text" class="form-control" id="historical-search-input" name="q" placeholder="{% trans 'Search historical flags...' %}" value="{{ search_query|default:'' }}" autocomplete="off">
                 <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
             </div>
         </form>
     </div>
 
     <!-- Flags Grid -->
-    <div class="row g-3">
+    <div class="row g-3" id="historical-grid">
         {% for item in page_obj %}
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2 historical-card-col">
             <div class="flag-item"
                  onclick="openFlag('{{ item.img|escapejs }}', '{{ item.name|escapejs }}', '{{ item.type|escapejs }}', '{{ item.link|escapejs }}')"
                  role="button" tabindex="0"
@@ -174,10 +175,16 @@
         {% empty %}
         <div class="col-12 text-center py-5">
             <div class="alert alert-info">
-                <i class="bi bi-info-circle"></i> No historical flags found.
+                <i class="bi bi-info-circle"></i> {% trans "No historical flags found." %}
             </div>
         </div>
         {% endfor %}
+    </div>
+
+    <div class="col-12 text-center py-5 d-none" id="historical-empty-filtered">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> {% trans "No matching historical flags on this page." %}
+        </div>
     </div>
 
     <!-- Pagination -->
@@ -186,7 +193,7 @@
         <ul class="pagination justify-content-center flex-wrap">
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?search={{ search_query|default:'' }}&page={{ page_obj.previous_page_number }}">&laquo;</a>
+                <a class="page-link" href="?q={{ search_query|default:'' }}&page={{ page_obj.previous_page_number }}">&laquo;</a>
             </li>
             {% endif %}
 
@@ -195,14 +202,14 @@
                 <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                 {% elif num > page_obj.number|add:"-4" and num < page_obj.number|add:"4" %}
                 <li class="page-item">
-                    <a class="page-link" href="?search={{ search_query|default:'' }}&page={{ num }}">{{ num }}</a>
+                    <a class="page-link" href="?q={{ search_query|default:'' }}&page={{ num }}">{{ num }}</a>
                 </li>
                 {% endif %}
             {% endfor %}
 
             {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?search={{ search_query|default:'' }}&page={{ page_obj.next_page_number }}">&raquo;</a>
+                <a class="page-link" href="?q={{ search_query|default:'' }}&page={{ page_obj.next_page_number }}">&raquo;</a>
             </li>
             {% endif %}
         </ul>
@@ -221,7 +228,7 @@
         <span class="lightbox-badge" id="lbBadge"></span>
         <div id="lbLinkWrap" class="lightbox-link" style="display:none">
           <a id="lbLink" href="#" class="btn btn-sm btn-outline-primary">
-            <i class="bi bi-box-arrow-up-right"></i> View details
+                        <i class="bi bi-box-arrow-up-right"></i> {% trans "View Details" %}
           </a>
         </div>
       </div>
@@ -260,5 +267,143 @@
 
     getFlagModal().show();
   }
+
+    (function () {
+        const form = document.getElementById('historical-search-form');
+        const input = document.getElementById('historical-search-input');
+        const grid = document.getElementById('historical-grid');
+        const cards = Array.from(document.querySelectorAll('.historical-card-col'));
+        const emptyFiltered = document.getElementById('historical-empty-filtered');
+        const paginationBlock = document.querySelector('nav[aria-label="Gallery pagination"]');
+        const searchApiUrl = "{{ search_api_url }}";
+
+        if (!form || !input || !grid) {
+            return;
+        }
+
+        const initialCards = cards.map((card) => card.cloneNode(true));
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+        });
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>'\"]/g, function (ch) {
+                return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[ch];
+            });
+        }
+
+        function renderCards(items) {
+            if (!items.length) {
+                grid.innerHTML = '';
+                if (emptyFiltered) {
+                    emptyFiltered.classList.remove('d-none');
+                }
+                return;
+            }
+
+            if (emptyFiltered) {
+                emptyFiltered.classList.add('d-none');
+            }
+
+            grid.innerHTML = items.map(function (item) {
+                const name = escapeHtml(item.name);
+                const img = item.img ? escapeHtml(item.img) : '';
+                const emoji = escapeHtml(item.emoji || '📜');
+                const type = escapeHtml(item.type || '{% trans "Historical Flag" %}');
+                const link = item.link ? escapeHtml(item.link) : '';
+
+                return `
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 historical-card-col">
+                        <div class="flag-item"
+                                 onclick="openFlag('${img}', '${name}', '${type}', '${link}')"
+                                 role="button" tabindex="0"
+                                 onkeydown="if(event.key==='Enter')this.click()">
+                            <div class="flag-img-wrap">
+                                ${img
+                                    ? `<img src="${img}" alt="${name}" class="flag-display" loading="lazy" decoding="async">`
+                                    : `<span class="flag-emoji-display">${emoji}</span>`}
+                            </div>
+                            <div class="flag-caption" title="${name}">
+                                ${name}
+                                <br><span class="flag-badge">${type}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function restoreInitialPage() {
+            grid.innerHTML = '';
+            initialCards.forEach((card) => grid.appendChild(card.cloneNode(true)));
+            if (emptyFiltered) {
+                emptyFiltered.classList.add('d-none');
+            }
+            if (paginationBlock) {
+                paginationBlock.classList.remove('d-none');
+            }
+        }
+
+        let requestId = 0;
+        let activeController = null;
+
+        async function applyLiveSearch() {
+            const query = input.value.trim();
+            if (query.length < 2) {
+                if (activeController) {
+                    activeController.abort();
+                    activeController = null;
+                }
+                restoreInitialPage();
+                return;
+            }
+
+            if (paginationBlock) {
+                paginationBlock.classList.add('d-none');
+            }
+
+            const currentRequest = ++requestId;
+            const params = new URLSearchParams({ q: query });
+
+            if (activeController) {
+                activeController.abort();
+            }
+            activeController = new AbortController();
+
+            const response = await fetch(`${searchApiUrl}?${params.toString()}`, {
+                signal: activeController.signal,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            if (!response.ok || currentRequest !== requestId) {
+                return;
+            }
+
+            const data = await response.json();
+            if (currentRequest !== requestId) {
+                return;
+            }
+
+            renderCards(data.items || []);
+        }
+
+        let timer = null;
+        input.addEventListener('input', function () {
+            if (timer) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function () {
+                applyLiveSearch().catch(function () {
+                    // Keep the page responsive if network calls fail.
+                });
+            }, 220);
+        });
+
+        if (input.value.trim()) {
+            applyLiveSearch().catch(function () {
+                // Keep the UI usable if first request fails.
+            });
+        }
+    })();
 </script>
 {% endblock %}

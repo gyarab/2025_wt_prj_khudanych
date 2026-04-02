@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Just Enough Flags - Explore 4,600+ flags from countries, historical states, territories and international organisations">
+    <meta name="description" content="{% trans 'Just Enough Flags - Explore 4,600+ flags from countries, historical states, territories and international organisations' %}">
     
     {% block canonical %}
         <link rel="canonical" href="{{ request.build_absolute_uri }}">
@@ -20,7 +20,7 @@
         <link rel="alternate" hreflang="x-default" href="{{ request.scheme }}://{{ request.get_host }}/en{{ request.get_full_path|slice:"3:" }}">
     {% endblock %}
     
-    <title>{% block title %}Just Enough Flags{% endblock %}</title>
+    <title>{% block title %}{% trans "Just Enough Flags" %}{% endblock %}</title>
     
     {% load static %}
     <link rel="icon" type="image/svg+xml" href="{% static 'app/logo.svg' %}">
@@ -265,8 +265,8 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{% url 'homepage' %}">
-                <img src="{% static 'app/logo.svg' %}" alt="Logo" class="navbar-logo">
-                Just Enough Flags
+                <img src="{% static 'app/logo.svg' %}" alt="{% trans 'Logo' %}" class="navbar-logo">
+                {% trans "Just Enough Flags" %}
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -274,22 +274,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'homepage' %}"><i class="bi bi-house-door"></i> Home</a>
+                        <a class="nav-link" href="{% url 'homepage' %}"><i class="bi bi-house-door"></i> {% trans "Home" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'countries' %}"><i class="bi bi-globe"></i> Countries</a>
+                        <a class="nav-link" href="{% url 'countries' %}"><i class="bi bi-globe"></i> {% trans "Countries" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'territories' %}"><i class="bi bi-map"></i> Territories</a>
+                        <a class="nav-link" href="{% url 'territories' %}"><i class="bi bi-map"></i> {% trans "Territories" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'historical' %}"><i class="bi bi-clock-history"></i> Historical</a>
+                        <a class="nav-link" href="{% url 'historical' %}"><i class="bi bi-clock-history"></i> {% trans "Historical" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'flags_gallery' %}"><i class="bi bi-flag"></i> Gallery</a>
+                        <a class="nav-link" href="{% url 'flags_gallery' %}"><i class="bi bi-flag"></i> {% trans "Gallery" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about' %}"><i class="bi bi-info-circle"></i> About</a>
+                        <a class="nav-link" href="{% url 'about' %}"><i class="bi bi-info-circle"></i> {% trans "About" %}</a>
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
@@ -297,25 +297,25 @@
                                 <i class="bi bi-person-circle"></i> {{ user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person"></i> {% trans "Profile" %}</a></li>
                                 {% if user.is_staff %}
-                                    <li><a class="dropdown-item" href="/admin/"><i class="bi bi-shield-lock"></i> Admin</a></li>
+                                    <li><a class="dropdown-item" href="/admin/"><i class="bi bi-shield-lock"></i> {% trans "Admin" %}</a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="post" action="{% url 'account_logout' %}" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                                        <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> {% trans "Logout" %}</button>
                                     </form>
                                 </li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                            <a class="nav-link" href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> {% trans "Login" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-sm btn-outline-primary ms-lg-2 rounded-pill px-3" href="{% url 'account_signup' %}">Sign Up</a>
+                            <a class="nav-link btn btn-sm btn-outline-primary ms-lg-2 rounded-pill px-3" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -328,7 +328,7 @@
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
                 </div>
             {% endfor %}
         {% endif %}
@@ -340,11 +340,11 @@
     <footer>
         <div class="container">
             <p>
-                <img src="{% static 'app/logo.svg' %}" alt="Logo" style="height: 24px; vertical-align: middle; margin-right: 5px;">
-                <span class="footer-gradient-text">Just Enough Flags</span>
+                <img src="{% static 'app/logo.svg' %}" alt="{% trans 'Logo' %}" style="height: 24px; vertical-align: middle; margin-right: 5px;">
+                <span class="footer-gradient-text">{% trans "Just Enough Flags" %}</span>
             </p>
             <p class="mt-2">
-                <small>&copy; 2026 Just Enough Flags. Exploring our beautiful world, one flag at a time.</small>
+                <small>{% blocktrans %}&copy; 2026 Just Enough Flags.{% endblocktrans %} {% trans "Exploring our beautiful world, one flag at a time." %}</small>
             </p>
         </div>
     </footer>

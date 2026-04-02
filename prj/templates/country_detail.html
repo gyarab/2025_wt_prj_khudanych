@@ -100,17 +100,17 @@
 <div class="container mb-5">
     <!-- Basic Information -->
     <div class="detail-card">
-        <h2 class="section-heading"><i class="bi bi-info-circle"></i> Basic Information</h2>
+        <h2 class="section-heading"><i class="bi bi-info-circle"></i> {% trans "Basic Information" %}</h2>
         
         <div class="row">
             <div class="col-md-6">
                 <div class="detail-row">
-                    <div class="detail-label"><i class="bi bi-building"></i> Capital</div>
+                    <div class="detail-label"><i class="bi bi-building"></i> {% trans "Capital" %}</div>
                     <div class="detail-value">{{ country.capital|default:"N/A" }}</div>
                 </div>
                 
                 <div class="detail-row">
-                    <div class="detail-label"><i class="bi bi-map"></i> Region</div>
+                    <div class="detail-label"><i class="bi bi-map"></i> {% trans "Region" %}</div>
                     <div class="detail-value">
                         {% if country.region %}
                             {{ country.region.name }}
@@ -122,26 +122,26 @@
                 </div>
                 
                 <div class="detail-row">
-                    <div class="detail-label"><i class="bi bi-people-fill"></i> Population</div>
+                    <div class="detail-label"><i class="bi bi-people-fill"></i> {% trans "Population" %}</div>
                     <div class="detail-value">{{ country.population|floatformat:0 }}</div>
                 </div>
             </div>
             
             <div class="col-md-6">
                 <div class="detail-row">
-                    <div class="detail-label"><i class="bi bi-rulers"></i> Area</div>
+                    <div class="detail-label"><i class="bi bi-rulers"></i> {% trans "Area" %}</div>
                     <div class="detail-value">
                         {% if country.area %}{{ country.area|floatformat:0 }} km²{% else %}N/A{% endif %}
                     </div>
                 </div>
                 
                 <div class="detail-row">
-                    <div class="detail-label"><i class="bi bi-credit-card"></i> Currencies</div>
+                    <div class="detail-label"><i class="bi bi-credit-card"></i> {% trans "Currencies" %}</div>
                     <div class="detail-value">{{ country.currencies_display }}</div>
                 </div>
                 
                 <div class="detail-row">
-                    <div class="detail-label"><i class="bi bi-translate"></i> Languages</div>
+                    <div class="detail-label"><i class="bi bi-translate"></i> {% trans "Languages" %}</div>
                     <div class="detail-value">{{ country.languages_display }}</div>
                 </div>
             </div>
@@ -150,24 +150,24 @@
 
     <!-- Codes & Identifiers -->
     <div class="detail-card">
-        <h2 class="section-heading"><i class="bi bi-upc-scan"></i> Codes & Identifiers</h2>
+        <h2 class="section-heading"><i class="bi bi-upc-scan"></i> {% trans "Codes & Identifiers" %}</h2>
         
         <div class="row">
             <div class="col-md-4">
                 <div class="detail-row">
-                    <div class="detail-label">ISO 3166-1 Alpha-2</div>
+                    <div class="detail-label">{% trans "ISO 3166-1 Alpha-2" %}</div>
                     <div class="detail-value"><code>{{ country.cca2 }}</code></div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="detail-row">
-                    <div class="detail-label">ISO 3166-1 Alpha-3</div>
+                    <div class="detail-label">{% trans "ISO 3166-1 Alpha-3" %}</div>
                     <div class="detail-value"><code>{{ country.cca3 }}</code></div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="detail-row">
-                    <div class="detail-label">Flag Emoji</div>
+                    <div class="detail-label">{% trans "Flag Emoji" %}</div>
                     <div class="detail-value" style="font-size: 2rem;">{{ country.flag_emoji }}</div>
                 </div>
             </div>
@@ -209,7 +209,7 @@
     <!-- Neighboring Countries -->
     {% if neighbors %}
     <div class="detail-card">
-        <h2 class="section-heading"><i class="bi bi-signpost-2"></i> Neighboring Countries</h2>
+        <h2 class="section-heading"><i class="bi bi-signpost-2"></i> {% trans "Neighboring Countries" %}</h2>
         
         <div class="row g-3">
             {% for neighbor in neighbors %}

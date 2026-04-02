@@ -1,0 +1,639 @@
+# German translation for Just Enough Flags
+# Copyright (C) 2026
+# This file is distributed under the same license as the Just Enough Flags package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Just Enough Flags 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-02 16:00+0000\n"
+"PO-Revision-Date: 2026-04-02 16:00+0000\n"
+"Last-Translator: AI Assistant\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Models - Profile
+msgid "Display Name"
+msgstr "Anzeigename"
+
+msgid "Profile Picture"
+msgstr "Profilbild"
+
+msgid "Nickname Change Count"
+msgstr "Anzahl der Nicknameänderungen"
+
+msgid "Last Nickname Change"
+msgstr "Letzte Nicknameänderung"
+
+#, python-format
+msgid "Please wait %(days)s more day(s) before changing your nickname again."
+msgstr ""
+"Bitte warten Sie noch %(days)s Tag(e), bevor Sie Ihren Nicknamen erneut "
+"ändern."
+
+msgid ""
+"You have already changed your nickname twice this month. Please try again "
+"next month."
+msgstr ""
+"Sie haben Ihren Nicknamen in diesem Monat bereits zweimal geändert. Bitte "
+"versuchen Sie es nächsten Monat erneut."
+
+# Models - Region
+msgid "Name"
+msgstr "Name"
+
+msgid "Slug"
+msgstr "URL-Kürzel"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Region"
+msgstr "Region"
+
+msgid "Regions"
+msgstr "Regionen"
+
+# Models - Country
+msgid "Common Name"
+msgstr "Gebräuchlicher Name"
+
+msgid "Official Name"
+msgstr "Offizieller Name"
+
+msgid "ISO Alpha-2"
+msgstr "ISO-Code Alpha-2"
+
+msgid "ISO Alpha-3"
+msgstr "ISO-Code Alpha-3"
+
+msgid "Capital"
+msgstr "Hauptstadt"
+
+msgid "Subregion"
+msgstr "Subregion"
+
+msgid "Population"
+msgstr "Bevölkerung"
+
+msgid "Area"
+msgstr "Fläche"
+
+msgid "Latitude"
+msgstr "Breitengrad"
+
+msgid "Longitude"
+msgstr "Längengrad"
+
+msgid "Flag SVG"
+msgstr "Flagge SVG"
+
+msgid "Flag PNG"
+msgstr "Flagge PNG"
+
+msgid "Flag Emoji"
+msgstr "Flagge Emoji"
+
+msgid "Coat of Arms SVG"
+msgstr "Wappen SVG"
+
+msgid "Coat of Arms PNG"
+msgstr "Wappen PNG"
+
+msgid "Currencies"
+msgstr "Währungen"
+
+msgid "Languages"
+msgstr "Sprachen"
+
+msgid "Timezones"
+msgstr "Zeitzonen"
+
+msgid "Continents"
+msgstr "Kontinente"
+
+msgid "Borders"
+msgstr "Grenzen"
+
+msgid "Independent"
+msgstr "Unabhängig"
+
+msgid "UN Member"
+msgstr "UN-Mitglied"
+
+msgid "Sovereign State"
+msgstr "Souveräner Staat"
+
+msgid "Territory"
+msgstr "Territorium"
+
+msgid "Historical"
+msgstr "Historisch"
+
+msgid "Other"
+msgstr "Sonstiges"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Created At"
+msgstr "Erstellt am"
+
+msgid "Updated At"
+msgstr "Aktualisiert am"
+
+msgid "Country"
+msgstr "Land"
+
+msgid "Countries"
+msgstr "Länder"
+
+# Models - FlagCollection
+msgid "State/Province"
+msgstr "Bundesland/Provinz"
+
+msgid "City / Municipality"
+msgstr "Stadt / Gemeinde"
+
+msgid "International Organization"
+msgstr "Internationale Organisation"
+
+msgid "Region / Subdivision"
+msgstr "Region / Unterteilung"
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Flag Image URL"
+msgstr "Flaggen-Bild-URL"
+
+msgid "Local copy of the flag image"
+msgstr "Lokale Kopie des Flaggenbildes"
+
+msgid "Flag Image File"
+msgstr "Flaggen-Bilddatei"
+
+msgid "Area (km²)"
+msgstr "Fläche (km²)"
+
+msgid "Wikidata QID for deduplication"
+msgstr "Wikidata QID zur Deduplizierung"
+
+msgid "Wikidata ID"
+msgstr "Wikidata ID"
+
+msgid "Checked by human or AI"
+msgstr "Von Mensch oder KI geprüft"
+
+msgid "Is Verified"
+msgstr "Ist verifiziert"
+
+msgid "Visible on the website"
+msgstr "Auf der Website sichtbar"
+
+msgid "Is Public"
+msgstr "Ist öffentlich"
+
+msgid "Flag Collection"
+msgstr "Flaggensammlung"
+
+msgid "Flag Collections"
+msgstr "Flaggensammlungen"
+
+# Admin
+msgid "Profiles"
+msgstr "Profile"
+
+msgid "Nickname Change History"
+msgstr "Nickname-Änderungsverlauf"
+
+msgid "Basic Information"
+msgstr "Grundinformationen"
+
+msgid "Geographic Information"
+msgstr "Geografische Informationen"
+
+msgid "Flags & Symbols"
+msgstr "Flaggen und Symbole"
+
+msgid "Demographics"
+msgstr "Demografie"
+
+msgid "Political Information"
+msgstr "Politische Informationen"
+
+msgid "Metadata"
+msgstr "Metadaten"
+
+msgid "Verify selected flags"
+msgstr "Ausgewählte Flaggen verifizieren"
+
+#, python-format
+msgid "Successfully verified %(count)s flags."
+msgstr "%(count)s Flaggen erfolgreich verifiziert."
+
+msgid "Hide selected flags from website"
+msgstr "Ausgewählte Flaggen von der Website ausblenden"
+
+msgid "Show selected flags on website"
+msgstr "Ausgewählte Flaggen auf der Website anzeigen"
+
+# Views
+msgid "Sovereign Countries"
+msgstr "Souveräne Länder"
+
+msgid "Major Territory"
+msgstr "Hauptterritorium"
+
+msgid "Territory / Dependency"
+msgstr "Territorium / Abhängigkeit"
+
+msgid "Territories & Dependencies"
+msgstr "Territorien und Abhängigkeiten"
+
+msgid "Former Country"
+msgstr "Ehemaliges Land"
+
+msgid "Historical Flag"
+msgstr "Historische Flagge"
+
+msgid "Historical Flags & Former States"
+msgstr "Historische Flaggen und ehemalige Staaten"
+
+# Templates - Base
+msgid "Home"
+msgstr "Startseite"
+
+msgid "Territories"
+msgstr "Territorien"
+
+msgid "Gallery"
+msgstr "Galerie"
+
+msgid "About"
+msgstr "Über uns"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Admin"
+msgstr "Administration"
+
+msgid "Logout"
+msgstr "Abmelden"
+
+msgid "Login"
+msgstr "Anmelden"
+
+msgid "Sign Up"
+msgstr "Registrieren"
+
+msgid "Close"
+msgstr "Schließen"
+
+msgid "Exploring our beautiful world, one flag at a time."
+msgstr "Wir erkunden unsere schöne Welt, eine Flagge nach der anderen."
+
+# Templates - Home
+msgid "Discover the World"
+msgstr "Entdecke die Welt"
+
+msgid ""
+"Explore comprehensive database of countries, flags, capitals, and geographic"
+" information from around the globe"
+msgstr ""
+"Erkunden Sie eine umfassende Datenbank mit Ländern, Flaggen, Hauptstädten "
+"und geografischen Informationen aus der ganzen Welt"
+
+msgid "Browse Countries"
+msgstr "Länder durchsuchen"
+
+msgid "View Flags"
+msgstr "Flaggen anzeigen"
+
+msgid "Sovereign Nations"
+msgstr "Souveräne Nationen"
+
+msgid "Historical States"
+msgstr "Historische Staaten"
+
+msgid "Total Flags"
+msgstr "Gesamtzahl der Flaggen"
+
+msgid "Most Populous Countries"
+msgstr "Bevölkerungsreichste Länder"
+
+msgid ""
+"Stay tuned! Our global directory is currently being updated with new "
+"information."
+msgstr ""
+"Bleiben Sie dran! Unser globales Verzeichnis wird derzeit mit neuen "
+"Informationen aktualisiert."
+
+msgid "countries"
+msgstr "Länder"
+
+msgid "Explore by Region"
+msgstr "Nach Region erkunden"
+
+msgid "Ready to Explore?"
+msgstr "Bereit zu erkunden?"
+
+msgid ""
+"Dive into our comprehensive database and discover fascinating facts about "
+"countries around the world"
+msgstr ""
+"Tauchen Sie ein in unsere umfassende Datenbank und entdecken Sie "
+"faszinierende Fakten über Länder auf der ganzen Welt"
+
+msgid "Start Exploring"
+msgstr "Mit der Erkundung beginnen"
+
+# Templates - About
+msgid "About - Just Enough Flags"
+msgstr "Über uns - Just Enough Flags"
+
+msgid "About Just Enough Flags"
+msgstr "Über Just Enough Flags"
+
+msgid "Your comprehensive source for global geography and flag information"
+msgstr ""
+"Ihre umfassende Quelle für weltweite Geografie und Flaggeninformationen"
+
+msgid "Our Mission"
+msgstr "Unsere Mission"
+
+msgid ""
+"Just Enough Flags is a comprehensive global resource designed to provide "
+"detailed geographic and vexillological information about countries, "
+"territories, and regions worldwide."
+msgstr ""
+"Just Enough Flags ist eine umfassende globale Ressource, die detaillierte "
+"geografische und vexillologische Informationen über Länder, Territorien und "
+"Regionen weltweit bereitstellt."
+
+msgid ""
+"Our mission is to provide accurate, high-quality, and easily accessible "
+"information for students, researchers, and enthusiasts interested in the "
+"diverse political and cultural landscape of our world."
+msgstr ""
+"Unsere Mission ist es, genaue, qualitativ hochwertige und leicht zugängliche"
+" Informationen für Studenten, Forscher und Enthusiasten bereitzustellen, die"
+" sich für die vielfältige politische und kulturelle Landschaft unserer Welt "
+"interessieren."
+
+msgid "We offer extensive data including:"
+msgstr "Wir bieten umfangreiche Daten, einschließlich:"
+
+msgid "Official and common country names"
+msgstr "Offizielle und gebräuchliche Ländernamen"
+
+msgid "High-quality flag images in various formats"
+msgstr "Hochwertige Flaggenbilder in verschiedenen Formaten"
+
+msgid "Capital cities and major geographic information"
+msgstr "Hauptstädte und wichtige geografische Informationen"
+
+msgid "Population and area statistics"
+msgstr "Bevölkerungs- und Flächenstatistiken"
+
+msgid "Official languages and currencies"
+msgstr "Amtssprachen und Währungen"
+
+msgid "Political status and international memberships"
+msgstr "Politischer Status und internationale Mitgliedschaften"
+
+msgid "Neighboring countries and borders"
+msgstr "Nachbarländer und Grenzen"
+
+msgid "Historical and territorial flags"
+msgstr "Historische und territoriale Flaggen"
+
+msgid "Key Features"
+msgstr "Hauptmerkmale"
+
+msgid "Comprehensive Database"
+msgstr "Umfassende Datenbank"
+
+msgid ""
+"Detailed information on over 250 countries and territories, including "
+"dependencies and special administrative regions."
+msgstr ""
+"Detaillierte Informationen über mehr als 250 Länder und Territorien, "
+"einschließlich Abhängigkeiten und Sonderverwaltungsregionen."
+
+msgid "Fully Responsive"
+msgstr "Vollständig responsiv"
+
+msgid ""
+"Our platform works seamlessly across all devices - desktop, tablet, and "
+"mobile - providing a consistent and high-quality experience."
+msgstr ""
+"Unsere Plattform funktioniert nahtlos auf allen Geräten - Desktop, Tablet "
+"und Mobil - und bietet ein konsistentes und qualitativ hochwertiges "
+"Erlebnis."
+
+msgid "Advanced Search"
+msgstr "Erweiterte Suche"
+
+msgid ""
+"Quickly find countries by name, capital, region, or any other attribute with"
+" our powerful search and filter system."
+msgstr ""
+"Finden Sie schnell Länder nach Name, Hauptstadt, Region oder einem anderen "
+"Attribut mit unserem leistungsstarken Such- und Filtersystem."
+
+msgid "High-Quality Flags"
+msgstr "Hochwertige Flaggen"
+
+msgid ""
+"Precision-rendered flag images sourced from reliable international "
+"databases, ensuring crisp display at any scale."
+msgstr ""
+"Präzise gerenderte Flaggenbilder aus zuverlässigen internationalen "
+"Datenbanken, die eine scharfe Anzeige in jeder Größe gewährleisten."
+
+msgid "Modern Design"
+msgstr "Modernes Design"
+
+msgid ""
+"A clean, professional interface focused on readability and a pleasant user "
+"experience."
+msgstr ""
+"Eine saubere, professionelle Oberfläche mit Fokus auf Lesbarkeit und "
+"angenehme Benutzererfahrung."
+
+msgid "Secure & Reliable"
+msgstr "Sicher und zuverlässig"
+
+msgid ""
+"Our platform is built to the highest industry standards, ensuring your data "
+"and experience are always protected and dependable."
+msgstr ""
+"Unsere Plattform ist nach den höchsten Industriestandards gebaut und stellt "
+"sicher, dass Ihre Daten und Erfahrungen immer geschützt und zuverlässig "
+"sind."
+
+msgid "Data Integrity"
+msgstr "Datenintegrität"
+
+msgid ""
+"Our data is curated from reputable international sources to ensure accuracy "
+"and reliability, including official geographic standards and international "
+"organizations. We continuously update our records to reflect the changing "
+"global landscape."
+msgstr ""
+"Unsere Daten werden aus renommierten internationalen Quellen kuratiert, um "
+"Genauigkeit und Zuverlässigkeit zu gewährleisten, einschließlich offizieller"
+" geografischer Standards und internationaler Organisationen. Wir "
+"aktualisieren unsere Aufzeichnungen kontinuierlich, um die sich verändernde "
+"globale Landschaft widerzuspiegeln."
+
+msgid "Back to Home"
+msgstr "Zurück zur Startseite"
+
+# Templates - Profile
+msgid "Unique ID"
+msgstr "Eindeutige ID"
+
+msgid "Member Since"
+msgstr "Mitglied seit"
+
+msgid "Edit Profile"
+msgstr "Profil bearbeiten"
+
+msgid "Edit Your Profile"
+msgstr "Bearbeiten Sie Ihr Profil"
+
+msgid "Keep your information up to date"
+msgstr "Halten Sie Ihre Informationen auf dem neuesten Stand"
+
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+# Templates - Auth
+msgid "Sign In"
+msgstr "Anmelden"
+
+msgid "Welcome Back"
+msgstr "Willkommen zurück"
+
+msgid "Sign in to your account"
+msgstr "Melden Sie sich bei Ihrem Konto an"
+
+#, python-format
+msgid "Continue with %(provider_name)s"
+msgstr "Weiter mit %(provider_name)s"
+
+msgid "or login with email"
+msgstr "oder mit E-Mail anmelden"
+
+msgid "Forgot Password?"
+msgstr "Passwort vergessen?"
+
+msgid "Don't have an account?"
+msgstr "Haben Sie kein Konto?"
+
+msgid "Create Account"
+msgstr "Konto erstellen"
+
+msgid "Join our flag exploring community"
+msgstr "Treten Sie unserer Flaggen-Erkundungsgemeinschaft bei"
+
+#, python-format
+msgid "Sign up with %(provider_name)s"
+msgstr "Registrieren mit %(provider_name)s"
+
+msgid "or use email"
+msgstr "oder E-Mail verwenden"
+
+msgid "Already have an account?"
+msgstr "Haben Sie bereits ein Konto?"
+
+msgid "Sign Out"
+msgstr "Abmelden"
+
+msgid "Are you sure you want to sign out?"
+msgstr "Sind Sie sicher, dass Sie sich abmelden möchten?"
+
+msgid "Just Enough Flags"
+msgstr "Just Enough Flags"
+
+msgid "Flags Gallery"
+msgstr "Flaggen-Galerie"
+
+msgid "Search flags..."
+msgstr "Flaggen suchen..."
+
+msgid "All"
+msgstr "Alle"
+
+msgid "States"
+msgstr "Staaten"
+
+msgid "Cities"
+msgstr "Städte"
+
+msgid "International"
+msgstr "International"
+
+msgid "No flags found. Try a different search or category."
+msgstr "Keine Flaggen gefunden. Versuchen Sie eine andere Suche oder Kategorie."
+
+msgid "No matching flags on this page."
+msgstr "Keine passenden Flaggen auf dieser Seite."
+
+#, python-format
+msgid "Page %(page)s of %(total_pages)s"
+msgstr "Seite %(page)s von %(total_pages)s"
+
+#, python-format
+msgid "(%(total)s flags)"
+msgstr "(%(total)s Flaggen)"
+
+msgid "Country Explorer"
+msgstr "Länder-Entdecker"
+
+#, python-format
+msgid "Explore %(total)s countries and territories"
+msgstr "Entdecken Sie %(total)s Länder und Territorien"
+
+msgid "Search countries..."
+msgstr "Länder suchen..."
+
+msgid "No countries found. Try adjusting your search or filters."
+msgstr "Keine Länder gefunden. Passen Sie Ihre Suche oder Filter an."
+
+msgid "Previous"
+msgstr "Zurück"
+
+msgid "Next"
+msgstr "Weiter"
+
+msgid "Discover flags from former states and historical periods"
+msgstr "Entdecken Sie Flaggen von ehemaligen Staaten und historischen Epochen"
+
+msgid "Search historical flags..."
+msgstr "Historische Flaggen suchen..."
+
+msgid "No historical flags found."
+msgstr "Keine historischen Flaggen gefunden."
+
+msgid "No matching historical flags on this page."
+msgstr "Keine passenden historischen Flaggen auf dieser Seite."
+
+msgid "Logo"
+msgstr "Logo"
+
+msgid "&copy; 2026 Just Enough Flags."
+msgstr "&copy; 2026 Just Enough Flags."
+
+msgid "Search territories..."
+msgstr "Territorien suchen..."

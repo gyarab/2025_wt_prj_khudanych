@@ -37,6 +37,10 @@ staticfiles/
 media/
 prj/media/
 
+# --- i18n compiled translations ---
+*.mo
+locale/*/LC_MESSAGES/*.mo
+
 # --- Proměnné prostředí ---
 .env
 .env.*
@@ -63,3 +67,14 @@ Cargo.lock
 .DS_Store
 Thumbs.db
 .gemini/
+
+# --- AI agent temporary files ---
+*action_summary*
+*quick_test*
+*compile_translations*
+compile_i18n.py
+.aider*
+
+# --- Useless txt files (keep requirements.txt) ---
+*.txt
+!requirements.txt

@@ -1,0 +1,634 @@
+# Czech translation for Just Enough Flags
+# Copyright (C) 2026
+# This file is distributed under the same license as the Just Enough Flags package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Just Enough Flags 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-02 16:00+0000\n"
+"PO-Revision-Date: 2026-04-02 16:00+0000\n"
+"Last-Translator: AI Assistant\n"
+"Language-Team: Czech\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+# Models - Profile
+msgid "Display Name"
+msgstr "Zobrazované jméno"
+
+msgid "Profile Picture"
+msgstr "Profilový obrázek"
+
+msgid "Nickname Change Count"
+msgstr "Počet změn přezdívky"
+
+msgid "Last Nickname Change"
+msgstr "Poslední změna přezdívky"
+
+#, python-format
+msgid "Please wait %(days)s more day(s) before changing your nickname again."
+msgstr "Počkejte prosím ještě %(days)s den/dny před další změnou přezdívky."
+
+msgid ""
+"You have already changed your nickname twice this month. Please try again "
+"next month."
+msgstr ""
+"Tento měsíc jste již dvakrát změnili svou přezdívku. Zkuste to prosím příští"
+" měsíc."
+
+# Models - Region
+msgid "Name"
+msgstr "Název"
+
+msgid "Slug"
+msgstr "Zkratka URL"
+
+msgid "Description"
+msgstr "Popis"
+
+msgid "Region"
+msgstr "Region"
+
+msgid "Regions"
+msgstr "Regiony"
+
+# Models - Country
+msgid "Common Name"
+msgstr "Běžný název"
+
+msgid "Official Name"
+msgstr "Oficiální název"
+
+msgid "ISO Alpha-2"
+msgstr "ISO kód Alpha-2"
+
+msgid "ISO Alpha-3"
+msgstr "ISO kód Alpha-3"
+
+msgid "Capital"
+msgstr "Hlavní město"
+
+msgid "Subregion"
+msgstr "Podregion"
+
+msgid "Population"
+msgstr "Počet obyvatel"
+
+msgid "Area"
+msgstr "Rozloha"
+
+msgid "Latitude"
+msgstr "Zeměpisná šířka"
+
+msgid "Longitude"
+msgstr "Zeměpisná délka"
+
+msgid "Flag SVG"
+msgstr "Vlajka SVG"
+
+msgid "Flag PNG"
+msgstr "Vlajka PNG"
+
+msgid "Flag Emoji"
+msgstr "Vlajka Emoji"
+
+msgid "Coat of Arms SVG"
+msgstr "Státní znak SVG"
+
+msgid "Coat of Arms PNG"
+msgstr "Státní znak PNG"
+
+msgid "Currencies"
+msgstr "Měny"
+
+msgid "Languages"
+msgstr "Jazyky"
+
+msgid "Timezones"
+msgstr "Časová pásma"
+
+msgid "Continents"
+msgstr "Kontinenty"
+
+msgid "Borders"
+msgstr "Hranice"
+
+msgid "Independent"
+msgstr "Nezávislý"
+
+msgid "UN Member"
+msgstr "Člen OSN"
+
+msgid "Sovereign State"
+msgstr "Suverénní stát"
+
+msgid "Territory"
+msgstr "Území"
+
+msgid "Historical"
+msgstr "Historický"
+
+msgid "Other"
+msgstr "Ostatní"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Created At"
+msgstr "Vytvořeno"
+
+msgid "Updated At"
+msgstr "Aktualizováno"
+
+msgid "Country"
+msgstr "Země"
+
+msgid "Countries"
+msgstr "Země"
+
+# Models - FlagCollection
+msgid "State/Province"
+msgstr "Stát/Provincie"
+
+msgid "City / Municipality"
+msgstr "Město / Obec"
+
+msgid "International Organization"
+msgstr "Mezinárodní organizace"
+
+msgid "Region / Subdivision"
+msgstr "Region / Subdivize"
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Flag Image URL"
+msgstr "URL obrázku vlajky"
+
+msgid "Local copy of the flag image"
+msgstr "Místní kopie obrázku vlajky"
+
+msgid "Flag Image File"
+msgstr "Soubor obrázku vlajky"
+
+msgid "Area (km²)"
+msgstr "Rozloha (km²)"
+
+msgid "Wikidata QID for deduplication"
+msgstr "Wikidata QID pro odstranění duplicit"
+
+msgid "Wikidata ID"
+msgstr "Wikidata ID"
+
+msgid "Checked by human or AI"
+msgstr "Zkontrolováno člověkem nebo AI"
+
+msgid "Is Verified"
+msgstr "Je ověřeno"
+
+msgid "Visible on the website"
+msgstr "Viditelné na webu"
+
+msgid "Is Public"
+msgstr "Je veřejné"
+
+msgid "Flag Collection"
+msgstr "Sbírka vlajek"
+
+msgid "Flag Collections"
+msgstr "Sbírky vlajek"
+
+# Admin
+msgid "Profiles"
+msgstr "Profily"
+
+msgid "Nickname Change History"
+msgstr "Historie změn přezdívky"
+
+msgid "Basic Information"
+msgstr "Základní informace"
+
+msgid "Geographic Information"
+msgstr "Geografické informace"
+
+msgid "Flags & Symbols"
+msgstr "Vlajky a symboly"
+
+msgid "Demographics"
+msgstr "Demografie"
+
+msgid "Political Information"
+msgstr "Politické informace"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Verify selected flags"
+msgstr "Ověřit vybrané vlajky"
+
+#, python-format
+msgid "Successfully verified %(count)s flags."
+msgstr "Úspěšně ověřeno %(count)s vlajek."
+
+msgid "Hide selected flags from website"
+msgstr "Skrýt vybrané vlajky z webu"
+
+msgid "Show selected flags on website"
+msgstr "Zobrazit vybrané vlajky na webu"
+
+# Views
+msgid "Sovereign Countries"
+msgstr "Suverénní země"
+
+msgid "Major Territory"
+msgstr "Hlavní území"
+
+msgid "Territory / Dependency"
+msgstr "Území / Závislost"
+
+msgid "Territories & Dependencies"
+msgstr "Území a závislosti"
+
+msgid "Former Country"
+msgstr "Bývalá země"
+
+msgid "Historical Flag"
+msgstr "Historická vlajka"
+
+msgid "Historical Flags & Former States"
+msgstr "Historické vlajky a bývalé státy"
+
+# Templates - Base
+msgid "Home"
+msgstr "Domů"
+
+msgid "Territories"
+msgstr "Území"
+
+msgid "Gallery"
+msgstr "Galerie"
+
+msgid "About"
+msgstr "O nás"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Admin"
+msgstr "Administrace"
+
+msgid "Logout"
+msgstr "Odhlásit se"
+
+msgid "Login"
+msgstr "Přihlásit se"
+
+msgid "Sign Up"
+msgstr "Registrovat se"
+
+msgid "Close"
+msgstr "Zavřít"
+
+msgid "Exploring our beautiful world, one flag at a time."
+msgstr "Objevujeme náš krásný svět, vlajku po vlajce."
+
+# Templates - Home
+msgid "Discover the World"
+msgstr "Objevte svět"
+
+msgid ""
+"Explore comprehensive database of countries, flags, capitals, and geographic"
+" information from around the globe"
+msgstr ""
+"Prozkoumejte komplexní databázi zemí, vlajek, hlavních měst a geografických "
+"informací z celého světa"
+
+msgid "Browse Countries"
+msgstr "Procházet země"
+
+msgid "View Flags"
+msgstr "Zobrazit vlajky"
+
+msgid "Sovereign Nations"
+msgstr "Suverénní národy"
+
+msgid "Historical States"
+msgstr "Historické státy"
+
+msgid "Total Flags"
+msgstr "Celkem vlajek"
+
+msgid "Most Populous Countries"
+msgstr "Nejlidnatější země"
+
+msgid ""
+"Stay tuned! Our global directory is currently being updated with new "
+"information."
+msgstr ""
+"Sledujte nás! Naše globální databáze je právě aktualizována o nové "
+"informace."
+
+msgid "countries"
+msgstr "zemí"
+
+msgid "Explore by Region"
+msgstr "Prozkoumat podle regionu"
+
+msgid "Ready to Explore?"
+msgstr "Připraveni prozkoumat?"
+
+msgid ""
+"Dive into our comprehensive database and discover fascinating facts about "
+"countries around the world"
+msgstr ""
+"Ponořte se do naší komplexní databáze a objevte fascinující fakta o zemích "
+"celého světa"
+
+msgid "Start Exploring"
+msgstr "Začít objevovat"
+
+# Templates - About
+msgid "About - Just Enough Flags"
+msgstr "O nás - Just Enough Flags"
+
+msgid "About Just Enough Flags"
+msgstr "O Just Enough Flags"
+
+msgid "Your comprehensive source for global geography and flag information"
+msgstr "Váš komplexní zdroj pro světovou geografii a informace o vlajkách"
+
+msgid "Our Mission"
+msgstr "Naše mise"
+
+msgid ""
+"Just Enough Flags is a comprehensive global resource designed to provide "
+"detailed geographic and vexillological information about countries, "
+"territories, and regions worldwide."
+msgstr ""
+"Just Enough Flags je komplexní globální zdroj určený k poskytování "
+"podrobných geografických a vexilologických informací o zemích, územích a "
+"regionech po celém světě."
+
+msgid ""
+"Our mission is to provide accurate, high-quality, and easily accessible "
+"information for students, researchers, and enthusiasts interested in the "
+"diverse political and cultural landscape of our world."
+msgstr ""
+"Naším posláním je poskytovat přesné, kvalitní a snadno dostupné informace "
+"pro studenty, výzkumníky a nadšence, kteří se zajímají o různorodou "
+"politickou a kulturní krajinu našeho světa."
+
+msgid "We offer extensive data including:"
+msgstr "Nabízíme rozsáhlá data včetně:"
+
+msgid "Official and common country names"
+msgstr "Oficiální a běžné názvy zemí"
+
+msgid "High-quality flag images in various formats"
+msgstr "Vysoce kvalitní obrázky vlajek v různých formátech"
+
+msgid "Capital cities and major geographic information"
+msgstr "Hlavní města a hlavní geografické informace"
+
+msgid "Population and area statistics"
+msgstr "Statistiky obyvatelstva a rozlohy"
+
+msgid "Official languages and currencies"
+msgstr "Oficiální jazyky a měny"
+
+msgid "Political status and international memberships"
+msgstr "Politický status a mezinárodní členství"
+
+msgid "Neighboring countries and borders"
+msgstr "Sousední země a hranice"
+
+msgid "Historical and territorial flags"
+msgstr "Historické a územní vlajky"
+
+msgid "Key Features"
+msgstr "Klíčové funkce"
+
+msgid "Comprehensive Database"
+msgstr "Komplexní databáze"
+
+msgid ""
+"Detailed information on over 250 countries and territories, including "
+"dependencies and special administrative regions."
+msgstr ""
+"Podrobné informace o více než 250 zemích a územích, včetně závislostí a "
+"zvláštních správních regionů."
+
+msgid "Fully Responsive"
+msgstr "Plně responzivní"
+
+msgid ""
+"Our platform works seamlessly across all devices - desktop, tablet, and "
+"mobile - providing a consistent and high-quality experience."
+msgstr ""
+"Naše platforma funguje bezproblémově na všech zařízeních - stolních "
+"počítačích, tabletech a mobilech - a poskytuje konzistentní a vysoce "
+"kvalitní zážitek."
+
+msgid "Advanced Search"
+msgstr "Pokročilé vyhledávání"
+
+msgid ""
+"Quickly find countries by name, capital, region, or any other attribute with"
+" our powerful search and filter system."
+msgstr ""
+"Rychle najděte země podle názvu, hlavního města, regionu nebo jakéhokoli "
+"jiného atributu pomocí našeho výkonného vyhledávacího a filtrovacího "
+"systému."
+
+msgid "High-Quality Flags"
+msgstr "Vysoce kvalitní vlajky"
+
+msgid ""
+"Precision-rendered flag images sourced from reliable international "
+"databases, ensuring crisp display at any scale."
+msgstr ""
+"Přesně vykreslené obrázky vlajek získané ze spolehlivých mezinárodních "
+"databází, které zajišťují ostrý obraz v jakémkoli měřítku."
+
+msgid "Modern Design"
+msgstr "Moderní design"
+
+msgid ""
+"A clean, professional interface focused on readability and a pleasant user "
+"experience."
+msgstr ""
+"Čisté, profesionální rozhraní zaměřené na čitelnost a příjemné uživatelské "
+"prostředí."
+
+msgid "Secure & Reliable"
+msgstr "Bezpečné a spolehlivé"
+
+msgid ""
+"Our platform is built to the highest industry standards, ensuring your data "
+"and experience are always protected and dependable."
+msgstr ""
+"Naše platforma je vytvořena podle nejvyšších průmyslových standardů, které "
+"zajišťují, že vaše data a zkušenosti jsou vždy chráněny a spolehlivé."
+
+msgid "Data Integrity"
+msgstr "Integrita dat"
+
+msgid ""
+"Our data is curated from reputable international sources to ensure accuracy "
+"and reliability, including official geographic standards and international "
+"organizations. We continuously update our records to reflect the changing "
+"global landscape."
+msgstr ""
+"Naše data jsou shromažďována z renomovaných mezinárodních zdrojů, aby byla "
+"zajištěna přesnost a spolehlivost, včetně oficiálních geografických "
+"standardů a mezinárodních organizací. Neustále aktualizujeme naše záznamy, "
+"aby odrážely měnící se globální krajinu."
+
+msgid "Back to Home"
+msgstr "Zpět na domovskou stránku"
+
+# Templates - Profile
+msgid "Unique ID"
+msgstr "Jedinečné ID"
+
+msgid "Member Since"
+msgstr "Členem od"
+
+msgid "Edit Profile"
+msgstr "Upravit profil"
+
+msgid "Edit Your Profile"
+msgstr "Upravit váš profil"
+
+msgid "Keep your information up to date"
+msgstr "Udržujte své informace aktuální"
+
+msgid "Save Changes"
+msgstr "Uložit změny"
+
+msgid "Cancel"
+msgstr "Zrušit"
+
+# Templates - Auth
+msgid "Sign In"
+msgstr "Přihlásit se"
+
+msgid "Welcome Back"
+msgstr "Vítejte zpět"
+
+msgid "Sign in to your account"
+msgstr "Přihlaste se ke svému účtu"
+
+#, python-format
+msgid "Continue with %(provider_name)s"
+msgstr "Pokračovat s %(provider_name)s"
+
+msgid "or login with email"
+msgstr "nebo se přihlaste e-mailem"
+
+msgid "Forgot Password?"
+msgstr "Zapomněli jste heslo?"
+
+msgid "Don't have an account?"
+msgstr "Nemáte účet?"
+
+msgid "Create Account"
+msgstr "Vytvořit účet"
+
+msgid "Join our flag exploring community"
+msgstr "Připojte se k naší komunitě objevovatelů vlajek"
+
+#, python-format
+msgid "Sign up with %(provider_name)s"
+msgstr "Zaregistrovat se s %(provider_name)s"
+
+msgid "or use email"
+msgstr "nebo použijte e-mail"
+
+msgid "Already have an account?"
+msgstr "Již máte účet?"
+
+msgid "Sign Out"
+msgstr "Odhlásit se"
+
+msgid "Are you sure you want to sign out?"
+msgstr "Opravdu se chcete odhlásit?"
+
+msgid "Just Enough Flags"
+msgstr "Just Enough Flags"
+
+msgid "Flags Gallery"
+msgstr "Galerie vlajek"
+
+msgid "Search flags..."
+msgstr "Hledat vlajky..."
+
+msgid "All"
+msgstr "Vše"
+
+msgid "States"
+msgstr "Státy"
+
+msgid "Cities"
+msgstr "Města"
+
+msgid "International"
+msgstr "Mezinárodní"
+
+msgid "No flags found. Try a different search or category."
+msgstr "Nebyly nalezeny žádné vlajky. Zkuste jiné vyhledávání nebo kategorii."
+
+msgid "No matching flags on this page."
+msgstr "Na této stránce nejsou žádné odpovídající vlajky."
+
+#, python-format
+msgid "Page %(page)s of %(total_pages)s"
+msgstr "Stránka %(page)s z %(total_pages)s"
+
+#, python-format
+msgid "(%(total)s flags)"
+msgstr "(%(total)s vlajek)"
+
+msgid "Country Explorer"
+msgstr "Průzkumník zemí"
+
+#, python-format
+msgid "Explore %(total)s countries and territories"
+msgstr "Prozkoumejte %(total)s zemí a území"
+
+msgid "Search countries..."
+msgstr "Hledat země..."
+
+msgid "No countries found. Try adjusting your search or filters."
+msgstr "Nebyly nalezeny žádné země. Zkuste upravit vyhledávání nebo filtry."
+
+msgid "Previous"
+msgstr "Předchozí"
+
+msgid "Next"
+msgstr "Další"
+
+msgid "Discover flags from former states and historical periods"
+msgstr "Objevte vlajky bývalých států a historických období"
+
+msgid "Search historical flags..."
+msgstr "Hledat historické vlajky..."
+
+msgid "No historical flags found."
+msgstr "Nebyly nalezeny žádné historické vlajky."
+
+msgid "No matching historical flags on this page."
+msgstr "Na této stránce nejsou žádné odpovídající historické vlajky."
+
+msgid "Logo"
+msgstr "Logo"
+
+msgid "&copy; 2026 Just Enough Flags."
+msgstr "&copy; 2026 Just Enough Flags."
+
+msgid "Search territories..."
+msgstr "Hledat území..."
