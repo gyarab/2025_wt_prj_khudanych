@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n humanize %}
 
 {% block title %}{% trans "Countries" %} - {% trans "Just Enough Flags" %}{% endblock %}
 
@@ -100,7 +100,7 @@
 <div class="page-header">
     <div class="container text-center">
         <h1><i class="bi bi-globe-americas"></i> {{ page_title|default:default_country_explorer }}</h1>
-        <p class="lead">{% blocktrans with total=page_obj.paginator.count %}Explore {{ total }} countries and territories{% endblocktrans %}</p>
+        <p class="lead">{% blocktrans with total=page_obj.paginator.count|intcomma %}Explore {{ total }} countries and territories{% endblocktrans %}</p>
     </div>
 </div>
 

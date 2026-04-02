@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n humanize %}
 
 {% block title %}Just Enough Flags - Explore the World{% endblock %}
 
@@ -275,7 +275,7 @@
                     <div class="stat-icon">
                         <i class="bi bi-globe-americas"></i>
                     </div>
-                    <h2 class="stat-number">{{ total_countries }}</h2>
+                    <h2 class="stat-number">{{ total_countries|intcomma }}</h2>
                     <p class="stat-label">{% trans "Sovereign Nations" %}</p>
                 </div>
             </div>
@@ -284,7 +284,7 @@
                     <div class="stat-icon">
                         <i class="bi bi-map"></i>
                     </div>
-                    <h2 class="stat-number">{{ total_territories }}</h2>
+                    <h2 class="stat-number">{{ total_territories|intcomma }}</h2>
                     <p class="stat-label">{% trans "Territories & Dependencies" %}</p>
                 </div>
             </div>
@@ -293,7 +293,7 @@
                     <div class="stat-icon">
                         <i class="bi bi-clock-history"></i>
                     </div>
-                    <h2 class="stat-number">{{ total_historical }}</h2>
+                    <h2 class="stat-number">{{ total_historical|intcomma }}</h2>
                     <p class="stat-label">{% trans "Historical States" %}</p>
                 </div>
             </div>
@@ -302,7 +302,7 @@
                     <div class="stat-icon">
                         <i class="bi bi-flag-fill"></i>
                     </div>
-                    <h2 class="stat-number">{{ total_flags }}</h2>
+                    <h2 class="stat-number">{{ total_flags|intcomma }}</h2>
                     <p class="stat-label">{% trans "Total Flags" %}</p>
                 </div>
             </div>
@@ -336,7 +336,7 @@
                                 </p>
                             {% endif %}
                             <p class="country-detail">
-                                <i class="bi bi-people-fill"></i> {% trans "Population" %}: {{ country.population|floatformat:0 }}
+                                <i class="bi bi-people-fill"></i> {% trans "Population" %}: {{ country.population|floatformat:0|intcomma }}
                             </p>
                             {% if country.region %}
                                 <p class="country-detail">
@@ -378,7 +378,7 @@
                             {% endif %}
                         </div>
                         <h4 class="region-name">{{ region.name }}</h4>
-                        <p class="region-count">{{ region.country_count }} {% trans "countries" %}</p>
+                        <p class="region-count">{{ region.country_count|intcomma }} {% trans "countries" %}</p>
                     </div>
                 </a>
             </div>

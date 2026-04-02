@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n humanize %}
 
 {% block title %}{{ territory.name_common }} - Territory Details{% endblock %}
 
@@ -84,10 +84,10 @@
         <div class="row g-3">
             <div class="col-md-6">
                 <p class="mb-1"><strong>Capital:</strong> {{ territory.capital|default:'Not available' }}</p>
-                <p class="mb-0"><strong>Population:</strong> {{ territory.population|floatformat:0 }}</p>
+                <p class="mb-0"><strong>Population:</strong> {{ territory.population|floatformat:0|intcomma }}</p>
             </div>
             <div class="col-md-6">
-                <p class="mb-1"><strong>Area:</strong> {% if territory.area %}{{ territory.area|floatformat:0 }} km²{% else %}Not available{% endif %}</p>
+                <p class="mb-1"><strong>Area:</strong> {% if territory.area %}{{ territory.area|floatformat:0|intcomma }} km²{% else %}Not available{% endif %}</p>
                 <p class="mb-0"><strong>Subregion:</strong> {{ territory.subregion|default:'Not available' }}</p>
             </div>
         </div>

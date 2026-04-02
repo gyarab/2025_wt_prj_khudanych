@@ -482,20 +482,24 @@ def _collect_gallery_querysets(category, search_query=''):
     show_countries = category in ('all', 'country', 'territory', 'historical')
     
     if show_countries:
-        country_filter = Q()
         if category == 'country':
-            country_filter = Q(status='sovereign')
+            allowed_statuses = ['sovereign']
         elif category == 'territory':
-            country_filter = Q(status='territory')
+            allowed_statuses = ['territory']
         elif category == 'historical':
-            country_filter = Q(status='historical')
+            allowed_statuses = ['historical']
+        else:
+            # The gallery should expose only records with dedicated detail routes.
+            allowed_statuses = ['sovereign', 'territory', 'historical']
+
+        country_filter = Q(status__in=allowed_statuses)
 
         if search_query:
             country_filter &= Q(name_common__icontains=search_query)
 
-        valid_data_filter = Q(name_common__isnull=False) & Q(cca3__isnull=False) & Q(flag_png__isnull=False)
-        
-        country_qs = Country.objects.filter(country_filter & valid_data_filter).only(
+        country_qs = Country.objects.filter(country_filter).filter(
+            _country_detail_quality_filter()
+        ).only(
             'name_common', 'cca3', 'flag_png', 'flag_emoji', 'status'
         ).order_by('name_common')
 
@@ -545,21 +549,21 @@ def flag_detail(request, category, slug):
     latitude = flag.latitude
     longitude = flag.longitude
 
-    if flag.country:
-        if area_km2 is None and flag.country.area is not None:
-            area_km2 = float(flag.country.area)
-        if population is None and flag.country.population:
-            population = int(flag.country.population)
-        if latitude is None and flag.country.latitude is not None:
-            latitude = float(flag.country.latitude)
-        if longitude is None and flag.country.longitude is not None:
-            longitude = float(flag.country.longitude)
+    has_area_km2 = area_km2 is not None
+    has_population = population is not None
+    has_coordinates = latitude is not None and longitude is not None
 
     label_en = desc.get('label_en', '') if isinstance(desc.get('label_en', ''), str) else ''
     wiki_label = label_en.strip() or flag.name
     wiki_url = None
     if wiki_label and not (wiki_label.startswith('Q') and wiki_label[1:].isdigit()):
         wiki_url = f"https://en.wikipedia.org/wiki/{quote(wiki_label.replace(' ', '_'))}"
+
+    from django.utils.translation import get_language
+    current_lang = get_language() or 'en'
+
+    # Zkusí vzít text pro aktuální jazyk, pokud není, vezme angličtinu
+    localized_description = desc.get(current_lang) or desc.get('en', '')
     
     context = {
         'flag': flag,
@@ -569,7 +573,11 @@ def flag_detail(request, category, slug):
         'area_km2': area_km2,
         'latitude': latitude,
         'longitude': longitude,
+        'has_area_km2': has_area_km2,
+        'has_population': has_population,
+        'has_coordinates': has_coordinates,
         'wiki_url': wiki_url,
+        'localized_description': localized_description,
     }
     return render(request, 'flag_detail.html', context)
 

@@ -31,7 +31,11 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', DEFAULT_SECRET_KEY)
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'development').lower()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ('1', 'true', 'yes', 'on')
+_debug_env = os.getenv('DJANGO_DEBUG')
+if _debug_env is None:
+    DEBUG = DJANGO_ENV != 'production'
+else:
+    DEBUG = _debug_env.lower() in ('1', 'true', 'yes', 'on')
 
 if DJANGO_ENV == 'production' and SECRET_KEY == DEFAULT_SECRET_KEY:
     raise ImproperlyConfigured('Set DJANGO_SECRET_KEY in production and do not use the default key from source code.')
@@ -49,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.humanize',
     'django.contrib.sitemaps',
     
     # Auth & OAuth
@@ -183,7 +188,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'app' / 'static',

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n humanize %}
 
 {% block title %}{{ country.name_common }} - Country Details{% endblock %}
 
@@ -123,7 +123,7 @@
                 
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-people-fill"></i> {% trans "Population" %}</div>
-                    <div class="detail-value">{{ country.population|floatformat:0 }}</div>
+                    <div class="detail-value">{{ country.population|floatformat:0|intcomma }}</div>
                 </div>
             </div>
             
@@ -131,7 +131,7 @@
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-rulers"></i> {% trans "Area" %}</div>
                     <div class="detail-value">
-                        {% if country.area %}{{ country.area|floatformat:0 }} km²{% else %}N/A{% endif %}
+                        {% if country.area %}{{ country.area|floatformat:0|intcomma }} km²{% else %}N/A{% endif %}
                     </div>
                 </div>
                 
@@ -294,7 +294,7 @@
         </nav>
         <p class="text-center text-muted small">
             Page {{ additional_flags.number }} of {{ additional_flags.paginator.num_pages }}
-            ({{ additional_flags.paginator.count }} flags total)
+            ({{ additional_flags.paginator.count|intcomma }} flags total)
         </p>
         {% endif %}
     </div>

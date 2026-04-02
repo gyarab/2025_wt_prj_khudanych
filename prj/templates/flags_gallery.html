@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n humanize %}
 
 {% block title %}{% trans "Flags Gallery" %} - {% trans "Just Enough Flags" %}{% endblock %}
 
@@ -112,7 +112,7 @@
 <div class="gallery-header">
     <div class="container text-center">
         <h1><i class="bi bi-flag-fill"></i> {% trans "Flags Gallery" %}</h1>
-        <p class="lead mb-0">{% blocktrans with total=total_flags %}{{ total }} flags from around the world{% endblocktrans %}</p>
+        <p class="lead mb-0">{% blocktrans with total=total_flags|intcomma %}{{ total }} flags from around the world{% endblocktrans %}</p>
     </div>
 </div>
 
@@ -131,39 +131,39 @@
     <!-- Category Filter -->
     <div class="category-pills">
         <a href="{% url 'flags_gallery' %}?category=all" class="category-pill {% if selected_category == 'all' %}active{% endif %}">
-            {% trans "All" %} ({{ total_flags }})
+            {% trans "All" %} ({{ total_flags|intcomma }})
         </a>
         <a href="{% url 'flags_gallery' %}?category=country" class="category-pill {% if selected_category == 'country' %}active{% endif %}">
-            🌍 {% trans "Countries" %} ({{ cat_counts.country }})
+            🌍 {% trans "Countries" %} ({{ cat_counts.country|intcomma }})
         </a>
         {% if cat_counts.state %}
         <a href="{% url 'flags_gallery' %}?category=state" class="category-pill {% if selected_category == 'state' %}active{% endif %}">
-            🏛️ {% trans "States" %} ({{ cat_counts.state }})
+            🏛️ {% trans "States" %} ({{ cat_counts.state|intcomma }})
         </a>
         {% endif %}
         {% if cat_counts.city %}
         <a href="{% url 'flags_gallery' %}?category=city" class="category-pill {% if selected_category == 'city' %}active{% endif %}">
-            🏙️ {% trans "Cities" %} ({{ cat_counts.city }})
+            🏙️ {% trans "Cities" %} ({{ cat_counts.city|intcomma }})
         </a>
         {% endif %}
         {% if cat_counts.region %}
         <a href="{% url 'flags_gallery' %}?category=region" class="category-pill {% if selected_category == 'region' %}active{% endif %}">
-            📍 {% trans "Regions" %} ({{ cat_counts.region }})
+            📍 {% trans "Regions" %} ({{ cat_counts.region|intcomma }})
         </a>
         {% endif %}
         {% if cat_counts.territory %}
         <a href="{% url 'flags_gallery' %}?category=territory" class="category-pill {% if selected_category == 'territory' %}active{% endif %}">
-            🏝️ {% trans "Territories" %} ({{ cat_counts.territory }})
+            🏝️ {% trans "Territories" %} ({{ cat_counts.territory|intcomma }})
         </a>
         {% endif %}
         {% if cat_counts.historical %}
         <a href="{% url 'flags_gallery' %}?category=historical" class="category-pill {% if selected_category == 'historical' %}active{% endif %}">
-            📜 {% trans "Historical" %} ({{ cat_counts.historical }})
+            📜 {% trans "Historical" %} ({{ cat_counts.historical|intcomma }})
         </a>
         {% endif %}
         {% if cat_counts.international %}
         <a href="{% url 'flags_gallery' %}?category=international" class="category-pill {% if selected_category == 'international' %}active{% endif %}">
-            🤝 {% trans "International" %} ({{ cat_counts.international }})
+            🤝 {% trans "International" %} ({{ cat_counts.international|intcomma }})
         </a>
         {% endif %}
     </div>
@@ -243,7 +243,7 @@
     </nav>
     <p class="text-center text-muted small">
         {% blocktrans with page=page_obj.number total_pages=page_obj.paginator.num_pages %}Page {{ page }} of {{ total_pages }}{% endblocktrans %}
-        {% blocktrans with total=page_obj.paginator.count %}({{ total }} flags){% endblocktrans %}
+        {% blocktrans with total=page_obj.paginator.count|intcomma %}({{ total }} flags){% endblocktrans %}
     </p>
         </div>
     {% endif %}

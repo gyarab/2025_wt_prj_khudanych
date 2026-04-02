@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n humanize %}
 
 {% block title %}{{ flag.name }} - Flag Details{% endblock %}
 
@@ -92,6 +92,16 @@
                 </div>
             </div>
 
+            {% if localized_description %}
+            <div class="section-card p-3 bg-white mb-4">
+                <h2 class="h5 mb-3">{% trans "Summary" %}</h2>
+                <div class="text-secondary summary-content">
+                    {{ localized_description|safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if has_area_km2 or has_population %}
             <div class="section-card p-3 bg-white mb-4">
                 <h2 class="h5 mb-3">Statistics</h2>
                 <div class="row g-3">
@@ -99,8 +109,8 @@
                         <div class="border rounded p-3 h-100">
                             <p class="text-muted mb-1">Area</p>
                             <p class="h5 mb-0">
-                                {% if area_km2 %}
-                                    {{ area_km2|floatformat:2 }} km²
+                                {% if has_area_km2 %}
+                                    {{ area_km2|floatformat:2|intcomma }} km²
                                 {% else %}
                                     <span class="text-muted fs-6">Not available</span>
                                 {% endif %}
@@ -111,8 +121,8 @@
                         <div class="border rounded p-3 h-100">
                             <p class="text-muted mb-1">Population</p>
                             <p class="h5 mb-0">
-                                {% if population %}
-                                    {{ population }}
+                                {% if has_population %}
+                                    {{ population|intcomma }}
                                 {% else %}
                                     <span class="text-muted fs-6">Not available</span>
                                 {% endif %}
@@ -121,6 +131,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
 
             <div class="section-card p-3 bg-white">
                 <h2 class="h5 mb-3">Location</h2>

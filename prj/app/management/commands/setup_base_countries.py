@@ -4,7 +4,6 @@ Uses local JSON data from mledoze/countries (GitHub) + flagcdn.com for flag URLs
 """
 
 import json
-import os
 from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from app.models import Region, Country, FlagCollection
@@ -21,7 +20,7 @@ REGION_DESCRIPTIONS = {
 
 
 class Command(BaseCommand):
-    help = 'Populate the database with ALL 250 countries from local JSON data'
+    help = 'Setup base countries dataset from local countries.json'
 
     def add_arguments(self, parser):
         parser.add_argument(
