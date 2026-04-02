@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.urls import reverse
 from .models import Country, Region, FlagCollection
 from .forms import ProfileForm
+from itertools import chain
 
 # Import naší bleskové zkompilované Rust knihovny
 import flag_search_core
@@ -318,11 +319,12 @@ def territory_detail(request, cca3):
     return render(request, 'territory_detail.html', context)
 
 
-def _collect_gallery_items(category):
-    """Build gallery items for flags page and API search."""
-    items = []
+def _collect_gallery_querysets(category, search_query=''):
+    country_qs = Country.objects.none()
+    flag_qs = FlagCollection.objects.none()
 
     show_countries = category in ('all', 'country', 'territory', 'historical')
+    
     if show_countries:
         country_filter = Q()
         if category == 'country':
@@ -332,41 +334,28 @@ def _collect_gallery_items(category):
         elif category == 'historical':
             country_filter = Q(status='historical')
 
-        qs = Country.objects.filter(country_filter).only('name_common', 'cca3', 'flag_png', 'flag_emoji', 'status')
-        for c in qs:
-            if c.status == 'territory':
-                if not _is_territory_detail_eligible(c):
-                    continue
-                link = reverse('territory_detail', kwargs={'cca3': c.cca3})
-            else:
-                if not _is_country_detail_eligible(c):
-                    continue
-                link = reverse('country_detail', kwargs={'cca3': c.cca3})
+        if search_query:
+            country_filter &= Q(name_common__icontains=search_query)
 
-            items.append({
-                'name': c.name_common,
-                'img': c.flag_png,
-                'emoji': c.flag_emoji,
-                'link': link,
-                'badge': 'Country' if c.status == 'sovereign' else c.get_status_display(),
-                'item_category': 'country' if c.status == 'sovereign' else c.status,
-            })
+        valid_data_filter = Q(name_common__isnull=False) & Q(cca3__isnull=False) & Q(flag_png__isnull=False)
+        
+        country_qs = Country.objects.filter(country_filter & valid_data_filter).only(
+            'name_common', 'cca3', 'flag_png', 'flag_emoji', 'status'
+        ).order_by('name_common')
 
     if category != 'country':
-        # Added is_public=True filter here!
-        qs = FlagCollection.objects.filter(is_public=True).only('name', 'flag_image', 'category', 'slug')
+        fc_filter = Q(is_public=True)
         if category != 'all':
-            qs = qs.filter(category=category)
-        for f in qs:
-            items.append({
-                'name': f.name,
-                'img': f.flag_image,
-                'badge': f.get_category_display(),
-                'link': reverse('flag_detail', kwargs={'category': f.category, 'slug': f.slug}),
-                'item_category': f.category,
-            })
+            fc_filter &= Q(category=category)
+        
+        if search_query:
+            fc_filter &= Q(name__icontains=search_query)
 
-    return items
+        flag_qs = FlagCollection.objects.filter(fc_filter).only(
+            'name', 'flag_image', 'category', 'slug'
+        ).order_by('name')
+
+    return country_qs, flag_qs
 
 
 def flag_detail(request, category, slug):
@@ -430,41 +419,103 @@ def flag_detail(request, category, slug):
 
 
 def flags_gallery(request):
-    """Gallery view with pagination, search, and category filter"""
     category = request.GET.get('category', 'all')
+    search_query = request.GET.get('search') or request.GET.get('q') or ''
+    search_query = search_query.strip()
 
-    # Added is_public=True to counts so category pills show correct numbers
+    # Získáme QuerySety 
+    country_qs, flag_qs = _collect_gallery_querysets(category, search_query)
+
+    # Stáhneme validní státy 
+    country_items = []
+    for c in country_qs:
+        link = reverse('country_detail', kwargs={'cca3': c.cca3}) if c.status != 'territory' else reverse('territory_detail', kwargs={'cca3': c.cca3})
+        country_items.append({
+            'name': c.name_common,
+            'img': c.flag_png,
+            'emoji': c.flag_emoji,
+            'link': link,
+            'badge': 'Country' if c.status == 'sovereign' else c.get_status_display(),
+            'item_category': 'country' if c.status == 'sovereign' else c.status,
+        })
+
+    #Připravíme paginator pro tisíce zbytků v DB
+    page_number = int(request.GET.get('page', 1))
+    per_page = GALLERY_PER_PAGE
+    
+    # Výpočet: kolik států už jsme zobrazili vs. kolik vlajek z DB potřebujeme
+    
+    total_countries_count = len(country_items)
+    
+    start_index = (page_number - 1) * per_page
+    end_index = start_index + per_page
+
+    items_to_display = []
+
+    if start_index < total_countries_count:
+        # Jsme na stránce, kde se ještě zobrazují státy
+        items_to_display.extend(country_items[start_index:end_index])
+        
+        remaining_slots = per_page - len(items_to_display)
+        if remaining_slots > 0:
+            # Vytáhneme prvních pár vlajek z databáze (SQL: LIMIT remaining_slots OFFSET 0)
+            db_flags = flag_qs[:remaining_slots]
+            for f in db_flags:
+                items_to_display.append({
+                    'name': f.name, 'img': f.flag_image, 'badge': f.get_category_display(),
+                    'link': reverse('flag_detail', kwargs={'category': f.category, 'slug': f.slug}),
+                    'item_category': f.category,
+                })
+    else:
+        # Jsme na stránkách, kde už jsou jen vlajky (státy už skončily)
+        db_offset = start_index - total_countries_count
+        # SQL: LIMIT per_page OFFSET db_offset
+        db_flags = flag_qs[db_offset : db_offset + per_page]
+        for f in db_flags:
+            items_to_display.append({
+                'name': f.name, 'img': f.flag_image, 'badge': f.get_category_display(),
+                'link': reverse('flag_detail', kwargs={'category': f.category, 'slug': f.slug}),
+                'item_category': f.category,
+            })
+
+    # Manuální vytvoření Paginator objektu pro šablonu
+    total_flags_count = flag_qs.count() # SQL COUNT() dotaz - super rychlý
+    total_combined_items = total_countries_count + total_flags_count
+    
+    # Šabloně musíme předat "falešný" seznam s None, aby si Paginator myslel, že má vše, ale reálně nemá.
+    # Nebo jednodušeji vytvoříme paginátor s vlastním počtem:
+    class DummyPaginator(Paginator):
+        def __init__(self, count, per_page):
+            self._count = count
+            super().__init__([], per_page)
+        @property
+        def count(self):
+            return self._count
+            
+    paginator = DummyPaginator(total_combined_items, per_page)
+    page_obj = paginator.get_page(page_number)
+    page_obj.object_list = items_to_display # Narveme tam jen těch 50 našich položek
+
+    # --- Počítadla pro hlavičku a pilulky (Tyto zůstávají stejné) ---
     fc_counts = dict(FlagCollection.objects.filter(is_public=True).values_list('category').annotate(n=Count('id')))
-
-    eligible_country_count = sum(1 for c in Country.objects.filter(status='sovereign') if _is_country_detail_eligible(c))
-    eligible_territory_count = sum(1 for c in Country.objects.filter(status='territory') if _is_territory_detail_eligible(c))
-    eligible_historical_count = sum(1 for c in Country.objects.filter(status='historical') if _is_country_detail_eligible(c))
-
-    pill_country_count = eligible_country_count
-    pill_territory_count = eligible_territory_count + fc_counts.get('territory', 0)
-    pill_historical_count = eligible_historical_count + fc_counts.get('historical', 0)
-    total_flags = pill_country_count + pill_territory_count + pill_historical_count + fc_counts.get('state', 0) + fc_counts.get('city', 0) + fc_counts.get('region', 0) + fc_counts.get('international', 0)
+    # Zjednodušené sčítání pro zrychlení
+    pill_country_count = Country.objects.filter(status='sovereign').count() 
+    pill_territory_count = Country.objects.filter(status='territory').count() + fc_counts.get('territory', 0)
+    pill_historical_count = Country.objects.filter(status='historical').count() + fc_counts.get('historical', 0)
+    total_flags_header = pill_country_count + pill_territory_count + pill_historical_count + fc_counts.get('state', 0) + fc_counts.get('city', 0) + fc_counts.get('region', 0) + fc_counts.get('international', 0)
 
     cat_counts = {
-        'state': fc_counts.get('state', 0),
-        'city': fc_counts.get('city', 0),
-        'region': fc_counts.get('region', 0),
-        'international': fc_counts.get('international', 0),
-        'territory': pill_territory_count,
-        'historical': pill_historical_count,
-        'country': pill_country_count,
+        'state': fc_counts.get('state', 0), 'city': fc_counts.get('city', 0),
+        'region': fc_counts.get('region', 0), 'international': fc_counts.get('international', 0),
+        'territory': pill_territory_count, 'historical': pill_historical_count, 'country': pill_country_count,
     }
 
-    items = _collect_gallery_items(category)
-
-    page, search_query = _normalize_and_paginate(items, request)
-
     context = {
-        'page_obj': page,
+        'page_obj': page_obj,
         'selected_category': category,
         'search_query': search_query,
         'cat_counts': cat_counts,
-        'total_flags': total_flags,
+        'total_flags': total_flags_header,
     }
     return render(request, 'flags_gallery.html', context)
 

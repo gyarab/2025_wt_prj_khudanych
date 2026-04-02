@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,10 +26,15 @@ load_dotenv(BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-yh4c&01(-v(vw7pr*8y@k@79*lsjbx$mreccjh+x#w1n3^e^rb'
+DEFAULT_SECRET_KEY = 'django-insecure-yh4c&01(-v(vw7pr*8y@k@79*lsjbx$mreccjh+x#w1n3^e^rb'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', DEFAULT_SECRET_KEY)
+DJANGO_ENV = os.getenv('DJANGO_ENV', 'development').lower()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ('1', 'true', 'yes', 'on')
+
+if DJANGO_ENV == 'production' and SECRET_KEY == DEFAULT_SECRET_KEY:
+    raise ImproperlyConfigured('Set DJANGO_SECRET_KEY in production and do not use the default key from source code.')
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://jef.world-quiz.com']
