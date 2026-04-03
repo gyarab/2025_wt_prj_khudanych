@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n humanize %}
 
-{% block title %}{{ country.name_common }} - Country Details{% endblock %}
+{% block title %}{{ country.name_common }} - {% trans "Country Details" %}{% endblock %}
 
 {% block head %}
 <style>
@@ -176,29 +176,29 @@
 
     <!-- Political Information -->
     <div class="detail-card">
-        <h2 class="section-heading"><i class="bi bi-globe"></i> Political Information</h2>
+        <h2 class="section-heading"><i class="bi bi-globe"></i> {% trans "Political Information" %}</h2>
         
         <div class="row">
             <div class="col-md-6">
                 <div class="detail-row">
-                    <div class="detail-label">Independent</div>
+                    <div class="detail-label">{% trans "Independent" %}</div>
                     <div class="detail-value">
                         {% if country.independent %}
-                            <span class="badge bg-success">Yes</span>
+                            <span class="badge bg-success">{% trans "Yes" %}</span>
                         {% else %}
-                            <span class="badge bg-secondary">No</span>
+                            <span class="badge bg-secondary">{% trans "No" %}</span>
                         {% endif %}
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="detail-row">
-                    <div class="detail-label">UN Member</div>
+                    <div class="detail-label">{% trans "UN Member" %}</div>
                     <div class="detail-value">
                         {% if country.un_member %}
-                            <span class="badge bg-primary">Yes</span>
+                            <span class="badge bg-primary">{% trans "Yes" %}</span>
                         {% else %}
-                            <span class="badge bg-secondary">No</span>
+                            <span class="badge bg-secondary">{% trans "No" %}</span>
                         {% endif %}
                     </div>
                 </div>
@@ -295,8 +295,7 @@
             </ul>
         </nav>
         <p class="text-center text-muted small">
-            Page {{ additional_flags.number }} of {{ additional_flags.paginator.num_pages }}
-            ({{ additional_flags.paginator.count|intcomma }} flags total)
+            {% blocktrans with page=additional_flags.number total_pages=additional_flags.paginator.num_pages total_flags=additional_flags.paginator.count|intcomma %}Page {{ page }} of {{ total_pages }} ({{ total_flags }} flags total){% endblocktrans %}
         </p>
         {% endif %}
     </div>
@@ -337,7 +336,7 @@
     <!-- Back Button -->
     <div class="text-center mt-4">
         <a href="{% url 'countries' %}" class="btn btn-gradient btn-lg">
-            <i class="bi bi-arrow-left"></i> Back to Countries
+            <i class="bi bi-arrow-left"></i> {% trans "Back to Countries" %}
         </a>
     </div>
 </div>

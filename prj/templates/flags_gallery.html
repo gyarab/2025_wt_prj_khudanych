@@ -117,7 +117,6 @@
 </div>
 
 <div class="container mb-5">
-    <!-- Search -->
     <div class="search-box">
         <form method="get" action="{% url 'flags_gallery' %}" id="flags-search-form">
             <input type="hidden" name="category" value="{{ selected_category }}">
@@ -128,7 +127,6 @@
         </form>
     </div>
 
-    <!-- Category Filter -->
     <div class="category-pills">
         <a href="{% url 'flags_gallery' %}?category=all" class="category-pill {% if selected_category == 'all' %}active{% endif %}">
             {% trans "All" %} ({{ total_flags|intcomma }})
@@ -168,7 +166,6 @@
         {% endif %}
     </div>
 
-    <!-- Flags Grid -->
     <div class="row g-3" id="flags-grid">
         {% for item in page_obj %}
            <div class="col-6 col-sm-4 col-md-3 col-lg-2 flag-card-col"
@@ -179,7 +176,7 @@
             <div class="flag-item h-100 d-flex flex-column">
                 <div class="flag-img-wrap">
                     {% if item.img %}
-                        <img src="{{ item.img }}" alt="{{ item.name }}" class="flag-display" loading="lazy" decoding="async">
+                        <img src="{{ item.img }}" alt="{{ item.localized_name|default:item.name }}" class="flag-display" loading="lazy" decoding="async">
                     {% elif item.emoji %}
                         <span class="flag-emoji-display">{{ item.emoji }}</span>
                     {% else %}
@@ -187,7 +184,7 @@
                     {% endif %}
                 </div>
                 <div class="flag-body mt-auto">
-                    <div class="flag-caption" title="{{ item.name }}">{{ item.name }}</div>
+                    <div class="flag-caption" title="{{ item.localized_name|default:item.name }}">{{ item.localized_name|default:item.name }}</div>
                     {% if item.link %}
                     <div class="d-grid mt-2">
                         <a class="btn btn-sm btn-outline-primary" href="{{ item.link }}">{% trans "View Details" %}</a>
@@ -211,7 +208,6 @@
         </div>
     </div>
 
-    <!-- Pagination -->
     {% if page_obj.has_other_pages %}
     <div id="flags-pagination-block">
     <nav class="mt-4" aria-label="Gallery pagination">
@@ -293,7 +289,7 @@
             }
 
             grid.innerHTML = items.map(function (item) {
-                const name = escapeHtml(item.name);
+                const name = escapeHtml(item.localized_name || item.name);
                 const img = item.img ? escapeHtml(item.img) : '';
                 const emoji = escapeHtml(item.emoji || '🏁');
                 const link = item.link ? escapeHtml(item.link) : '';

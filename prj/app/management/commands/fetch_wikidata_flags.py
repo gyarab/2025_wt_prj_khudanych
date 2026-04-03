@@ -130,7 +130,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--limit-per-category",
             type=int,
-            default=500,
+            default=30000,
             help="Max SPARQL rows fetched per category",
         )
         parser.add_argument(

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n humanize %}
 
-{% block title %}{{ flag.localized_name }} - Flag Details{% endblock %}
+{% block title %}{{ flag.localized_name }} - {% trans "Flag Details" %}{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -95,7 +95,7 @@
 <div class="container py-4">
     <div class="passport-header mb-4">
         <h1 class="h3 mb-1">{{ flag.localized_name }}</h1>
-        <p class="mb-0">Digital Passport</p>
+        <p class="mb-0">{% trans "Digital Passport" %}</p>
     </div>
 
     <div class="flag-nav-top mb-4">
@@ -137,7 +137,7 @@
     <div class="row g-4">
         <div class="col-lg-5">
             <div class="section-card p-3 bg-white">
-                <h2 class="h5 mb-3">Flag</h2>
+                <h2 class="h5 mb-3">{% trans "Flag" %}</h2>
                 <div class="text-center p-3 bg-light rounded">
                     <img id="flag-detail-image"
                         src="{% if flag.image_file %}{{ flag.image_file.url }}{% else %}{{ flag.flag_image }}{% endif %}"
@@ -147,18 +147,18 @@
                          class="img-fluid" style="max-height: 340px; object-fit: contain;" alt="{{ flag.localized_name }}">
                 </div>
                 <div class="mt-4">
-                    <h3 class="h6 text-uppercase text-muted mb-1">Name</h3>
+                    <h3 class="h6 text-uppercase text-muted mb-1">{% trans "Name" %}</h3>
                     <p class="h5 mb-3 fw-semibold">{{ flag.localized_name }}</p>
                     
                     <div class="d-flex flex-wrap gap-2">
                         {% if wiki_url %}
                             <a href="{{ wiki_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-wikipedia"></i> Wikipedia
+                                <i class="bi bi-wikipedia"></i> {% trans "Wikipedia" %}
                             </a>
                         {% endif %}
                         {% if flag.wikidata_id %}
                             <a href="https://www.wikidata.org/wiki/{{ flag.wikidata_id }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-database"></i> Wikidata
+                                <i class="bi bi-database"></i> {% trans "Wikidata" %}
                             </a>
                         {% endif %}
                     </div>
@@ -168,16 +168,16 @@
 
         <div class="col-lg-7">
             <div class="section-card p-3 bg-white mb-4">
-                <h2 class="h5 mb-3">Nomenclature and Geography</h2>
-                <p class="mb-2"><strong>Category:</strong> {{ flag.get_category_display }}</p>
+                <h2 class="h5 mb-3">{% trans "Nomenclature and Geography" %}</h2>
+                <p class="mb-2"><strong>{% trans "Category" %}:</strong> {{ flag.get_category_display }}</p>
                 <div class="mb-2">
-                    <strong>Wikidata Types:</strong>
+                    <strong>{% trans "Wikidata Types" %}:</strong>
                     {% if wikidata_type_list %}
                         {% for type in wikidata_type_list %}
                             <span class="badge text-bg-light border me-1">{{ type }}</span>
                         {% endfor %}
                     {% else %}
-                        <span class="text-muted">No type data available.</span>
+                        <span class="text-muted">{% trans "No type data available." %}</span>
                     {% endif %}
                 </div>
             </div>
@@ -193,28 +193,28 @@
 
             {% if has_area_km2 or has_population %}
             <div class="section-card p-3 bg-white mb-4">
-                <h2 class="h5 mb-3">Statistics</h2>
+                <h2 class="h5 mb-3">{% trans "Statistics" %}</h2>
                 <div class="row g-3">
                     <div class="col-sm-6">
                         <div class="border rounded p-3 h-100">
-                            <p class="text-muted mb-1">Area</p>
+                            <p class="text-muted mb-1">{% trans "Area" %}</p>
                             <p class="h5 mb-0">
                                 {% if has_area_km2 %}
                                     {{ area_km2|floatformat:2|intcomma }} km²
                                 {% else %}
-                                    <span class="text-muted fs-6">Not available</span>
+                                    <span class="text-muted fs-6">{% trans "Not available" %}</span>
                                 {% endif %}
                             </p>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="border rounded p-3 h-100">
-                            <p class="text-muted mb-1">Population</p>
+                            <p class="text-muted mb-1">{% trans "Population" %}</p>
                             <p class="h5 mb-0">
                                 {% if has_population %}
                                     {{ population|intcomma }}
                                 {% else %}
-                                    <span class="text-muted fs-6">Not available</span>
+                                    <span class="text-muted fs-6">{% trans "Not available" %}</span>
                                 {% endif %}
                             </p>
                         </div>
@@ -224,10 +224,10 @@
             {% endif %}
 
             <div class="section-card p-3 bg-white">
-                <h2 class="h5 mb-3">Location</h2>
+                <h2 class="h5 mb-3">{% trans "Location" %}</h2>
                 {% if latitude and longitude %}
                     <button id="load-map-btn" class="btn btn-sm btn-outline-primary mb-3" type="button">
-                        Load Interactive Map
+                        {% trans "Load Interactive Map" %}
                     </button>
                     <div id="flag-map"
                          class="d-none"
@@ -235,7 +235,7 @@
                          data-lon="{{ longitude|stringformat:'.6f' }}"
                          data-name="{{ flag.localized_name }}"></div>
                 {% else %}
-                    <div class="alert alert-secondary mb-0">No coordinate data available yet.</div>
+                    <div class="alert alert-secondary mb-0">{% trans "No coordinate data available yet." %}</div>
                 {% endif %}
             </div>
         </div>

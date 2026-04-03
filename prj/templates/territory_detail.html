@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n humanize %}
 
-{% block title %}{{ territory.name_common }} - Territory Details{% endblock %}
+{% block title %}{{ territory.name_common }} - {% trans "Territory Details" %}{% endblock %}
 
 {% block head %}
 <style>
@@ -59,43 +59,43 @@
     </div>
 
     <div class="detail-card">
-        <h2 class="section-heading">Territory and Sovereignty</h2>
+        <h2 class="section-heading">{% trans "Territory and Sovereignty" %}</h2>
         <div class="row g-3">
             <div class="col-md-6">
-                <p class="mb-1"><strong>Status:</strong> {{ territory.get_status_display }}</p>
-                <p class="mb-1"><strong>Independent:</strong> {% if territory.independent %}Yes{% else %}No{% endif %}</p>
-                <p class="mb-0"><strong>UN Member:</strong> {% if territory.un_member %}Yes{% else %}No{% endif %}</p>
+                <p class="mb-1"><strong>{% trans "Status" %}:</strong> {{ territory.get_status_display }}</p>
+                <p class="mb-1"><strong>{% trans "Independent" %}:</strong> {% if territory.independent %}Yes{% else %}No{% endif %}</p>
+                <p class="mb-0"><strong>{% trans "UN Member" %}:</strong> {% if territory.un_member %}Yes{% else %}No{% endif %}</p>
             </div>
             <div class="col-md-6">
-                <p class="mb-1"><strong>Owner Country:</strong>
+                <p class="mb-1"><strong>{% trans "Owner Country" %}:</strong>
                     {% if owner_country %}
                         <a href="{% url 'country_detail' owner_country.cca3 %}">{{ owner_country.name_common }}</a>
                     {% else %}
                         Not available
                     {% endif %}
                 </p>
-                <p class="mb-0"><strong>Region:</strong> {% if territory.region %}{{ territory.region.name }}{% else %}Not available{% endif %}</p>
+                <p class="mb-0"><strong>{% trans "Region" %}:</strong> {% if territory.region %}{{ territory.region.name }}{% else %}Not available{% endif %}</p>
             </div>
         </div>
     </div>
 
     <div class="detail-card">
-        <h2 class="section-heading">Basic Information</h2>
+        <h2 class="section-heading">{% trans "Basic Information" %}</h2>
         <div class="row g-3">
             <div class="col-md-6">
-                <p class="mb-1"><strong>Capital:</strong> {{ territory.capital|default:'Not available' }}</p>
-                <p class="mb-0"><strong>Population:</strong> {{ territory.population|floatformat:0|intcomma }}</p>
+                <p class="mb-1"><strong>{% trans "Capital" %}:</strong> {{ territory.capital|default:'Not available' }}</p>
+                <p class="mb-0"><strong>{% trans "Population" %}:</strong> {{ territory.population|floatformat:0|intcomma }}</p>
             </div>
             <div class="col-md-6">
-                <p class="mb-1"><strong>Area:</strong> {% if territory.area %}{{ territory.area|floatformat:0|intcomma }} km²{% else %}Not available{% endif %}</p>
-                <p class="mb-0"><strong>Subregion:</strong> {{ territory.subregion|default:'Not available' }}</p>
+                <p class="mb-1"><strong>{% trans "Area" %}:</strong> {% if territory.area %}{{ territory.area|floatformat:0|intcomma }} km²{% else %}Not available{% endif %}</p>
+                <p class="mb-0"><strong>{% trans "Subregion" %}:</strong> {{ territory.subregion|default:'Not available' }}</p>
             </div>
         </div>
     </div>
 
     {% if additional_flags %}
     <div class="detail-card" id="flags">
-        <h2 class="section-heading">Additional Territory Flags</h2>
+        <h2 class="section-heading">{% trans "Additional Territory Flags" %}</h2>
         <div class="row g-3">
             {% for flag in additional_flags %}
             <div class="col-6 col-sm-4 col-md-3">
@@ -113,7 +113,7 @@
                         </div>
                         <div style="font-size: 0.7rem; color: #718096; margin-bottom: 8px;">{{ flag.get_category_display }}</div>
                         <div class="d-grid">
-                            <a href="{% url 'flag_detail' flag.category flag.slug %}?src=territory:{{ territory.cca3 }}&page={{ additional_flags.number }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                            <a href="{% url 'flag_detail' flag.category flag.slug %}?src=territory:{{ territory.cca3 }}&page={{ additional_flags.number }}" class="btn btn-sm btn-outline-primary">{% trans "View Details" %}</a>
                         </div>
                     </div>
                 </div>
