@@ -1,4 +1,4 @@
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
@@ -171,6 +171,130 @@ def _build_country_search_filter(search_query, *field_names):
     return search_filter
 
 
+def _build_flag_name_search_filter(search_query):
+    """Accent-insensitive DB filter for flag names."""
+    if not search_query:
+        return Q()
+
+    search_filter = Q(name__icontains=search_query)
+    stripped_query = _strip_accents(search_query)
+    if stripped_query and stripped_query != search_query:
+        search_filter |= Q(name__icontains=stripped_query)
+    return search_filter
+
+
+def _with_query_params(url, params):
+    """Append query params to URL while skipping empty values."""
+    clean_params = {k: v for k, v in params.items() if v not in (None, '')}
+    if not clean_params:
+        return url
+    return f"{url}?{urlencode(clean_params)}"
+
+
+def _build_flag_detail_link(flag, source='', search_query='', page=None, gallery_category=''):
+    """Create detail URL with optional source context used for prev/next navigation."""
+    base_url = reverse('flag_detail', kwargs={'category': flag.category, 'slug': flag.slug})
+    return _with_query_params(base_url, {
+        'src': source,
+        'q': search_query,
+        'page': page,
+        'gallery_category': gallery_category,
+    })
+
+
+def _build_flag_navigation_context(flag, request):
+    """Build contextual previous/next links for flag detail pages."""
+    src = (request.GET.get('src') or '').strip()
+    search_query = (request.GET.get('q') or '').strip()
+    page = (request.GET.get('page') or '').strip()
+    page = page if page.isdigit() else ''
+    gallery_category = (request.GET.get('gallery_category') or '').strip()
+
+    qs = FlagCollection.objects.filter(is_public=True)
+
+    if src.startswith('country:'):
+        cca3 = src.split(':', 1)[1].upper().strip()
+        qs = qs.filter(country__cca3=cca3)
+    elif src.startswith('territory:'):
+        cca3 = src.split(':', 1)[1].upper().strip()
+        qs = qs.filter(country__cca3=cca3)
+    elif src == 'historical':
+        qs = qs.filter(category='historical')
+        if search_query:
+            qs = qs.filter(_build_flag_name_search_filter(search_query))
+    elif src == 'gallery':
+        if gallery_category and gallery_category != 'all':
+            qs = qs.filter(category=gallery_category)
+        if search_query:
+            qs = qs.filter(_build_flag_name_search_filter(search_query))
+    else:
+        qs = qs.filter(category=flag.category)
+
+    qs = qs.order_by('name', 'id')
+
+    prev_flag = qs.filter(
+        Q(name__lt=flag.name) |
+        (Q(name=flag.name) & Q(id__lt=flag.id))
+    ).order_by('-name', '-id').first()
+
+    next_flag = qs.filter(
+        Q(name__gt=flag.name) |
+        (Q(name=flag.name) & Q(id__gt=flag.id))
+    ).order_by('name', 'id').first()
+
+    nav_params = {
+        'src': src,
+        'q': search_query,
+        'page': page,
+        'gallery_category': gallery_category,
+    }
+
+    prev_flag_url = _with_query_params(
+        reverse('flag_detail', kwargs={'category': prev_flag.category, 'slug': prev_flag.slug}),
+        nav_params,
+    ) if prev_flag else None
+
+    next_flag_url = _with_query_params(
+        reverse('flag_detail', kwargs={'category': next_flag.category, 'slug': next_flag.slug}),
+        nav_params,
+    ) if next_flag else None
+
+    back_url = None
+    if src == 'gallery':
+        back_url = _with_query_params(reverse('flags_gallery'), {
+            'category': gallery_category or 'all',
+            'q': search_query,
+            'page': page,
+        })
+    elif src == 'historical':
+        back_url = _with_query_params(reverse('historical'), {
+            'q': search_query,
+            'page': page,
+        })
+    elif src.startswith('country:'):
+        cca3 = src.split(':', 1)[1].upper().strip()
+        back_url = reverse('country_detail', kwargs={'cca3': cca3})
+        if page:
+            back_url = f"{back_url}?page={page}#flags"
+        else:
+            back_url = f"{back_url}#flags"
+    elif src.startswith('territory:'):
+        cca3 = src.split(':', 1)[1].upper().strip()
+        back_url = reverse('territory_detail', kwargs={'cca3': cca3})
+        if page:
+            back_url = f"{back_url}?page={page}#flags"
+        else:
+            back_url = f"{back_url}#flags"
+
+    return {
+        'prev_flag': prev_flag,
+        'next_flag': next_flag,
+        'prev_flag_url': prev_flag_url,
+        'next_flag_url': next_flag_url,
+        'back_url': back_url,
+    }
+
+
 def _normalize_and_paginate(items_list, request, per_page=GALLERY_PER_PAGE):
     """Shared helper for search, normalization and pagination across views."""
     search_query = request.GET.get('search') or request.GET.get('q') or ''
@@ -322,6 +446,13 @@ def territories_list(request):
                     'name': f.name,
                     'img': f.flag_image,
                     'type': _('Territory / Dependency'),
+                    'link': _build_flag_detail_link(
+                        f,
+                        source='gallery',
+                        search_query=search_query,
+                        page=page_number,
+                        gallery_category='territory',
+                    ),
                 })
     else:
         db_offset = start_index - total_territories_count
@@ -330,6 +461,13 @@ def territories_list(request):
                 'name': f.name,
                 'img': f.flag_image,
                 'type': _('Territory / Dependency'),
+                'link': _build_flag_detail_link(
+                    f,
+                    source='gallery',
+                    search_query=search_query,
+                    page=page_number,
+                    gallery_category='territory',
+                ),
             })
 
     paginator = CountOnlyPaginator(total_combined, per_page)
@@ -399,6 +537,12 @@ def historical_list(request):
                     'name': f.name,
                     'img': f.flag_image,
                     'type': _('Historical Flag'),
+                    'link': _build_flag_detail_link(
+                        f,
+                        source='historical',
+                        search_query=search_query,
+                        page=page_number,
+                    ),
                 })
     else:
         db_offset = start_index - total_countries_count
@@ -407,6 +551,12 @@ def historical_list(request):
                 'name': f.name,
                 'img': f.flag_image,
                 'type': _('Historical Flag'),
+                'link': _build_flag_detail_link(
+                    f,
+                    source='historical',
+                    search_query=search_query,
+                    page=page_number,
+                ),
             })
 
     paginator = CountOnlyPaginator(total_combined, per_page)
@@ -564,6 +714,7 @@ def flag_detail(request, category, slug):
 
     # Zkusí vzít text pro aktuální jazyk, pokud není, vezme angličtinu
     localized_description = desc.get(current_lang) or desc.get('en', '')
+    navigation_context = _build_flag_navigation_context(flag, request)
     
     context = {
         'flag': flag,
@@ -578,6 +729,7 @@ def flag_detail(request, category, slug):
         'has_coordinates': has_coordinates,
         'wiki_url': wiki_url,
         'localized_description': localized_description,
+        **navigation_context,
     }
     return render(request, 'flag_detail.html', context)
 
@@ -627,7 +779,13 @@ def flags_gallery(request):
             for f in db_flags:
                 items_to_display.append({
                     'name': f.name, 'img': f.flag_image, 'badge': f.get_category_display(),
-                    'link': reverse('flag_detail', kwargs={'category': f.category, 'slug': f.slug}),
+                    'link': _build_flag_detail_link(
+                        f,
+                        source='gallery',
+                        search_query=search_query,
+                        page=page_number,
+                        gallery_category=category,
+                    ),
                     'item_category': f.category,
                 })
     else:
@@ -638,7 +796,13 @@ def flags_gallery(request):
         for f in db_flags:
             items_to_display.append({
                 'name': f.name, 'img': f.flag_image, 'badge': f.get_category_display(),
-                'link': reverse('flag_detail', kwargs={'category': f.category, 'slug': f.slug}),
+                'link': _build_flag_detail_link(
+                    f,
+                    source='gallery',
+                    search_query=search_query,
+                    page=page_number,
+                    gallery_category=category,
+                ),
                 'item_category': f.category,
             })
 
@@ -743,7 +907,12 @@ def flags_search_api(request):
             items.append({
                 'name': f.name,
                 'img': f.flag_image,
-                'link': reverse('flag_detail', kwargs={'category': f.category, 'slug': f.slug}),
+                'link': _build_flag_detail_link(
+                    f,
+                    source='gallery',
+                    search_query=search_query,
+                    gallery_category=category,
+                ),
             })
             if len(items) >= max_items:
                 break
@@ -838,6 +1007,12 @@ def territories_search_api(request):
             items.append({
                 'name': f.name,
                 'img': f.flag_image,
+                'link': _build_flag_detail_link(
+                    f,
+                    source='gallery',
+                    search_query=search_query,
+                    gallery_category='territory',
+                ),
             })
 
     total = len(items)
@@ -888,6 +1063,11 @@ def historical_search_api(request):
                 'name': f.name,
                 'img': f.flag_image,
                 'type': _('Historical Flag'),
+                'link': _build_flag_detail_link(
+                    f,
+                    source='historical',
+                    search_query=search_query,
+                ),
             })
 
     total = len(items)

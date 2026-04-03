@@ -154,6 +154,8 @@
         {% for item in page_obj %}
         <div class="col-6 col-sm-4 col-md-3 col-lg-2 historical-card-col">
             <div class="flag-item"
+                  data-flag-detail-link="{{ item.link|default:'' }}"
+                  data-flag-image-src="{{ item.img|default:'' }}"
                  onclick="openFlag('{{ item.img|escapejs }}', '{{ item.name|escapejs }}', '{{ item.type|escapejs }}', '{{ item.link|escapejs }}')"
                  role="button" tabindex="0"
                  onkeydown="if(event.key==='Enter')this.click()">
@@ -257,6 +259,11 @@
     if (link) {
       linkEl.href = link;
       linkWrap.style.display = '';
+            if (window.FlagImageCache && typeof window.FlagImageCache.prime === 'function') {
+                    window.FlagImageCache.prime(link, img).catch(function () {
+                            // Keep modal behavior even when cache prime fails.
+                    });
+            }
     } else {
       linkWrap.style.display = 'none';
     }
@@ -316,6 +323,8 @@
                 return `
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2 historical-card-col">
                         <div class="flag-item"
+                                 data-flag-detail-link="${link}"
+                                 data-flag-image-src="${img}"
                                  onclick="openFlag('${img}', '${name}', '${type}', '${link}')"
                                  role="button" tabindex="0"
                                  onkeydown="if(event.key==='Enter')this.click()">
@@ -332,6 +341,10 @@
                     </div>
                 `;
             }).join('');
+
+            if (window.FlagImageCache && typeof window.FlagImageCache.scan === 'function') {
+                window.FlagImageCache.scan(grid);
+            }
         }
 
         function restoreInitialPage() {

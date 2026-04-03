@@ -171,7 +171,11 @@
     <!-- Flags Grid -->
     <div class="row g-3" id="flags-grid">
         {% for item in page_obj %}
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2 flag-card-col" data-name="{{ item.name|lower }}" data-category="{{ item.item_category|default:'' }}">
+           <div class="col-6 col-sm-4 col-md-3 col-lg-2 flag-card-col"
+               data-name="{{ item.name|lower }}"
+               data-category="{{ item.item_category|default:'' }}"
+               data-flag-detail-link="{{ item.link|default:'' }}"
+               data-flag-image-src="{{ item.img|default:'' }}">
             <div class="flag-item h-100 d-flex flex-column">
                 <div class="flag-img-wrap">
                     {% if item.img %}
@@ -295,7 +299,9 @@
                 const link = item.link ? escapeHtml(item.link) : '';
 
                 return `
-                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 flag-card-col">
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 flag-card-col"
+                         data-flag-detail-link="${link}"
+                         data-flag-image-src="${img}">
                         <div class="flag-item h-100 d-flex flex-column">
                             <div class="flag-img-wrap">
                                 ${img
@@ -310,6 +316,10 @@
                     </div>
                 `;
             }).join('');
+
+            if (window.FlagImageCache && typeof window.FlagImageCache.scan === 'function') {
+                window.FlagImageCache.scan(grid);
+            }
         }
 
         function restoreInitialPage() {

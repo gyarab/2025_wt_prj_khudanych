@@ -19,6 +19,54 @@
         box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
     }
 
+    .flag-nav-top {
+        display: flex;
+        justify-content: center;
+    }
+
+    .flag-nav-inline {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .flag-nav-inline .btn {
+        width: 100%;
+    }
+
+    .flag-side-nav {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1040;
+        display: none;
+    }
+
+    .flag-side-prev {
+        left: 1.25rem;
+    }
+
+    .flag-side-next {
+        right: 1.25rem;
+    }
+
+    .flag-side-nav .btn {
+        min-width: 128px;
+        border-radius: 999px;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.18);
+    }
+
+    @media (min-width: 1400px) {
+        .flag-side-nav {
+            display: block;
+        }
+
+        .flag-nav-inline {
+            display: none;
+        }
+    }
+
     #flag-map {
         height: 340px;
         border-radius: 0.75rem;
@@ -35,6 +83,10 @@
         #flag-map {
             height: 220px;
         }
+
+        .flag-nav-top .btn {
+            width: 100%;
+        }
     }
 </style>
 {% endblock %}
@@ -46,13 +98,51 @@
         <p class="mb-0">Digital Passport</p>
     </div>
 
+    <div class="flag-nav-top mb-4">
+        {% if back_url %}
+            <a class="btn btn-outline-dark" href="{{ back_url }}">{% trans "Back to Section" %}</a>
+        {% endif %}
+    </div>
+
+    <div class="flag-nav-inline">
+        {% if prev_flag_url %}
+            <a class="btn btn-outline-primary" href="{{ prev_flag_url }}" aria-label="Previous flag">&larr; {% trans "Previous" %}</a>
+        {% else %}
+            <button class="btn btn-outline-secondary" type="button" disabled>&larr; {% trans "Previous" %}</button>
+        {% endif %}
+
+        {% if next_flag_url %}
+            <a class="btn btn-outline-primary" href="{{ next_flag_url }}" aria-label="Next flag">{% trans "Next" %} &rarr;</a>
+        {% else %}
+            <button class="btn btn-outline-secondary" type="button" disabled>{% trans "Next" %} &rarr;</button>
+        {% endif %}
+    </div>
+
+    <div class="flag-side-nav flag-side-prev">
+        {% if prev_flag_url %}
+            <a class="btn btn-outline-primary" href="{{ prev_flag_url }}" aria-label="Previous flag">&larr; {% trans "Previous" %}</a>
+        {% else %}
+            <button class="btn btn-outline-secondary" type="button" disabled>&larr; {% trans "Previous" %}</button>
+        {% endif %}
+    </div>
+
+    <div class="flag-side-nav flag-side-next">
+        {% if next_flag_url %}
+            <a class="btn btn-outline-primary" href="{{ next_flag_url }}" aria-label="Next flag">{% trans "Next" %} &rarr;</a>
+        {% else %}
+            <button class="btn btn-outline-secondary" type="button" disabled>{% trans "Next" %} &rarr;</button>
+        {% endif %}
+    </div>
+
     <div class="row g-4">
         <div class="col-lg-5">
             <div class="section-card p-3 bg-white">
                 <h2 class="h5 mb-3">Flag</h2>
                 <div class="text-center p-3 bg-light rounded">
-                    <img src="{% if flag.image_file %}{{ flag.image_file.url }}{% else %}{{ flag.flag_image }}{% endif %}" 
-                         onerror="this.onerror=null; this.src='{{ flag.flag_image }}';" 
+                    <img id="flag-detail-image"
+                        src="{% if flag.image_file %}{{ flag.image_file.url }}{% else %}{{ flag.flag_image }}{% endif %}"
+                        data-fallback-src="{{ flag.flag_image }}"
+                        onerror="this.onerror=null; this.src=this.dataset.fallbackSrc || this.src;"
                          loading="lazy" decoding="async"
                          class="img-fluid" style="max-height: 340px; object-fit: contain;" alt="{{ flag.name }}">
                 </div>
@@ -157,6 +247,13 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
     (function () {
+        const detailImage = document.getElementById('flag-detail-image');
+        if (detailImage && window.FlagImageCache && typeof window.FlagImageCache.hydrateDetailImage === 'function') {
+            window.FlagImageCache.hydrateDetailImage(detailImage).catch(function () {
+                // Keep normal rendering path if cache hydration fails.
+            });
+        }
+
         const mapContainer = document.getElementById('flag-map');
         const loadBtn = document.getElementById('load-map-btn');
 

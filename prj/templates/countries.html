@@ -153,7 +153,9 @@
             {% else %}
             <div class="text-decoration-none">
             {% endif %}
-                <div class="country-grid-card">
+                <div class="country-grid-card"
+                     data-flag-detail-link="{{ item.link|default:'' }}"
+                     data-flag-image-src="{{ item.flag_png|default:item.img|default:'' }}">
                     {% if item.flag_png or item.img %}
                         <img src="{{ item.flag_png|default:item.img }}" alt="Flag of {{ item.name_common|default:item.name }}" class="flag-thumbnail" loading="lazy" decoding="async">
                     {% else %}
@@ -271,7 +273,9 @@
             
             return `
                 <div class="col-sm-6 col-md-4 col-lg-3 country-card-col">
-                    <div class="country-grid-card h-100 d-flex flex-column">
+                    <div class="country-grid-card h-100 d-flex flex-column"
+                         data-flag-detail-link="${link}"
+                         data-flag-image-src="${img}">
                         <div>
                             ${img
                                 ? `<img src="${img}" alt="{% trans 'Flag of' %} ${name}" class="flag-thumbnail" loading="lazy" decoding="async">`
@@ -286,6 +290,10 @@
                 </div>
             `;
         }).join('');
+
+        if (window.FlagImageCache && typeof window.FlagImageCache.scan === 'function') {
+            window.FlagImageCache.scan(countriesGrid);
+        }
     }
     
     function restoreInitialPage() {

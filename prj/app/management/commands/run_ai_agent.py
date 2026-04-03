@@ -2,6 +2,7 @@ import json
 import time
 import os
 import re
+import requests
 from ddgs import DDGS
 from groq import Groq
 from dotenv import load_dotenv
@@ -11,154 +12,179 @@ from app.models import FlagCollection, Country
 load_dotenv()
 
 class Command(BaseCommand):
-    help = 'Balanced AI Agent: Exact numbers only, calibrated confidence.'
+    help = 'Master AI Agent: Verbose Binding, Multi-language Wiki, and Key Rotation.'
+
+    MODELS = [
+        "openai/gpt-oss-120b",
+        "meta-llama/llama-4-scout-17b-16e-instruct",
+        "openai/gpt-oss-20b",
+        "llama-3.3-70b-versatile",
+        "qwen/qwen3-32b",
+        "llama-3.1-8b-instant"
+    ]
 
     def add_arguments(self, parser):
-        parser.add_argument('--chunk-size', type=int, default=2, help='Malé dávky pro lepší soustředění AI')
-        parser.add_argument('--limit', type=int, default=0, help='Limit zpracovaných vlajek')
-        parser.add_argument('--reset', action='store_true', help='Reset is_verified status')
+        parser.add_argument('--chunk-size', type=int, default=2)
+        parser.add_argument('--limit', type=int, default=0)
+        parser.add_argument('--reset', action='store_true')
 
     def extract_json(self, text):
         try:
             match = re.search(r'(\{.*\})', text, re.DOTALL)
-            if match:
-                return json.loads(match.group(1))
+            if match: return json.loads(match.group(1))
             return json.loads(text)
-        except Exception:
-            return None
+        except: return None
+
+    def fetch_wikipedia_raw(self, title, lang="en"):
+        url = f"https://{lang}.wikipedia.org/w/api.php"
+        params = {
+            "action": "query", "format": "json", "titles": title,
+            "prop": "revisions", "rvprop": "content", "rvslots": "main", "redirects": 1
+        }
+        headers = {'User-Agent': 'JustEnoughFlagsBot/1.0 (Student Project)'}
+        try:
+            r = requests.get(url, params=params, headers=headers, timeout=5)
+            r.raise_for_status() 
+            data = r.json()
+            pages = data.get("query", {}).get("pages", {})
+            for page_id, page_info in pages.items():
+                if page_id != "-1":
+                    return page_info["revisions"][0]["slots"]["main"]["*"]
+        except: pass
+        return ""
 
     def handle(self, *args, **options):
-        api_key = os.getenv("GROQ_API_KEY")
-        if not api_key:
-            self.stdout.write(self.style.ERROR("Chybí GROQ_API_KEY!"))
+        # NATAŽENÍ KLÍČŮ
+        api_keys = [os.getenv(f"GROQ_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"GROQ_API_KEY_{j}")]
+        if not api_keys:
+            legacy = os.getenv("GROQ_API_KEY")
+            if legacy: api_keys = [legacy]
+
+        if not api_keys:
+            self.stdout.write(self.style.ERROR("Chybí API klíče v .env!"))
             return
 
+        # VERBOSE RESET
         if options['reset']:
-            self.stdout.write(self.style.WARNING("🔄 Resetuji stav vlajek na is_verified=False..."))
-            FlagCollection.objects.all().update(is_verified=False)
-
-        client = Groq(api_key=api_key)
+            self.stdout.write(self.style.WARNING("🔄 Zahajuji hromadný reset příznaku is_verified v databázi..."))
+            self.stdout.flush() # Vynutí okamžitý zápis do logu/terminálu
+            
+            start_reset = time.time()
+            count = FlagCollection.objects.all().update(is_verified=False)
+            duration = time.time() - start_reset
+            
+            self.stdout.write(self.style.SUCCESS(f"✅ Resetováno {count} záznamů za {duration:.2f} sekund."))
+            self.stdout.flush()
         ddgs = DDGS()
-        
         flags_to_process = FlagCollection.objects.filter(is_public=True, is_verified=False)
-        if options['limit'] > 0:
-            flags_to_process = flags_to_process[:options['limit']]
+        if options['limit'] > 0: flags_to_process = flags_to_process[:options['limit']]
             
         total = flags_to_process.count()
-        self.stdout.write(self.style.NOTICE(f"🚀 Llama 4 Scout startuje pro {total} vlajek..."))
+        self.stdout.write(self.style.NOTICE(f"🚀 Master Agent startuje pro {total} vlajek..."))
 
-        for i in range(0, total, options['chunk_size']):
+        current_model_idx = 0
+        current_key_idx = 0
+        client = Groq(api_key=api_keys[current_key_idx])
+        i = 0
+        
+        while i < total:
             chunk = flags_to_process[i:i + options['chunk_size']]
             data_to_send = []
             
             for f in chunk:
-                self.stdout.write(f"  🔍 Hledám kontext pro: {f.name}...")
+                self.stdout.write(f"  🔍 Sběr dat (Multilingual Wiki): {f.name}...")
+                ctx = ""
+                for lang in ["en", "cs", "de"]:
+                    raw = self.fetch_wikipedia_raw(f.name, lang=lang)
+                    if raw: ctx += f"\n--- WIKI {lang.upper()} ---\n{raw[:1500]}\n"
                 
-                query_info = f"{f.name} flag {f.category} history overview"
-                query_stats = f"{f.name} {f.category} exact population area city size"
-                
-                combined_context = ""
                 try:
-                    res_info = ddgs.text(query_info, max_results=4)
                     time.sleep(1)
-                    res_stats = ddgs.text(query_stats, max_results=3)
-                    
-                    if res_info:
-                        combined_context += "[INFO]: " + " ".join([r.get('body', '') for r in res_info])
-                    if res_stats:
-                        combined_context += " [STATS]: " + " ".join([r.get('body', '') for r in res_stats])
-                except Exception as e:
-                    combined_context = f"Search failed or rate limited: {e}"
+                    res_stats = ddgs.text(f"{f.name} population area", max_results=2)
+                    if res_stats: ctx += "\n--- SEARCH ---\n" + " ".join([r.get('body', '') for r in res_stats])
+                except: pass
 
                 data_to_send.append({
-                    "qid": str(f.wikidata_id),
-                    "name": f.name,
-                    "current_category": f.category,
-                    "web_data": combined_context[:3000]
+                    "qid": str(f.wikidata_id), "name": f.name, "current_category": f.category, "web_data": ctx[:5000]
                 })
 
             prompt = f"""
-            Act as an uncompromising Data Architect. Process {len(data_to_send)} entities.
-
-            STEP 1: CATEGORY & BINDING
+            Act as an elite Data Architect. Process {len(data_to_send)} entities.
+            
+            STEP 1: CATEGORY & BINDING (MANDATORY)
             - Determine 'new_category' (state, city, region, territory, historical, international).
-            - Identify the modern sovereign country this belongs to. Provide its 3-letter ISO code in 'parent_country_iso3' (e.g., 'DEU' for Aachen, 'RUS' for Abdulino). If unknown, return null.
+            - Identify the MODERN SOVEREIGN COUNTRY this belongs to. 
+            - IMPORTANT: Even for historical entities, suggest the modern country on whose territory it mostly lay (e.g., 'UZB' for Khwarazm, 'RUS' for Armenian SSR).
+            - Return 3-letter ISO code in 'parent_country_iso3'.
 
-            STEP 2: STATISTICS & CALIBRATED CONFIDENCE (CRITICAL)
-            - Extract EXACT 'population' and 'area_km2'. DO NOT ROUND NUMBERS! If the source says 1420153, return 1420153, not 1400000.
-            - WARNING: Do NOT assign a huge parent country's area to a small city.
-            - Provide 'stats_confidence' (0.0 to 1.0) using this STRICT scale:
-              * 0.8 to 1.0: You are very confident the stats belong specifically to this city/region/state.
-              * 0.5 to 0.7: You found stats, but the web text is slightly ambiguous.
-              * 0.0 to 0.4: You suspect Context Bleed (e.g., parent country's area assigned to city), OR the entity is a fake micronation. If so, return null for the numbers.
+            STEP 2: STATISTICS
+            - Extract 'population' and 'area_km2'.
+            - Provide 'stats_confidence' (0.0 to 1.0).
 
-            STEP 3: MULTILINGUAL DESCRIPTIONS & FALLBACK
-            - Write exactly 2 sentences in English, Czech, and German.
-            - INTERNAL CZECH QA: Perfect declensions. No robotic phrasing. Use exonyms (Aachen -> Cáchy).
-            - FALLBACK: If 'web_data' is empty or lacks details, rely on your internal knowledge base to write 2 interesting, universally accepted historical or geographical facts about the entity.
+            STEP 3: MULTILINGUAL DESCRIPTIONS
+            - Write exactly 2 sentences in EN, CS, DE.
+            - CZECH: Perfect grammar and gender agreement. No robotic phrasing.
 
-            Return ONLY JSON mapping QID to results.
-            FORMAT:
-            {{"qid": {{"new_category": "...", "parent_country_iso3": "USA", "population": 123456, "area_km2": 45.67, "stats_confidence": 0.9, "description_en": "...", "description_cs": "...", "description_de": "..."}}}}
+            Return ONLY JSON:
+            {{"qid": {{"new_category": "...", "parent_country_iso3": "USA", "population": 123, "area_km2": 45, "stats_confidence": 0.9, "description_en": "...", "description_cs": "...", "description_de": "..."}}}}
             
             DATA: {json.dumps(data_to_send)}
             """
 
-            try:
-                response = client.chat.completions.create(
-                    messages=[{"role": "user", "content": prompt}],
-                    model="meta-llama/llama-4-scout-17b-16e-instruct",
-                    temperature=0.0,
-                    response_format={"type": "json_object"}
-                )
-                
-                ai_results = self.extract_json(response.choices[0].message.content)
-                if not ai_results: 
-                    self.stdout.write(self.style.ERROR("  [Chyba]: AI nevrátila platný JSON."))
-                    continue
+            success = False
+            while current_model_idx < len(self.MODELS) and not success:
+                model_name = self.MODELS[current_model_idx]
+                try:
+                    self.stdout.write(f"  🤖 Model: {model_name} (Klíč: {current_key_idx+1})")
+                    response = client.chat.completions.create(
+                        messages=[{"role": "user", "content": prompt}],
+                        model=model_name, temperature=0.0, response_format={"type": "json_object"}
+                    )
+                    ai_results = self.extract_json(response.choices[0].message.content)
+                    if not ai_results: break 
 
-                for flag in chunk:
-                    res = ai_results.get(str(flag.wikidata_id))
-                    if res:
-                        self.stdout.write(self.style.MIGRATE_HEADING(f"\n--- Zpracovávám: {flag.name} ---"))
-                        
-                        allowed_cats = ['state', 'city', 'region', 'territory', 'historical', 'international']
-                        new_cat = res.get('new_category', flag.category)
-                        if new_cat not in allowed_cats: new_cat = 'historical'
-                        
-                        if new_cat != flag.category:
-                            self.stdout.write(self.style.WARNING(f"  [Kategorie]: {flag.category} -> {new_cat}"))
-                        flag.category = new_cat
+                    for flag in chunk:
+                        res = ai_results.get(str(flag.wikidata_id))
+                        if res:
+                            self.stdout.write(self.style.MIGRATE_HEADING(f"\n--- {flag.name} ---"))
+                            flag.category = res.get('new_category', flag.category)
+                            
+                            # 1. BINDING DEBUG (Uvidíš, co AI navrhuje)
+                            iso3 = res.get('parent_country_iso3')
+                            if iso3:
+                                parent = Country.objects.filter(cca3=iso3.upper()).first()
+                                if parent:
+                                    flag.country = parent
+                                    self.stdout.write(self.style.SUCCESS(f"  [Binding]: Připojeno k {parent.name_common} ({iso3})"))
+                                else:
+                                    self.stdout.write(self.style.WARNING(f"  [Binding]: AI navrhla {iso3}, ale tento kód není v tabulce Country!"))
+                            else:
+                                self.stdout.write(self.style.WARNING(f"  [Binding]: AI vrátila null - kód státu nebyl určen."))
 
-                        stats_conf = res.get('stats_confidence', 0.0)
-                        
-                        if stats_conf < 0.75:
-                            flag.population = None
-                            flag.area_km2 = None
-                            self.stdout.write(self.style.WARNING(f"  [Python Veto]: Statistiky smazány (Jistota AI: {stats_conf})."))
-                        else:
-                            if 'population' in res: flag.population = res.get('population')
-                            if 'area_km2' in res: flag.area_km2 = res.get('area_km2')
+                            # 2. STATS
+                            conf = res.get('stats_confidence', 0.0)
+                            if conf >= 0.5:
+                                flag.population = res.get('population')
+                                flag.area_km2 = res.get('area_km2')
+                            else:
+                                flag.population = flag.area_km2 = None
+                                self.stdout.write(self.style.WARNING(f"  [Veto]: Statistiky smazány (Jistota: {conf})"))
 
-                        iso3 = res.get('parent_country_iso3')
-                        if iso3:
-                            parent = Country.objects.filter(cca3=iso3.upper()).first()
-                            if parent:
-                                flag.country = parent
-                                self.stdout.write(self.style.SUCCESS(f"  [Binding]: Úspěšně připojeno k {parent.name_common} ({iso3})"))
-
-                        desc = {}
-                        desc['en'] = res.get('description_en', 'Data unavailable.')
-                        desc['cs'] = res.get('description_cs', 'Data nejsou k dispozici.')
-                        desc['de'] = res.get('description_de', 'Daten nicht verfügbar.')
-                        flag.description = desc
-                        
-                        flag.is_verified = True
-                        flag.save()
-                        self.stdout.write(self.style.SUCCESS(f"  ✓ Ošetřeno a uloženo."))
-
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(f"Batch failed: {e}"))
-                time.sleep(5)
+                            flag.description = {'en': res.get('description_en',''), 'cs': res.get('description_cs',''), 'de': res.get('description_de','')}
+                            flag.is_verified = True
+                            flag.save()
+                    success = True 
+                except Exception as e:
+                    if "429" in str(e) and current_key_idx < len(api_keys) - 1:
+                        current_key_idx += 1
+                        client = Groq(api_key=api_keys[current_key_idx])
+                        continue
+                    else:
+                        current_model_idx += 1
+                        current_key_idx = 0
+                        if current_model_idx < len(self.MODELS): client = Groq(api_key=api_keys[current_key_idx])
+                        break 
             
-            time.sleep(3)
+            if current_model_idx >= len(self.MODELS): break
+            i += options['chunk_size']
+            time.sleep(2)

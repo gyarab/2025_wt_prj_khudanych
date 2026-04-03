@@ -351,6 +351,153 @@
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function () {
+            const DETAIL_MAP_KEY = 'flagDetailImageMap.v1';
+            const CACHE_NAME = 'flag-detail-images-v1';
+
+            function normalizeUrl(rawUrl) {
+                if (!rawUrl) {
+                    return '';
+                }
+                try {
+                    return new URL(rawUrl, window.location.href).toString();
+                } catch (_error) {
+                    return '';
+                }
+            }
+
+            function isSameOrigin(url) {
+                try {
+                    return new URL(url, window.location.href).origin === window.location.origin;
+                } catch (_error) {
+                    return false;
+                }
+            }
+
+            function detailKey(detailHref) {
+                try {
+                    const url = new URL(detailHref, window.location.href);
+                    return url.pathname + url.search;
+                } catch (_error) {
+                    return '';
+                }
+            }
+
+            function readMap() {
+                try {
+                    const raw = window.sessionStorage.getItem(DETAIL_MAP_KEY);
+                    return raw ? JSON.parse(raw) : {};
+                } catch (_error) {
+                    return {};
+                }
+            }
+
+            function writeMap(value) {
+                try {
+                    window.sessionStorage.setItem(DETAIL_MAP_KEY, JSON.stringify(value));
+                } catch (_error) {
+                    // Session storage can be disabled; continue without map persistence.
+                }
+            }
+
+            async function cacheImageResponse(imageUrl) {
+                if (!('caches' in window) || !isSameOrigin(imageUrl)) {
+                    return;
+                }
+                try {
+                    const cache = await window.caches.open(CACHE_NAME);
+                    const existing = await cache.match(imageUrl);
+                    if (existing) {
+                        return;
+                    }
+                    const response = await fetch(imageUrl, { credentials: 'same-origin' });
+                    if (response.ok) {
+                        await cache.put(imageUrl, response.clone());
+                    }
+                } catch (_error) {
+                    // Ignore cache API failures and fall back to regular browser caching.
+                }
+            }
+
+            async function prime(detailHref, imageHref) {
+                const key = detailKey(detailHref);
+                const imageUrl = normalizeUrl(imageHref);
+                if (!key || !imageUrl) {
+                    return;
+                }
+
+                const currentMap = readMap();
+                currentMap[key] = imageUrl;
+                writeMap(currentMap);
+
+                await cacheImageResponse(imageUrl);
+            }
+
+            function scan(root) {
+                const node = root || document;
+                const cards = node.querySelectorAll('[data-flag-detail-link][data-flag-image-src]');
+                cards.forEach(function (card) {
+                    const detailHref = card.getAttribute('data-flag-detail-link');
+                    const imageHref = card.getAttribute('data-flag-image-src');
+                    if (!detailHref || !imageHref) {
+                        return;
+                    }
+                    prime(detailHref, imageHref).catch(function () {
+                        // Keep UI smooth if cache priming fails.
+                    });
+                });
+            }
+
+            async function hydrateDetailImage(imgElement) {
+                if (!imgElement) {
+                    return;
+                }
+
+                const key = window.location.pathname + window.location.search;
+                const mappedUrl = readMap()[key];
+                if (!mappedUrl) {
+                    return;
+                }
+
+                if (!('caches' in window) || !isSameOrigin(mappedUrl)) {
+                    imgElement.src = mappedUrl;
+                    return;
+                }
+
+                try {
+                    const cache = await window.caches.open(CACHE_NAME);
+                    const response = await cache.match(mappedUrl);
+                    if (!response) {
+                        imgElement.src = mappedUrl;
+                        return;
+                    }
+                    const blob = await response.blob();
+                    if (!blob || !blob.size) {
+                        imgElement.src = mappedUrl;
+                        return;
+                    }
+                    const objectUrl = URL.createObjectURL(blob);
+                    imgElement.src = objectUrl;
+                    imgElement.addEventListener('load', function () {
+                        URL.revokeObjectURL(objectUrl);
+                    }, { once: true });
+                } catch (_error) {
+                    imgElement.src = mappedUrl;
+                }
+            }
+
+            window.FlagImageCache = {
+                prime: prime,
+                scan: scan,
+                hydrateDetailImage: hydrateDetailImage,
+            };
+
+            document.addEventListener('DOMContentLoaded', function () {
+                scan(document);
+            });
+        })();
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
