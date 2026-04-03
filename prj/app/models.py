@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
 
@@ -168,17 +169,27 @@ class Country(models.Model):
 
 class FlagCollection(models.Model):
     """Additional flag collection for territories, historical flags, etc."""
+    CATEGORY_VALUES = (
+        'state',
+        'territory',
+        'city',
+        'region',
+        'historical',
+        'international',
+    )
+
     CATEGORY_CHOICES = [
+        ('state', _('State')),
         ('territory', _('Territory')),
-        ('historical', _('Historical')),
-        ('state', _('State/Province')),
         ('city', _('City / Municipality')),
-        ('international', _('International Organization')),
         ('region', _('Region / Subdivision')),
-        ('other', _('Other')),
+        ('historical', _('Historical')),
+        ('international', _('International Organization')),
     ]
 
     name = models.CharField(max_length=200, verbose_name=_("Name"))
+    name_cs = models.CharField(max_length=200, blank=True, default='', verbose_name=_("Name (Czech)"))
+    name_de = models.CharField(max_length=200, blank=True, default='', verbose_name=_("Name (German)"))
     slug = models.SlugField(max_length=255, unique=True, blank=True, verbose_name=_("Slug"))
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, verbose_name=_("Category"))
     description = models.JSONField(default=dict, blank=True, verbose_name=_("Description"))
@@ -208,6 +219,19 @@ class FlagCollection(models.Model):
         indexes = [
             models.Index(fields=['category']),
         ]
+        constraints = [
+            models.CheckConstraint(
+                name='flagcollection_category_valid',
+                condition=models.Q(category__in=(
+                    'state',
+                    'territory',
+                    'city',
+                    'region',
+                    'historical',
+                    'international',
+                )),
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.get_category_display()})"
@@ -216,11 +240,29 @@ class FlagCollection(models.Model):
         from django.urls import reverse
         return reverse('flag_detail', kwargs={'category': self.category, 'slug': self.slug})
 
+    @property
+    def localized_name(self):
+        cur_lang = (translation.get_language() or '').split('-')[0]
+        if cur_lang == 'cs' and self.name_cs:
+            return self.name_cs
+        if cur_lang == 'de' and self.name_de:
+            return self.name_de
+        return self.name
+
     def save(self, *args, **kwargs):
+        # Keep country binding idempotent: consume ISO3 hints from structured description.
+        description = self.description if isinstance(self.description, dict) else {}
+        parent_iso3 = description.get('parent_country_iso3')
+        if isinstance(parent_iso3, str):
+            parent_iso3 = parent_iso3.strip().upper()
+            if len(parent_iso3) == 3:
+                parent_country = Country.objects.filter(cca3=parent_iso3).first()
+                if parent_country:
+                    self.country = parent_country
+
         if not self.slug:
             from django.utils.text import slugify
             
-            description = self.description if isinstance(self.description, dict) else {}
             en_label = description.get('label_en')
             
             # Předání výpočetní zátěže (regex a kontrola) do Rustu

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n humanize %}
 
-{% block title %}{{ flag.name }} - Flag Details{% endblock %}
+{% block title %}{{ flag.localized_name }} - Flag Details{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -94,7 +94,7 @@
 {% block content %}
 <div class="container py-4">
     <div class="passport-header mb-4">
-        <h1 class="h3 mb-1">{{ flag.name }}</h1>
+        <h1 class="h3 mb-1">{{ flag.localized_name }}</h1>
         <p class="mb-0">Digital Passport</p>
     </div>
 
@@ -144,11 +144,11 @@
                         data-fallback-src="{{ flag.flag_image }}"
                         onerror="this.onerror=null; this.src=this.dataset.fallbackSrc || this.src;"
                          loading="lazy" decoding="async"
-                         class="img-fluid" style="max-height: 340px; object-fit: contain;" alt="{{ flag.name }}">
+                         class="img-fluid" style="max-height: 340px; object-fit: contain;" alt="{{ flag.localized_name }}">
                 </div>
                 <div class="mt-4">
                     <h3 class="h6 text-uppercase text-muted mb-1">Name</h3>
-                    <p class="h5 mb-3 fw-semibold">{{ flag.name }}</p>
+                    <p class="h5 mb-3 fw-semibold">{{ flag.localized_name }}</p>
                     
                     <div class="d-flex flex-wrap gap-2">
                         {% if wiki_url %}
@@ -233,7 +233,7 @@
                          class="d-none"
                          data-lat="{{ latitude|stringformat:'.6f' }}"
                          data-lon="{{ longitude|stringformat:'.6f' }}"
-                         data-name="{{ flag.name }}"></div>
+                         data-name="{{ flag.localized_name }}"></div>
                 {% else %}
                     <div class="alert alert-secondary mb-0">No coordinate data available yet.</div>
                 {% endif %}
