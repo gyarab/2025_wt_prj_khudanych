@@ -157,14 +157,14 @@
                      data-flag-detail-link="{{ item.link|default:'' }}"
                      data-flag-image-src="{{ item.flag_png|default:item.img|default:'' }}">
                     {% if item.flag_png or item.img %}
-                        <img src="{{ item.flag_png|default:item.img }}" alt="Flag of {{ item.name_common|default:item.name }}" class="flag-thumbnail" loading="lazy" decoding="async">
+                         <img src="{{ item.flag_png|default:item.img }}" alt="Flag of {{ item.name_common|default:item.localized_name|default:item.name }}" class="flag-thumbnail" loading="lazy" decoding="async">
                     {% else %}
                         <div class="flag-thumbnail d-flex align-items-center justify-content-center" style="font-size: 4rem;">
                             {{ item.flag_emoji|default:item.emoji }}
                         </div>
                     {% endif %}
                     <div class="country-card-body {% if compact_territory_cards %}compact-territory{% endif %}">
-                        <h3 class="country-title">{{ item.name_common|default:item.name }}</h3>
+                        <h3 class="country-title">{{ item.name_common|default:item.localized_name|default:item.name }}</h3>
                         {% if compact_territory_cards and item.link %}
                             <div class="d-grid">
                                 <span class="btn btn-sm btn-outline-primary">{% trans "View Details" %}</span>
@@ -264,7 +264,7 @@
         }
         
         countriesGrid.innerHTML = items.map(function(item) {
-            const name = escapeHtml(item.name);
+            const name = escapeHtml(item.localized_name || item.name);
             const capital = escapeHtml(item.capital);
             const img = item.img ? escapeHtml(item.img) : '';
             const emoji = escapeHtml(item.emoji || '🏳️');

@@ -64,13 +64,14 @@ def flags_search_api(request):
                 break
 
     if category != 'country' and len(items) < max_items:
-        flag_qs = FlagCollection.objects.filter(name__icontains=search_query, is_public=True).only('name', 'flag_image', 'category', 'slug')
+        flag_qs = FlagCollection.objects.filter(name__icontains=search_query, is_public=True).only('name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug')
         if category != 'all':
             flag_qs = flag_qs.filter(category=category)
 
         for f in flag_qs[:800]:
             items.append({
                 'name': f.name,
+                'localized_name': f.localized_name,
                 'img': f.flag_image,
                 'link': build_flag_detail_link(
                     f,
@@ -166,11 +167,12 @@ def territories_search_api(request):
         extra_qs = FlagCollection.objects.filter(
             category='territory',
             is_public=True,
-        ).filter(fc_filter).only('name', 'flag_image').order_by('name')
+        ).filter(fc_filter).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
         for f in extra_qs[:max_items - len(items)]:
             items.append({
                 'name': f.name,
+                'localized_name': f.localized_name,
                 'img': f.flag_image,
                 'link': build_flag_detail_link(
                     f,
@@ -221,11 +223,12 @@ def historical_search_api(request):
         flag_qs = FlagCollection.objects.filter(
             category='historical',
             is_public=True,
-        ).filter(flag_filter).only('name', 'flag_image').order_by('name')
+        ).filter(flag_filter).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
         for f in flag_qs[:max_items - len(items)]:
             items.append({
                 'name': f.name,
+                'localized_name': f.localized_name,
                 'img': f.flag_image,
                 'type': _('Historical Flag'),
                 'link': build_flag_detail_link(

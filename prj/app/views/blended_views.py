@@ -32,7 +32,7 @@ def territories_list(request):
     extra_territories_qs = FlagCollection.objects.filter(
         category='territory',
         is_public=True,
-    ).only('name', 'flag_image').order_by('name')
+    ).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
     if search_query:
         stripped_query = strip_accents(search_query)
         extra_filter = Q(name__icontains=search_query)
@@ -68,6 +68,7 @@ def territories_list(request):
             for f in extra_territories_qs[:remaining_slots]:
                 items_to_display.append({
                     'name': f.name,
+                    'localized_name': f.localized_name,
                     'img': f.flag_image,
                     'type': _('Territory / Dependency'),
                     'link': build_flag_detail_link(
@@ -83,6 +84,7 @@ def territories_list(request):
         for f in extra_territories_qs[db_offset:db_offset + per_page]:
             items_to_display.append({
                 'name': f.name,
+                'localized_name': f.localized_name,
                 'img': f.flag_image,
                 'type': _('Territory / Dependency'),
                 'link': build_flag_detail_link(
@@ -126,7 +128,7 @@ def historical_list(request):
     historical_flag_qs = FlagCollection.objects.filter(
         category='historical',
         is_public=True,
-    ).only('name', 'flag_image').order_by('name')
+    ).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
     if search_query:
         stripped_query = strip_accents(search_query)
@@ -159,6 +161,7 @@ def historical_list(request):
             for f in historical_flag_qs[:remaining_slots]:
                 items_to_display.append({
                     'name': f.name,
+                    'localized_name': f.localized_name,
                     'img': f.flag_image,
                     'type': _('Historical Flag'),
                     'link': build_flag_detail_link(
@@ -173,6 +176,7 @@ def historical_list(request):
         for f in historical_flag_qs[db_offset:db_offset + per_page]:
             items_to_display.append({
                 'name': f.name,
+                'localized_name': f.localized_name,
                 'img': f.flag_image,
                 'type': _('Historical Flag'),
                 'link': build_flag_detail_link(

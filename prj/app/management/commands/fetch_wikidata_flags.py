@@ -75,12 +75,14 @@ def _to_flag_image_url(flag_file_url: str) -> str:
 
 def _build_query(root_qids: Iterable[str], limit: int) -> str:
     values = " ".join(f"wd:{qid}" for qid in root_qids)
+    
+    # OPRAVA: Přidán 'schema:about' a 'schema:isPartOf' pro získání přesného názvu z enwiki
     return f"""
-SELECT DISTINCT ?item ?itemLabel ?flag ?population ?area ?coord ?countryIso3 ?typeLabel
+SELECT DISTINCT ?item ?itemLabel ?flag ?population ?area ?coord ?countryIso3 ?typeLabel ?wikiTitle
 WHERE {{
   VALUES ?rootType {{ {values} }}
-  ?item wdt:P31/wdt:P279* ?rootType ;
-        wdt:P41 ?flag .
+  ?item wdt:P31/wdt:P279* ?rootType .
+  ?item wdt:P41 ?flag .
 
   OPTIONAL {{ ?item wdt:P1082 ?population . }}
   OPTIONAL {{ ?item wdt:P2046 ?area . }}
@@ -94,6 +96,12 @@ WHERE {{
     ?itemType rdfs:label ?typeLabel .
     FILTER(LANG(?typeLabel) = "en")
   }}
+  
+  OPTIONAL {{
+    ?article schema:about ?item .
+    ?article schema:isPartOf <https://en.wikipedia.org/> .
+    ?article schema:name ?wikiTitle .
+  }}
 
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
 }}
@@ -101,7 +109,7 @@ LIMIT {int(limit)}
 """
 
 
-def _run_sparql(query: str, retries: int = 4) -> List[dict]:
+def _run_sparql(query: str, retries: int = 3) -> List[dict]:
     last_error = None
 
     for attempt in range(1, retries + 1):
@@ -112,19 +120,28 @@ def _run_sparql(query: str, retries: int = 4) -> List[dict]:
                 headers=REQUEST_HEADERS,
                 timeout=120,
             )
+            
+            if response.status_code in [504, 502, 503]:
+                response.raise_for_status()
+                
             response.raise_for_status()
             payload = response.json()
             return payload.get("results", {}).get("bindings", [])
+            
+        except requests.exceptions.HTTPError as exc:
+            if exc.response is not None and exc.response.status_code in [504, 502, 503]:
+                raise exc
+            last_error = exc
+            time.sleep(3 * attempt)
         except requests.RequestException as exc:
             last_error = exc
-            wait_seconds = 3 * attempt
-            time.sleep(wait_seconds)
+            time.sleep(3 * attempt)
 
     raise CommandError(f"SPARQL request failed after {retries} attempts: {last_error}")
 
 
 class Command(BaseCommand):
-    help = "Fetch and upsert Wikidata flags for state/city/territory/historical/international categories"
+    help = "Fetch and upsert Wikidata flags with accurate Wiki titles, automatic backoff and colorful logs"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -148,6 +165,8 @@ class Command(BaseCommand):
         if limit_per_category <= 0:
             raise CommandError("--limit-per-category must be > 0")
 
+        self.stdout.write(self.style.SUCCESS(f"\n🚀 Startuji masivní stahování z Wikidat (Výchozí limit: {limit_per_category})"))
+
         totals: Dict[str, Dict[str, int]] = {
             category: {"fetched": 0, "created": 0, "updated": 0, "skipped": 0}
             for category in selected_categories
@@ -155,17 +174,36 @@ class Command(BaseCommand):
 
         for category in selected_categories:
             roots = CATEGORY_TYPE_ROOTS[category]
-            query = _build_query(roots, limit_per_category)
-            self.stdout.write(self.style.MIGRATE_HEADING(f"\n=== Fetching {category} flags ==="))
+            self.stdout.write(self.style.MIGRATE_HEADING(f"\n{'='*10} Kategorie: {category.upper()} {'='*10}"))
 
-            try:
-                rows = _run_sparql(query)
-            except CommandError as exc:
-                self.stderr.write(self.style.ERROR(str(exc)))
-                continue
+            current_limit = limit_per_category
+            rows = []
+            
+            while current_limit >= 500:
+                query = _build_query(roots, current_limit)
+                self.stdout.write(self.style.NOTICE(f"  📡 [FETCH] Dotazuji Wikidata (Limit: {current_limit})..."))
+                
+                try:
+                    rows = _run_sparql(query)
+                    break
+                except requests.exceptions.HTTPError as exc:
+                    if exc.response is not None and exc.response.status_code in [504, 502, 503]:
+                        self.stdout.write(self.style.WARNING(f"  ⚠️ [TIMEOUT] Server nestíhá (Chyba {exc.response.status_code}). Snižuji limit na {current_limit // 2}..."))
+                        current_limit //= 2
+                        time.sleep(2)
+                    else:
+                        self.stderr.write(self.style.ERROR(f"  ❌ [ERROR] HTTP chyba: {exc}"))
+                        break
+                except CommandError as exc:
+                    self.stderr.write(self.style.ERROR(f"  ❌ [ERROR] {exc}"))
+                    break
 
             totals[category]["fetched"] = len(rows)
-            self.stdout.write(f"Fetched {len(rows)} rows for category '{category}'.")
+            if len(rows) > 0:
+                self.stdout.write(self.style.SUCCESS(f"  ✅ [OK] Získáno {len(rows)} záznamů. Začínám ukládat do databáze..."))
+            else:
+                self.stdout.write(self.style.WARNING(f"  ⏭️ [SKIP] Žádná data pro '{category}'. Přeskakuji..."))
+                continue
 
             for row in rows:
                 try:
@@ -175,7 +213,12 @@ class Command(BaseCommand):
                         totals[category]["skipped"] += 1
                         continue
 
-                    name = _binding_value(row, "itemLabel") or wikidata_id
+                    # OPRAVA: Přednostně použijeme přesný název z EN Wikipedie (wikiTitle)
+                    wiki_title = _binding_value(row, "wikiTitle")
+                    item_label = _binding_value(row, "itemLabel")
+                    
+                    name = wiki_title if wiki_title else (item_label or wikidata_id)
+                    
                     flag_file = _binding_value(row, "flag")
                     flag_image = _to_flag_image_url(flag_file)
                     if not flag_image:
@@ -201,7 +244,7 @@ class Command(BaseCommand):
                         "latitude": latitude,
                         "longitude": longitude,
                         "country": linked_country,
-                        "is_public": True,
+                        # Nenastavujeme is_public=True, abychom nepřepisovali "Junk" vlajky schované AI agentem!
                     }
 
                     if type_label:
@@ -218,14 +261,19 @@ class Command(BaseCommand):
                     else:
                         totals[category]["updated"] += 1
 
-                except Exception as exc:  # noqa: BLE001 - keep row-level ETL resilient
+                except Exception as exc:
                     totals[category]["skipped"] += 1
-                    self.stderr.write(self.style.WARNING(f"Skip row in {category}: {exc}"))
+                    self.stderr.write(self.style.ERROR(f"  ❌ [ROW ERROR] Nelze uložit záznam: {exc}"))
 
-        self.stdout.write(self.style.SUCCESS("\nETL finished."))
-        for category in selected_categories:
             stats = totals[category]
             self.stdout.write(
-                f"{category}: fetched={stats['fetched']} created={stats['created']} "
-                f"updated={stats['updated']} skipped={stats['skipped']}"
+                self.style.SUCCESS(f"  📊 [STATS] {category.upper()}: ") +
+                f"Získáno: {stats['fetched']} | " +
+                self.style.NOTICE(f"Nových: {stats['created']} ") + "| " +
+                self.style.WARNING(f"Upravených: {stats['updated']} ") + "| " +
+                self.style.ERROR(f"Přeskočeno: {stats['skipped']}")
             )
+
+        self.stdout.write(self.style.MIGRATE_HEADING("\n" + "="*40))
+        self.stdout.write(self.style.SUCCESS("🎉 Celý ETL proces úspěšně dokončen!"))
+        self.stdout.write(self.style.MIGRATE_HEADING("="*40 + "\n"))

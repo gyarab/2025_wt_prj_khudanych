@@ -156,20 +156,20 @@
             <div class="flag-item"
                   data-flag-detail-link="{{ item.link|default:'' }}"
                   data-flag-image-src="{{ item.img|default:'' }}"
-                 onclick="openFlag('{{ item.img|escapejs }}', '{{ item.name|escapejs }}', '{{ item.type|escapejs }}', '{{ item.link|escapejs }}')"
+                 onclick="openFlag('{{ item.img|escapejs }}', '{{ item.localized_name|default:item.name|escapejs }}', '{{ item.type|escapejs }}', '{{ item.link|escapejs }}')"
                  role="button" tabindex="0"
                  onkeydown="if(event.key==='Enter')this.click()">
                 <div class="flag-img-wrap">
                     {% if item.img %}
-                        <img src="{{ item.img }}" alt="{{ item.name }}" class="flag-display" loading="lazy" decoding="async">
+                        <img src="{{ item.img }}" alt="{{ item.localized_name|default:item.name }}" class="flag-display" loading="lazy" decoding="async">
                     {% elif item.emoji %}
                         <span class="flag-emoji-display">{{ item.emoji }}</span>
                     {% else %}
                         <span class="flag-emoji-display">📜</span>
                     {% endif %}
                 </div>
-                <div class="flag-caption" title="{{ item.name }}">
-                    {{ item.name }}
+                <div class="flag-caption" title="{{ item.localized_name|default:item.name }}">
+                    {{ item.localized_name|default:item.name }}
                     <br><span class="flag-badge">{{ item.type }}</span>
                 </div>
             </div>
@@ -314,7 +314,7 @@
             }
 
             grid.innerHTML = items.map(function (item) {
-                const name = escapeHtml(item.name);
+                const name = escapeHtml(item.localized_name || item.name);
                 const img = item.img ? escapeHtml(item.img) : '';
                 const emoji = escapeHtml(item.emoji || '📜');
                 const type = escapeHtml(item.type || '{% trans "Historical Flag" %}');

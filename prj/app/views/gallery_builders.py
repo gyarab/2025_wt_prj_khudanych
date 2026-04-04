@@ -50,7 +50,7 @@ def collect_gallery_querysets(category, search_query=''):
             fc_filter &= Q(name__icontains=search_query)
 
         flag_qs = FlagCollection.objects.filter(fc_filter).only(
-            'name', 'flag_image', 'category', 'slug'
+            'name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug'
         ).order_by('name')
 
     return country_qs, flag_qs
@@ -64,30 +64,32 @@ def flags_gallery(request):
 
     country_qs, flag_qs = collect_gallery_querysets(category, search_query)
 
-    country_items = []
-    for c in country_qs:
-        link = reverse('country_detail', kwargs={'cca3': c.cca3}) if c.status != 'territory' else reverse('territory_detail', kwargs={'cca3': c.cca3})
-        country_items.append({
-            'name': c.name_common,
-            'img': c.flag_png,
-            'emoji': c.flag_emoji,
-            'link': link,
-            'badge': _('Country') if c.status == 'sovereign' else c.get_status_display(),
-            'item_category': 'country' if c.status == 'sovereign' else c.status,
-        })
-
     page_number = int(request.GET.get('page', 1))
     per_page = GALLERY_PER_PAGE
     
-    total_countries_count = len(country_items)
+    # Use .count() instead of loading all items into memory
+    total_countries_count = country_qs.count()
     
     start_index = (page_number - 1) * per_page
     end_index = start_index + per_page
 
     items_to_display = []
 
+    # Use database-level slicing instead of loading everything into memory
     if start_index < total_countries_count:
-        items_to_display.extend(country_items[start_index:end_index])
+        # Slice at database level, not in Python
+        country_page = country_qs[start_index:end_index]
+        
+        for c in country_page:
+            link = reverse('country_detail', kwargs={'cca3': c.cca3}) if c.status != 'territory' else reverse('territory_detail', kwargs={'cca3': c.cca3})
+            items_to_display.append({
+                'name': c.name_common,
+                'img': c.flag_png,
+                'emoji': c.flag_emoji,
+                'link': link,
+                'badge': _('Country') if c.status == 'sovereign' else c.get_status_display(),
+                'item_category': 'country' if c.status == 'sovereign' else c.status,
+            })
         
         remaining_slots = per_page - len(items_to_display)
         if remaining_slots > 0:
@@ -95,6 +97,7 @@ def flags_gallery(request):
             for f in db_flags:
                 items_to_display.append({
                     'name': f.name,
+                    'localized_name': f.localized_name,
                     'img': f.flag_image,
                     'badge': f.get_category_display(),
                     'link': build_flag_detail_link(
@@ -112,6 +115,7 @@ def flags_gallery(request):
         for f in db_flags:
             items_to_display.append({
                 'name': f.name,
+                'localized_name': f.localized_name,
                 'img': f.flag_image,
                 'badge': f.get_category_display(),
                 'link': build_flag_detail_link(

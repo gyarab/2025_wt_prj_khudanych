@@ -181,7 +181,7 @@ class FlagCollection(models.Model):
     CATEGORY_CHOICES = [
         ('state', _('State')),
         ('territory', _('Territory')),
-        ('city', _('City / Municipality')),
+        ('city', _('Obec / Město')),
         ('region', _('Region / Subdivision')),
         ('historical', _('Historical')),
         ('international', _('International Organization')),
