@@ -17,7 +17,7 @@ def country_detail_quality_filter():
         (Q(flag_svg__isnull=False) & ~Q(flag_svg='') | Q(flag_png__isnull=False) & ~Q(flag_png='')) &
         Q(capital__isnull=False) & ~Q(capital='') &
         Q(region__isnull=False) &
-        Q(area__isnull=False) &
+        Q(area_km2__isnull=False) &
         Q(population__gt=0) &
         Q(currencies__isnull=False) &
         ~Q(currencies={}) &
@@ -44,12 +44,17 @@ def build_country_search_filter(search_query, *field_names):
 
 
 def build_flag_name_search_filter(search_query):
-    """Accent-insensitive DB filter for flag names."""
+    """Accent-insensitive DB filter for primary and localized flag names."""
     if not search_query:
         return Q()
 
-    search_filter = Q(name__icontains=search_query)
+    fields = ('name', 'name_cs', 'name_de')
+    search_filter = Q()
+    for field_name in fields:
+        search_filter |= Q(**{f"{field_name}__icontains": search_query})
+
     stripped_query = strip_accents(search_query)
     if stripped_query and stripped_query != search_query:
-        search_filter |= Q(name__icontains=stripped_query)
+        for field_name in fields:
+            search_filter |= Q(**{f"{field_name}__icontains": stripped_query})
     return search_filter

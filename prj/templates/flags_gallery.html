@@ -134,11 +134,6 @@
         <a href="{% url 'flags_gallery' %}?category=country" class="category-pill {% if selected_category == 'country' %}active{% endif %}">
             🌍 {% trans "Countries" %} ({{ cat_counts.country|intcomma }})
         </a>
-        {% if cat_counts.state %}
-        <a href="{% url 'flags_gallery' %}?category=state" class="category-pill {% if selected_category == 'state' %}active{% endif %}">
-            🏛️ {% trans "States" %} ({{ cat_counts.state|intcomma }})
-        </a>
-        {% endif %}
         {% if cat_counts.city %}
         <a href="{% url 'flags_gallery' %}?category=city" class="category-pill {% if selected_category == 'city' %}active{% endif %}">
             🏙️ {% trans "Cities" %} ({{ cat_counts.city|intcomma }})
@@ -149,9 +144,9 @@
             📍 {% trans "Regions" %} ({{ cat_counts.region|intcomma }})
         </a>
         {% endif %}
-        {% if cat_counts.territory %}
-        <a href="{% url 'flags_gallery' %}?category=territory" class="category-pill {% if selected_category == 'territory' %}active{% endif %}">
-            🏝️ {% trans "Territories" %} ({{ cat_counts.territory|intcomma }})
+        {% if cat_counts.dependency %}
+        <a href="{% url 'flags_gallery' %}?category=dependency" class="category-pill {% if selected_category == 'dependency' %}active{% endif %}">
+            🏝️ {% trans "Dependencies" %} ({{ cat_counts.dependency|intcomma }})
         </a>
         {% endif %}
         {% if cat_counts.historical %}

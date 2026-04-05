@@ -8,7 +8,7 @@ from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Case, When, IntegerField
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _, get_language
 
@@ -54,7 +54,7 @@ def render_homepage(request):
     historical_countries = [c for c in Country.objects.filter(status='historical').select_related('region') if is_country_detail_eligible(c)]
 
     total_countries = len(sovereign_countries)
-    total_territories = len(territory_countries) + FlagCollection.objects.filter(category='territory', is_public=True).count()
+    total_territories = len(territory_countries) + FlagCollection.objects.filter(category='dependency', is_public=True).count()
     total_historical = len(historical_countries) + FlagCollection.objects.filter(category='historical', is_public=True).count()
     total_flags = Country.objects.count() + FlagCollection.objects.filter(is_public=True).count()
     total_regions = Region.objects.count()
@@ -142,7 +142,24 @@ def country_detail(request, cca3):
         neighbor_candidates = Country.objects.filter(cca3__in=country.borders)
         neighbors = [n for n in neighbor_candidates if is_country_detail_eligible(n)]
     
-    additional_flags_qs = FlagCollection.objects.filter(country=country, is_public=True).order_by('name')
+    # Exclude national flags (category='country') to avoid duplication
+    # Sort dependencies first, then regions, cities, historical
+    additional_flags_qs = FlagCollection.objects.filter(
+        country=country, 
+        is_public=True
+    ).exclude(
+        category='country'
+    ).annotate(
+        sort_priority=Case(
+            When(category='dependency', then=1),
+            When(category='region', then=2),
+            When(category='city', then=3),
+            When(category='historical', then=4),
+            When(category='international', then=5),
+            default=6,
+            output_field=IntegerField()
+        )
+    ).order_by('sort_priority', 'name')
     paginator = Paginator(additional_flags_qs, 48)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -164,7 +181,24 @@ def territory_detail(request, cca3):
 
     owner_country = get_territory_owner_country(territory)
 
-    additional_flags_qs = FlagCollection.objects.filter(country=territory, is_public=True).order_by('name')
+    # Exclude national flags (category='country') to avoid duplication
+    # Sort dependencies first, then regions, cities, historical
+    additional_flags_qs = FlagCollection.objects.filter(
+        country=territory, 
+        is_public=True
+    ).exclude(
+        category='country'
+    ).annotate(
+        sort_priority=Case(
+            When(category='dependency', then=1),
+            When(category='region', then=2),
+            When(category='city', then=3),
+            When(category='historical', then=4),
+            When(category='international', then=5),
+            default=6,
+            output_field=IntegerField()
+        )
+    ).order_by('sort_priority', 'name')
     paginator = Paginator(additional_flags_qs, 48)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

@@ -100,7 +100,7 @@ class Country(models.Model):
     
     # Population and Area
     population = models.BigIntegerField(default=0, verbose_name=_("Population"))
-    area = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, verbose_name=_("Area"))
+    area_km2 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, verbose_name=_("Area"))
     
     # Coordinates
     latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True, verbose_name=_("Latitude"))
@@ -170,8 +170,8 @@ class Country(models.Model):
 class FlagCollection(models.Model):
     """Additional flag collection for territories, historical flags, etc."""
     CATEGORY_VALUES = (
-        'state',
-        'territory',
+        'country',
+        'dependency',
         'city',
         'region',
         'historical',
@@ -179,8 +179,8 @@ class FlagCollection(models.Model):
     )
 
     CATEGORY_CHOICES = [
-        ('state', _('State')),
-        ('territory', _('Territory')),
+        ('country', _('Country')),
+        ('dependency', _('Dependency')),
         ('city', _('Obec / Město')),
         ('region', _('Region / Subdivision')),
         ('historical', _('Historical')),
@@ -223,8 +223,8 @@ class FlagCollection(models.Model):
             models.CheckConstraint(
                 name='flagcollection_category_valid',
                 condition=models.Q(category__in=(
-                    'state',
-                    'territory',
+                    'country',
+                    'dependency',
                     'city',
                     'region',
                     'historical',

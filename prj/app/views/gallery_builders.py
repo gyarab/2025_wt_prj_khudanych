@@ -9,7 +9,11 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from ..models import Country, FlagCollection
-from .search_filters import country_detail_quality_filter
+from .search_filters import (
+    country_detail_quality_filter,
+    build_country_search_filter,
+    build_flag_name_search_filter,
+)
 from .pagination_helpers import build_flag_detail_link, GALLERY_PER_PAGE
 
 
@@ -18,12 +22,12 @@ def collect_gallery_querysets(category, search_query=''):
     country_qs = Country.objects.none()
     flag_qs = FlagCollection.objects.none()
 
-    show_countries = category in ('all', 'country', 'territory', 'historical')
+    show_countries = category in ('all', 'country', 'dependency', 'historical')
     
     if show_countries:
         if category == 'country':
             allowed_statuses = ['sovereign']
-        elif category == 'territory':
+        elif category == 'dependency':
             allowed_statuses = ['territory']
         elif category == 'historical':
             allowed_statuses = ['historical']
@@ -33,7 +37,7 @@ def collect_gallery_querysets(category, search_query=''):
         country_filter = Q(status__in=allowed_statuses)
 
         if search_query:
-            country_filter &= Q(name_common__icontains=search_query)
+            country_filter &= build_country_search_filter(search_query, 'name_common', 'name_official', 'capital')
 
         country_qs = Country.objects.filter(country_filter).filter(
             country_detail_quality_filter()
@@ -47,7 +51,7 @@ def collect_gallery_querysets(category, search_query=''):
             fc_filter &= Q(category=category)
         
         if search_query:
-            fc_filter &= Q(name__icontains=search_query)
+            fc_filter &= build_flag_name_search_filter(search_query)
 
         flag_qs = FlagCollection.objects.filter(fc_filter).only(
             'name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug'
@@ -146,16 +150,15 @@ def flags_gallery(request):
 
     fc_counts = dict(FlagCollection.objects.filter(is_public=True).values_list('category').annotate(n=Count('id')))
     pill_country_count = Country.objects.filter(status='sovereign').count()
-    pill_territory_count = Country.objects.filter(status='territory').count() + fc_counts.get('territory', 0)
+    pill_territory_count = Country.objects.filter(status='territory').count() + fc_counts.get('dependency', 0)
     pill_historical_count = Country.objects.filter(status='historical').count() + fc_counts.get('historical', 0)
-    total_flags_header = pill_country_count + pill_territory_count + pill_historical_count + fc_counts.get('state', 0) + fc_counts.get('city', 0) + fc_counts.get('region', 0) + fc_counts.get('international', 0)
+    total_flags_header = pill_country_count + pill_territory_count + pill_historical_count + fc_counts.get('country', 0) + fc_counts.get('city', 0) + fc_counts.get('region', 0) + fc_counts.get('international', 0)
 
     cat_counts = {
-        'state': fc_counts.get('state', 0),
         'city': fc_counts.get('city', 0),
         'region': fc_counts.get('region', 0),
         'international': fc_counts.get('international', 0),
-        'territory': pill_territory_count,
+        'dependency': pill_territory_count,
         'historical': pill_historical_count,
         'country': pill_country_count,
     }

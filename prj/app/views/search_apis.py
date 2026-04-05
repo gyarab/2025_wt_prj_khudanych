@@ -4,12 +4,14 @@ AJAX/JSON search endpoints for instant client-side search.
 
 from django.http import JsonResponse
 from django.urls import reverse
-from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from ..models import Country, FlagCollection
-from .search_filters import country_detail_quality_filter, build_country_search_filter
-from .text_utils import strip_accents
+from .search_filters import (
+    country_detail_quality_filter,
+    build_country_search_filter,
+    build_flag_name_search_filter,
+)
 from .pagination_helpers import build_flag_detail_link
 from .eligibility import is_country_detail_eligible, is_territory_detail_eligible
 
@@ -25,22 +27,23 @@ def flags_search_api(request):
     max_items = 200
     items = []
 
-    show_countries = category in ('all', 'country', 'territory', 'historical')
+    show_countries = category in ('all', 'country', 'dependency', 'historical')
     if show_countries:
         statuses = ['sovereign', 'territory', 'historical']
         if category == 'country':
             statuses = ['sovereign']
-        elif category == 'territory':
+        elif category == 'dependency':
             statuses = ['territory']
         elif category == 'historical':
             statuses = ['historical']
 
         country_qs = Country.objects.filter(
             status__in=statuses,
-            name_common__icontains=search_query,
+        ).filter(
+            build_country_search_filter(search_query, 'name_common', 'name_official', 'capital')
         ).select_related('region').only(
             'name_common', 'name_official', 'cca2', 'cca3', 'capital', 'region',
-            'area', 'population', 'currencies', 'languages',
+            'area_km2', 'population', 'currencies', 'languages',
             'flag_png', 'flag_svg', 'flag_emoji', 'status',
         )[:600]
 
@@ -64,7 +67,9 @@ def flags_search_api(request):
                 break
 
     if category != 'country' and len(items) < max_items:
-        flag_qs = FlagCollection.objects.filter(name__icontains=search_query, is_public=True).only('name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug')
+        flag_qs = FlagCollection.objects.filter(is_public=True).filter(
+            build_flag_name_search_filter(search_query)
+        ).only('name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug')
         if category != 'all':
             flag_qs = flag_qs.filter(category=category)
 
@@ -159,15 +164,10 @@ def territories_search_api(request):
         })
 
     if len(items) < max_items:
-        stripped_query = strip_accents(search_query)
-        fc_filter = Q(name__icontains=search_query)
-        if stripped_query and stripped_query != search_query:
-            fc_filter |= Q(name__icontains=stripped_query)
-
         extra_qs = FlagCollection.objects.filter(
-            category='territory',
+            category='dependency',
             is_public=True,
-        ).filter(fc_filter).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
+        ).filter(build_flag_name_search_filter(search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
         for f in extra_qs[:max_items - len(items)]:
             items.append({
@@ -178,7 +178,7 @@ def territories_search_api(request):
                     f,
                     source='gallery',
                     search_query=search_query,
-                    gallery_category='territory',
+                    gallery_category='dependency',
                 ),
             })
 
@@ -215,15 +215,10 @@ def historical_search_api(request):
         })
 
     if len(items) < max_items:
-        stripped_query = strip_accents(search_query)
-        flag_filter = Q(name__icontains=search_query)
-        if stripped_query and stripped_query != search_query:
-            flag_filter |= Q(name__icontains=stripped_query)
-
         flag_qs = FlagCollection.objects.filter(
             category='historical',
             is_public=True,
-        ).filter(flag_filter).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
+        ).filter(build_flag_name_search_filter(search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
         for f in flag_qs[:max_items - len(items)]:
             items.append({

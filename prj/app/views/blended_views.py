@@ -30,7 +30,7 @@ def territories_list(request):
         territory_qs = territory_qs.filter(build_country_search_filter(search_query, 'name_common', 'capital'))
 
     extra_territories_qs = FlagCollection.objects.filter(
-        category='territory',
+        category='dependency',
         is_public=True,
     ).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
     if search_query:
@@ -76,7 +76,7 @@ def territories_list(request):
                         source='gallery',
                         search_query=search_query,
                         page=page_number,
-                        gallery_category='territory',
+                        gallery_category='dependency',
                     ),
                 })
     else:
@@ -92,7 +92,7 @@ def territories_list(request):
                     source='gallery',
                     search_query=search_query,
                     page=page_number,
-                    gallery_category='territory',
+                    gallery_category='dependency',
                 ),
             })
 

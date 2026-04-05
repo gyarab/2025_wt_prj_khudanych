@@ -178,7 +178,7 @@ class Command(BaseCommand):
                         if missing_area: queries.append(f"{safe_name} {hint} area square kilometers site:wikipedia.org".strip())
                         if not missing_pop and not missing_area: queries.append(f"{safe_name} {hint} geography details site:wikipedia.org".strip())
 
-                        self.log("") # Odřádkování pro čistý výpis snippetů
+                        self.log("") 
                         for q in queries:
                             try:
                                 res_web = ddgs.text(q, max_results=2)
@@ -188,12 +188,11 @@ class Command(BaseCommand):
                                     web_stats.append(f"{q_type}:{len(found_text)}")
                                     ctx += f"\n--- WEB SEARCH ({q}) ---\n{found_text}\n"
                                     
-                                    # PŘIDANÝ DEBUGGING SNIPPETU
                                     clean_snippet = found_text[:200].replace('\n', ' ')
                                     self.log(f"      📄 AI vidí ({q_type}): {clean_snippet}...", self.style.HTTP_INFO)
                             except: pass
                             time.sleep(1)
-                        self.log("      ", inline=True) # Zarovnání pro další výpisy
+                        self.log("      ", inline=True) 
 
                     self.log(f"🌐 Web [{' | '.join(web_stats) if web_stats else 'None'}]")
 
@@ -203,29 +202,73 @@ class Command(BaseCommand):
                     })
 
                 prompt = f"""
-                Act as an elite Geopolitical Data Architect. Process {len(data_to_send)} entities.
-                
-                STRICT JUNK FILTER (CRITICAL):
-                Distinguish between a physical TERRITORY and a MOVEMENT/REGIME/IDEOLOGY.
-                - VALID: Nations, Cities, Towns, Villages, Settlements, Provinces, Historical States, Territories.
-                - JUNK: Political parties, revolutionary movements, specific dictatorial periods/regimes, sports teams.
-                
-                FEW-SHOT EXAMPLES:
-                1. Input: "26th of July Movement" -> Output: "new_category": "junk"
-                2. Input: "4th of August Regime" -> Output: "new_category": "junk"
-                3. Input: "Abinsky urban settlement" -> Output: "new_category": "city"
-                4. Input: "Aachen" -> Output: "new_category": "city", "name_cs": "Cáchy"
-                5. Input: "Abbasid Caliphate" -> Output: "new_category": "historical"
-                
-                DATA EXTRACTION RULES:
-                - STATISTICS: Extract EXACT numbers from web_data. NEVER round! If missing, use null.
-                - NAMES: Translate known exonyms strictly.
-                - DESCRIPTIONS: Exactly 3 sentences per language (EN, CS, DE) focusing on history/geography. Max 250 chars/lang.
-                - FORBIDDEN: Do NOT mention numeric statistics (population/area) in the description text.
-                
-                RETURN ONLY A VALID JSON DICTIONARY mapping QID (or name) to results:
-                {{ "QID": {{ "new_category": "state|city|region|territory|historical|international|junk", "parent_country_iso3": "ISO3", "population": 123, "area_km2": 45.5, "name_cs": "...", "name_de": "...", "description_en": "...", "description_cs": "...", "description_de": "..." }} }}
-                """
+            PHASE 1: FAST BULK SORTER - You are a geopolitical categorization engine processing {len(data_to_send)} entities.
+            Your PRIMARY MISSION is PERFECT categorization to prevent data poisoning. Be BRUTALLY strict.
+            
+            CATEGORY RULES (ABSOLUTE - NO EXCEPTIONS):
+            
+            1. "country" - ONLY these exactly:
+               - 193 UN member states (sovereign nations recognized by the UN)
+               - 2 UN observer states: Vatican City, Palestine
+               - If unsure whether something is a UN member, mark as "dependency" or "junk" instead
+               - NEVER mark micronations, unrecognized states, or historical entities as "country"
+            
+            2. "dependency" - Real non-sovereign territories ONLY:
+               - Officially recognized overseas territories, autonomous regions, crown dependencies
+               - Examples: Greenland, Aruba, Bermuda, New Caledonia, Puerto Rico, Guam, Faroe Islands
+               - Must be governed by a sovereign state
+               - NOT unrecognized separatist regions or micronations
+            
+            3. "region" - Administrative subdivisions:
+               - States of a federation (e.g., Texas, Bavaria, Johor)
+               - Provinces, counties, districts, oblasts, prefectures
+               - Must be an official administrative division
+            
+            4. "city" - Urban settlements:
+               - Cities, towns, municipalities, villages
+               - Any settlement, regardless of size
+            
+            5. "historical" - Former states that NO LONGER EXIST:
+               - Roman Empire, Soviet Union, Abbasid Caliphate, Yugoslavia, Czechoslovakia
+               - Must have been a recognized state in the past
+               - NOT current entities with historical flags
+            
+            6. "international" - Multinational organizations:
+               - UN, EU, NATO, Arab League, ASEAN, African Union
+               - Must be an official international body
+            
+            7. "junk" - CRITICAL FILTER (mark anything suspicious as junk):
+               - Micronations (Aarianian Union, Aerican Empire, Sealand, etc.)
+               - Unrecognized internet projects or fictional states
+               - Political parties, movements, ideologies (26th of July Movement, Ba'athism)
+               - Specific regimes or dictatorial periods (Nazi Germany, Francoist Spain - use "historical" for the state itself)
+               - Individuals, sports teams, corporations, cultural groups
+               - Separatist movements without official recognition
+               - Anything that seems fake, promotional, or non-governmental
+               - When in doubt between "dependency" and "junk" for obscure entities -> choose "junk"
+            
+            FEW-SHOT EXAMPLES:
+            - "Japan" -> "country" (UN member)
+            - "Greenland" -> "dependency" (Danish territory)
+            - "Texas" -> "region" (US state)
+            - "Munich" -> "city" (German city)
+            - "Soviet Union" -> "historical" (no longer exists)
+            - "United Nations" -> "international" (international org)
+            - "26th of July Movement" -> "junk" (political movement)
+            - "Aarianian Union" -> "junk" (micronation)
+            - "Sealand" -> "junk" (unrecognized micronation)
+            - "Nazi Germany" -> "junk" (regime, not the state itself - use "historical" for German Reich if needed)
+            - "Francoist Spain" -> "junk" (regime period)
+            
+            DATA EXTRACTION:
+            - STATISTICS: Extract EXACT numbers from web_data. NEVER round. Use null if missing.
+            - NAMES: Translate known exonyms to Czech (name_cs) and German (name_de).
+            - DESCRIPTIONS: Write EXACTLY 3 sentences per language (EN, CS, DE). Focus on history/geography. Max 250 chars per language.
+            - FORBIDDEN: Do NOT mention population or area statistics in description text.
+            
+            OUTPUT FORMAT (JSON dictionary, map QID or name to result):
+            {{ "QID": {{ "new_category": "country|dependency|city|region|historical|international|junk", "parent_country_iso3": "ABC", "population": 12345, "area_km2": 67.89, "name_cs": "...", "name_de": "...", "description_en": "...", "description_cs": "...", "description_de": "..." }} }}
+            """
 
                 try:
                     self.log(f"   🤖 [AI] Volám AI...", style=self.style.HTTP_INFO)
@@ -244,34 +287,67 @@ class Command(BaseCommand):
                         res = ai_results.get(str(flag.wikidata_id or '')) or ai_results.get(flag.name)
                         if not res: continue
 
+                        # JUNK DETECTION: Mark as not public and verified, then skip
                         if str(res.get('new_category')).lower() == 'junk':
-                            flag.is_public = False; flag.is_verified = True; flag.save()
-                            self.log(f"      🗑️  {flag.name[:25]:<25} -> JUNK (skryto)", self.style.WARNING)
+                            flag.category = 'junk' if 'junk' in dict(FlagCollection.CATEGORY_CHOICES) else flag.category
+                            flag.is_public = False
+                            flag.is_verified = True
+                            flag.save()
+                            self.log(f"      🗑️  {flag.name[:25]:<25} -> JUNK (hidden)", self.style.WARNING)
                             continue
 
-                        cat = res.get('new_category')
-                        if cat not in dict(FlagCollection.CATEGORY_CHOICES): cat = flag.category
+                        # CATEGORY VALIDATION: Only assign if valid
+                        new_cat = res.get('new_category')
+                        valid_categories = [choice[0] for choice in FlagCollection.CATEGORY_CHOICES]
+                        if new_cat in valid_categories:
+                            flag.category = new_cat
+                        else:
+                            self.log(f"      ⚠️  Invalid category '{new_cat}' for {flag.name}, keeping original", self.style.WARNING)
                         
+                        # PARENT COUNTRY BINDING: Extract ISO3 and bind to Country model
                         ai_iso = self._normalize_iso3(res.get('parent_country_iso3'))
                         bound_country = Country.objects.filter(cca3=ai_iso).first() if ai_iso in sovereign_iso3 else None
                         
-                        flag.category = cat
-                        if bound_country: flag.country = bound_country
+                        if bound_country: 
+                            flag.country = bound_country
                         
+                        # STATISTICS EXTRACTION: Population and Area
                         try:
-                            if res.get('population'): flag.population = int(float(res.get('population')))
-                            if res.get('area_km2'): flag.area_km2 = float(res.get('area_km2'))
-                        except: pass
+                            if res.get('population'): 
+                                flag.population = int(float(res.get('population')))
+                            if res.get('area_km2'): 
+                                flag.area_km2 = float(res.get('area_km2'))
+                        except: 
+                            pass
 
+                        # DUAL SYNC: Only sync to Country model if this is actually a 'country' category
+                        if bound_country and flag.category == 'country':
+                            country_updated = False
+                            if res.get('population') and flag.population and flag.population > 0:
+                                if bound_country.population == 0 or bound_country.population is None:
+                                    bound_country.population = flag.population
+                                    country_updated = True
+                            if res.get('area_km2') and flag.area_km2 and flag.area_km2 > 0:
+                                if bound_country.area_km2 == 0 or bound_country.area_km2 is None:
+                                    bound_country.area_km2 = flag.area_km2
+                                    country_updated = True
+                            if country_updated:
+                                bound_country.save()
+
+                        # TRANSLATIONS & DESCRIPTIONS
                         flag.name_cs = (res.get('name_cs') or flag.name).strip()
                         flag.name_de = (res.get('name_de') or flag.name).strip()
-                        flag.description = {'en': res.get('description_en',''), 'cs': res.get('description_cs',''), 'de': res.get('description_de','')}
+                        flag.description = {
+                            'en': res.get('description_en', ''), 
+                            'cs': res.get('description_cs', ''), 
+                            'de': res.get('description_de', '')
+                        }
                         flag.is_verified = True
                         flag.save()
                         
-                        pop_str = f"{flag.population}" if flag.population else "None"
-                        area_str = f"{flag.area_km2}" if flag.area_km2 else "None"
-                        self.log(f"      ✅ {flag.name[:25]:<25} -> {flag.name_cs[:15]} (Pop: {pop_str}, Area: {area_str})")
+                        pop_str = f"{flag.population:,}" if flag.population else "None"
+                        area_str = f"{flag.area_km2:,.2f}" if flag.area_km2 else "None"
+                        self.log(f"      ✅ {flag.name[:25]:<25} -> [{flag.category}] {flag.name_cs[:15]} (Pop: {pop_str}, Area: {area_str})")
 
                     success = True
                     i += len(chunk)
@@ -287,7 +363,12 @@ class Command(BaseCommand):
                         if k_idx < len(keys[provider]) - 1:
                             k_idx += 1
                             current_key_indices[provider] = k_idx
-                            self.log("      🔄 Přepínám na další klíč.")
+                            self.log(f"      🔄 Přepínám na další klíč ({k_idx+1}).")
+                            
+                            # TENTO ŘÁDEK CHYBĚL A ZPŮSOBOVAL NEFUNKČNÍ ROTACI KLÍČŮ:
+                            c_key = keys[provider][k_idx]
+                            client = OpenAI(base_url=m_cfg["base_url"], api_key=c_key) if m_cfg["base_url"] else Groq(api_key=c_key)
+                            
                             attempts -= 1 
                     else:
                         self.log(f"   ⚠️ [POKUS {attempts} SELHAL] {err[:150]}", self.style.ERROR)

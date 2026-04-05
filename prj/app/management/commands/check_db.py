@@ -13,53 +13,51 @@ class Command(BaseCommand):
         # =====================================================================
         self.stdout.write(self.style.WARNING("--- 1. ANALÝZA KATEGORIÍ V DB ---"))
         
-        # Agregace: Spočítáme, kolik vlajek má jakou kategorii
         categories = FlagCollection.objects.values('category').annotate(count=Count('id')).order_by('-count')
         
-        self.stdout.write("Skutečné hodnoty ve sloupci 'category' v tabulce FlagCollection:")
         country_count = 0
+        dependency_count = 0
         for cat in categories:
             cat_name = cat['category'] if cat['category'] else "NULL / Prázdné"
             self.stdout.write(f" - '{cat_name}': {cat['count']} vlajek")
             if cat_name == 'country':
                 country_count = cat['count']
+            if cat_name == 'dependency':
+                dependency_count = cat['count']
 
         self.stdout.write(self.style.SUCCESS("\n💡 INFO PRO FRONTEND:"))
         self.stdout.write(f"Frontend používá '?category=country' pro suverénní státy ({country_count} položek).")
-        self.stdout.write(f"Frontend používá '?category=dependency' pro nesuverénní území.\n\n")
+        self.stdout.write(f"Frontend používá '?category=dependency' pro nesuverénní území ({dependency_count} položek).\n\n")
 
         # =====================================================================
-        # 2. ANALÝZA DUPLICIT (Více entit používá stejný obrázek vlajky)
+        # 2. ANALÝZA DUPLICIT (Používáme pole 'flag_image')
         # =====================================================================
         self.stdout.write(self.style.WARNING("--- 2. DETEKCE VLAJEK SE STEJNÝM OBRÁZKEM ---"))
         
-        # Agregace: Seskupíme podle image_url a najdeme ty, které mají více než 1 výskyt
-        duplicity_qs = FlagCollection.objects.values('image_url').annotate(
+        # Seskupíme podle skutečného názvu pole: flag_image
+        duplicity_qs = FlagCollection.objects.values('flag_image').annotate(
             url_count=Count('id')
-        ).filter(url_count__gt=1).order_by('-url_count')
+        ).filter(url_count__gt=1).exclude(flag_image__isnull=True).exclude(flag_image__exact='').order_by('-url_count')
         
         total_duplicates = duplicity_qs.count()
-        self.stdout.write(f"Nalezeno {total_duplicates} unikátních obrázků, které se v DB objevují vícekrát.\n")
+        self.stdout.write(f"Nalezeno {total_duplicates} unikátních obrázků sdílených více entitami.\n")
 
-        # Vypíšeme prvních 15 nejhorších případů
         limit = 15
         self.stdout.write(f"Zobrazuji prvních {limit} ukázek:\n")
         
         for dup in duplicity_qs[:limit]:
-            url = dup['image_url']
+            img_val = dup['flag_image']
             count = dup['url_count']
             
-            # Zkrátíme URL pro hezčí výpis v terminálu
-            short_url = url.split('/')[-1] if url else "Žádné URL"
+            # Zkrácení cesty pro terminál
+            short_name = str(img_val).split('/')[-1]
             
-            self.stdout.write(self.style.NOTICE(f"🔗 Obrázek sdílen {count}x: .../{short_url}"))
+            self.stdout.write(self.style.NOTICE(f"\n🔗 Obrázek sdílen {count}x: .../{short_name}"))
             
-            # Vytáhneme konkrétní entity s tímto obrázkem
-            flags = FlagCollection.objects.filter(image_url=url).order_by('name')
+            # Najdeme všechny vlajky s tímto obrázkem
+            flags = FlagCollection.objects.filter(flag_image=img_val).order_by('name')
             for f in flags:
-                # Ošetření, pokud nemáš pole wiki_url přímo v modelu, ale skládáš ho z Wikidata ID
-                wiki_link = f"QID: {f.wikidata_id}" 
-                self.stdout.write(f"   🚩 ID: {f.id:<5} | Kat: {str(f.category):<10} | Jméno: {f.name:<30} | {wiki_link}")
-            self.stdout.write("") # Prázdný řádek pro oddělení bloků
+                wiki_info = f"QID: {f.wikidata_id}" if f.wikidata_id else "Bez QID"
+                self.stdout.write(f"   🚩 ID: {f.id:<5} | Kat: {str(f.category):<10} | Jméno: {f.name:<30} | {wiki_info}")
 
-        self.stdout.write(self.style.SUCCESS("🏁 Telemetrie dokončena."))
+        self.stdout.write(self.style.SUCCESS("\n🏁 Telemetrie dokončena."))

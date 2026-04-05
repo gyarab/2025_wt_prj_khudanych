@@ -37,7 +37,7 @@ def has_complete_country_template_data(country: Country) -> bool:
 
     has_required_identity = bool(country.name_common and country.name_official and country.cca2 and country.cca3)
     has_required_flag = bool(country.flag_emoji and (country.flag_svg or country.flag_png))
-    has_required_geo = bool(country.capital and country.region and country.area is not None)
+    has_required_geo = bool(country.capital and country.region and country.area_km2 is not None)
     has_required_population = bool(country.population and country.population > 0)
     has_required_currencies = isinstance(country.currencies, dict) and bool(country.currencies)
     has_required_languages = isinstance(country.languages, dict) and bool(country.languages)
