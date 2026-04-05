@@ -15,10 +15,12 @@ from .search_filters import (
     build_flag_name_search_filter,
 )
 from .pagination_helpers import build_flag_detail_link, GALLERY_PER_PAGE
+from .text_utils import normalize_query
 
 
 def collect_gallery_querysets(category, search_query=''):
     """Collect appropriate QuerySets based on gallery category and search."""
+    normalized_search_query = normalize_query(search_query)
     country_qs = Country.objects.none()
     flag_qs = FlagCollection.objects.none()
 
@@ -36,8 +38,8 @@ def collect_gallery_querysets(category, search_query=''):
 
         country_filter = Q(status__in=allowed_statuses)
 
-        if search_query:
-            country_filter &= build_country_search_filter(search_query, 'name_common', 'name_official', 'capital')
+        if normalized_search_query:
+            country_filter &= build_country_search_filter(normalized_search_query)
 
         country_qs = Country.objects.filter(country_filter).filter(
             country_detail_quality_filter()
@@ -50,8 +52,8 @@ def collect_gallery_querysets(category, search_query=''):
         if category != 'all':
             fc_filter &= Q(category=category)
         
-        if search_query:
-            fc_filter &= build_flag_name_search_filter(search_query)
+        if normalized_search_query:
+            fc_filter &= build_flag_name_search_filter(normalized_search_query)
 
         flag_qs = FlagCollection.objects.filter(fc_filter).only(
             'name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug'

@@ -131,6 +131,7 @@
 {% endblock %}
 
 {% block content %}
+{% trans "Search historical flags..." as historical_search_placeholder %}
 <div class="gallery-header">
     <div class="container text-center">
         <h1><i class="bi bi-clock-history"></i> {{ page_title }}</h1>
@@ -142,10 +143,7 @@
     <!-- Search -->
     <div class="search-box">
         <form method="get" action="{% url 'historical' %}" id="historical-search-form">
-            <div class="input-group">
-                <input type="text" class="form-control" id="historical-search-input" name="q" placeholder="{% trans 'Search historical flags...' %}" value="{{ search_query|default:'' }}" autocomplete="off">
-                <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
-            </div>
+            {% include 'includes/_search_bar.html' with search_input_id='historical-search-input' search_query_name='q' search_placeholder=historical_search_placeholder search_query=search_query|default:'' show_search_button=True search_input_class='form-control' %}
         </form>
     </div>
 

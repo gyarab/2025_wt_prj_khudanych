@@ -20,6 +20,7 @@ from .eligibility import (
     get_territory_owner_country
 )
 from .search_filters import country_detail_quality_filter, build_country_search_filter
+from .text_utils import normalize_query
 from .pagination_helpers import (
     build_flag_navigation_context,
     COUNTRIES_PER_PAGE
@@ -81,6 +82,7 @@ def countries_list(request):
     """List sovereign countries with DB-level pagination and instant search support."""
     page_number = int(request.GET.get('page', 1))
     search_query = (request.GET.get('q') or request.GET.get('search') or '').strip()
+    normalized_search_query = normalize_query(search_query)
     region_filter = request.GET.get('region')
 
     countries_qs = Country.objects.filter(status='sovereign').filter(
@@ -92,8 +94,8 @@ def countries_list(request):
     if region_filter:
         countries_qs = countries_qs.filter(region__slug=region_filter)
 
-    if search_query:
-        countries_qs = countries_qs.filter(build_country_search_filter(search_query, 'name_common', 'capital'))
+    if normalized_search_query:
+        countries_qs = countries_qs.filter(build_country_search_filter(normalized_search_query))
 
     paginator = Paginator(countries_qs, COUNTRIES_PER_PAGE)
     page_obj = paginator.get_page(page_number)

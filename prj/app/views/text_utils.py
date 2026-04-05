@@ -15,12 +15,26 @@ def _python_strip_accents(text: str) -> str:
     return ''.join(ch for ch in normalized if not unicodedata.combining(ch))
 
 
+def _python_normalize_query(text: str) -> str:
+    """Normalize text for indexed search comparisons."""
+    if not isinstance(text, str):
+        return ''
+    return unicodedata.normalize('NFD', text).encode('ascii', 'ignore').decode('utf-8').lower()
+
+
 def strip_accents(text: str) -> str:
     """Remove diacritics; prefer Rust implementation when present."""
     rust_fn = getattr(flag_search_core, 'strip_accents', None)
     if callable(rust_fn):
         return rust_fn(text)
     return _python_strip_accents(text)
+
+
+def normalize_query(text: str) -> str:
+    """Normalize search input to match indexed search_name values."""
+    if not isinstance(text, str):
+        return ''
+    return _python_normalize_query(text)
 
 
 def accent_insensitive_match(haystack: str, needle: str) -> bool:

@@ -14,12 +14,14 @@ from .search_filters import (
 )
 from .pagination_helpers import build_flag_detail_link
 from .eligibility import is_country_detail_eligible, is_territory_detail_eligible
+from .text_utils import normalize_query
 
 
 def flags_search_api(request):
     """Global gallery search endpoint used by instant client-side search."""
     category = request.GET.get('category', 'all')
     search_query = (request.GET.get('q') or '').strip()
+    normalized_search_query = normalize_query(search_query)
 
     if len(search_query) < 2:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
@@ -40,7 +42,7 @@ def flags_search_api(request):
         country_qs = Country.objects.filter(
             status__in=statuses,
         ).filter(
-            build_country_search_filter(search_query, 'name_common', 'name_official', 'capital')
+            build_country_search_filter(normalized_search_query)
         ).select_related('region').only(
             'name_common', 'name_official', 'cca2', 'cca3', 'capital', 'region',
             'area_km2', 'population', 'currencies', 'languages',
@@ -68,7 +70,7 @@ def flags_search_api(request):
 
     if category != 'country' and len(items) < max_items:
         flag_qs = FlagCollection.objects.filter(is_public=True).filter(
-            build_flag_name_search_filter(search_query)
+            build_flag_name_search_filter(normalized_search_query)
         ).only('name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug')
         if category != 'all':
             flag_qs = flag_qs.filter(category=category)
@@ -101,6 +103,7 @@ def countries_search_api(request):
     """AJAX search endpoint for countries section with instant search"""
     region_filter = request.GET.get('region', '')
     search_query = (request.GET.get('q') or '').strip()
+    normalized_search_query = normalize_query(search_query)
     
     if len(search_query) < 2:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
@@ -117,7 +120,7 @@ def countries_search_api(request):
     if region_filter:
         countries_qs = countries_qs.filter(region__slug=region_filter)
 
-    countries_qs = countries_qs.filter(build_country_search_filter(search_query, 'name_common', 'capital'))
+    countries_qs = countries_qs.filter(build_country_search_filter(normalized_search_query))
     for c in countries_qs[:max_items]:
         items.append({
             'name': c.name_common,
@@ -141,6 +144,7 @@ def countries_search_api(request):
 def territories_search_api(request):
     """AJAX search endpoint for territories page."""
     search_query = (request.GET.get('q') or '').strip()
+    normalized_search_query = normalize_query(search_query)
 
     if len(search_query) < 2:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
@@ -151,7 +155,7 @@ def territories_search_api(request):
     territory_qs = Country.objects.filter(status='territory').filter(
         country_detail_quality_filter()
     ).only('name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji').order_by('name_common')
-    territory_qs = territory_qs.filter(build_country_search_filter(search_query, 'name_common', 'capital'))
+    territory_qs = territory_qs.filter(build_country_search_filter(normalized_search_query))
 
     for c in territory_qs[:max_items]:
         items.append({
@@ -167,7 +171,7 @@ def territories_search_api(request):
         extra_qs = FlagCollection.objects.filter(
             category='dependency',
             is_public=True,
-        ).filter(build_flag_name_search_filter(search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
+        ).filter(build_flag_name_search_filter(normalized_search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
         for f in extra_qs[:max_items - len(items)]:
             items.append({
@@ -193,6 +197,7 @@ def territories_search_api(request):
 def historical_search_api(request):
     """AJAX search endpoint for historical gallery page."""
     search_query = (request.GET.get('q') or '').strip()
+    normalized_search_query = normalize_query(search_query)
 
     if len(search_query) < 2:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
@@ -203,7 +208,7 @@ def historical_search_api(request):
     country_qs = Country.objects.filter(status='historical').filter(
         country_detail_quality_filter()
     ).only('name_common', 'cca3', 'flag_png', 'flag_emoji').order_by('name_common')
-    country_qs = country_qs.filter(build_country_search_filter(search_query, 'name_common'))
+    country_qs = country_qs.filter(build_country_search_filter(normalized_search_query))
 
     for c in country_qs[:max_items]:
         items.append({
@@ -218,7 +223,7 @@ def historical_search_api(request):
         flag_qs = FlagCollection.objects.filter(
             category='historical',
             is_public=True,
-        ).filter(build_flag_name_search_filter(search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
+        ).filter(build_flag_name_search_filter(normalized_search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
         for f in flag_qs[:max_items - len(items)]:
             items.append({

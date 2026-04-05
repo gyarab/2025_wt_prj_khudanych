@@ -3,7 +3,7 @@ Complex QuerySet filter builders for database searches.
 """
 
 from django.db.models import Q
-from .text_utils import strip_accents
+from .text_utils import normalize_query
 
 
 def country_detail_quality_filter():
@@ -27,34 +27,24 @@ def country_detail_quality_filter():
 
 
 def build_country_search_filter(search_query, *field_names):
-    """Build DB filter for search text and its accent-stripped variant."""
+    """Build DB filter for normalized indexed country search text."""
     if not search_query:
         return Q()
 
-    search_filter = Q()
-    for field_name in field_names:
-        search_filter |= Q(**{f"{field_name}__icontains": search_query})
+    normalized_query = normalize_query(search_query)
+    if not normalized_query:
+        return Q()
 
-    stripped_query = strip_accents(search_query)
-    if stripped_query and stripped_query != search_query:
-        for field_name in field_names:
-            search_filter |= Q(**{f"{field_name}__icontains": stripped_query})
-
-    return search_filter
+    return Q(search_name__icontains=normalized_query)
 
 
 def build_flag_name_search_filter(search_query):
-    """Accent-insensitive DB filter for primary and localized flag names."""
+    """Normalized DB filter for flag names."""
     if not search_query:
         return Q()
 
-    fields = ('name', 'name_cs', 'name_de')
-    search_filter = Q()
-    for field_name in fields:
-        search_filter |= Q(**{f"{field_name}__icontains": search_query})
+    normalized_query = normalize_query(search_query)
+    if not normalized_query:
+        return Q()
 
-    stripped_query = strip_accents(search_query)
-    if stripped_query and stripped_query != search_query:
-        for field_name in fields:
-            search_filter |= Q(**{f"{field_name}__icontains": stripped_query})
-    return search_filter
+    return Q(search_name__icontains=normalized_query)

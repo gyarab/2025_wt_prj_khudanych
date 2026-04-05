@@ -3,14 +3,13 @@ Blended views combining Country and FlagCollection items (territories and histor
 """
 
 from django.core.paginator import Paginator
-from django.db.models import Q
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from ..models import Country, FlagCollection
 from .search_filters import country_detail_quality_filter, build_country_search_filter
-from .text_utils import strip_accents
+from .text_utils import normalize_query
 from .pagination_helpers import build_flag_detail_link, CountOnlyPaginator, COUNTRIES_PER_PAGE, GALLERY_PER_PAGE
 
 
@@ -18,6 +17,7 @@ def territories_list(request):
     """List territories and dependencies with DB-level pagination and instant search."""
     page_number = int(request.GET.get('page', 1))
     search_query = (request.GET.get('q') or request.GET.get('search') or '').strip()
+    normalized_search_query = normalize_query(search_query)
     per_page = COUNTRIES_PER_PAGE
 
     territory_qs = Country.objects.filter(status='territory').filter(
@@ -26,19 +26,15 @@ def territories_list(request):
         'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji', 'region__name',
     ).order_by('name_common')
 
-    if search_query:
-        territory_qs = territory_qs.filter(build_country_search_filter(search_query, 'name_common', 'capital'))
+    if normalized_search_query:
+        territory_qs = territory_qs.filter(build_country_search_filter(normalized_search_query))
 
     extra_territories_qs = FlagCollection.objects.filter(
         category='dependency',
         is_public=True,
     ).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
-    if search_query:
-        stripped_query = strip_accents(search_query)
-        extra_filter = Q(name__icontains=search_query)
-        if stripped_query and stripped_query != search_query:
-            extra_filter |= Q(name__icontains=stripped_query)
-        extra_territories_qs = extra_territories_qs.filter(extra_filter)
+    if normalized_search_query:
+        extra_territories_qs = extra_territories_qs.filter(build_country_search_filter(normalized_search_query))
 
     total_territories_count = territory_qs.count()
     total_extra_count = extra_territories_qs.count()
@@ -116,26 +112,23 @@ def historical_list(request):
     """List historical countries and flags with DB-level pagination and instant search."""
     page_number = int(request.GET.get('page', 1))
     search_query = (request.GET.get('q') or request.GET.get('search') or '').strip()
+    normalized_search_query = normalize_query(search_query)
     per_page = GALLERY_PER_PAGE
 
     historical_country_qs = Country.objects.filter(status='historical').filter(
         country_detail_quality_filter()
     ).only('name_common', 'cca3', 'flag_png', 'flag_emoji').order_by('name_common')
 
-    if search_query:
-        historical_country_qs = historical_country_qs.filter(build_country_search_filter(search_query, 'name_common'))
+    if normalized_search_query:
+        historical_country_qs = historical_country_qs.filter(build_country_search_filter(normalized_search_query))
 
     historical_flag_qs = FlagCollection.objects.filter(
         category='historical',
         is_public=True,
     ).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
-    if search_query:
-        stripped_query = strip_accents(search_query)
-        hist_filter = Q(name__icontains=search_query)
-        if stripped_query and stripped_query != search_query:
-            hist_filter |= Q(name__icontains=stripped_query)
-        historical_flag_qs = historical_flag_qs.filter(hist_filter)
+    if normalized_search_query:
+        historical_flag_qs = historical_flag_qs.filter(build_country_search_filter(normalized_search_query))
 
     total_countries_count = historical_country_qs.count()
     total_flags_count = historical_flag_qs.count()

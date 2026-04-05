@@ -97,6 +97,7 @@
 {% block content %}
 {% trans "Country Explorer" as default_country_explorer %}
 {% trans "Search countries..." as default_search_placeholder %}
+{% trans "Search" as search_label_text %}
 <div class="page-header">
     <div class="container text-center">
         <h1><i class="bi bi-globe-americas"></i> {{ page_title|default:default_country_explorer }}</h1>
@@ -110,18 +111,7 @@
         <form method="get" action="" id="countries-search-form">
             <div class="row g-3 align-items-end">
                 <div class="{% if regions %}col-md-8{% else %}col-12{% endif %}">
-                    <label for="search" class="form-label">
-                        <i class="bi bi-search"></i> {% trans "Search" %}
-                    </label>
-                    <input 
-                        type="text" 
-                        class="form-control form-control-lg" 
-                        id="search" 
-                        name="q" 
-                        placeholder="{{ search_placeholder|default:default_search_placeholder }}"
-                        value="{{ search_query|default:'' }}"
-                        autocomplete="off"
-                    >
+                    {% include 'includes/_search_bar.html' with search_input_id='search' search_query_name='q' search_placeholder=search_placeholder|default:default_search_placeholder search_query=search_query|default:'' search_label=search_label_text search_label_icon='bi bi-search' search_input_class='form-control form-control-lg' show_search_button=False %}
                 </div>
                 {% if regions %}
                 <div class="col-md-4">

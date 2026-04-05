@@ -1,0 +1,22 @@
+{% load i18n %}
+{% if search_label %}
+<label for="{{ search_input_id }}" class="form-label">
+    {% if search_label_icon %}<i class="{{ search_label_icon }}"></i> {% endif %}{{ search_label }}
+</label>
+{% endif %}
+<div class="input-group">
+    <input
+        type="text"
+        class="{{ search_input_class|default:'form-control' }}"
+        id="{{ search_input_id }}"
+        name="{{ search_query_name|default:'q' }}"
+        placeholder="{{ search_placeholder|default:'' }}"
+        value="{{ search_query|default:'' }}"
+        autocomplete="off"
+    >
+    {% if show_search_button %}
+    <button class="btn btn-outline-secondary" type="submit">
+        <i class="bi bi-search"></i>
+    </button>
+    {% endif %}
+</div>

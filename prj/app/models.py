@@ -1,4 +1,5 @@
 import uuid
+import unicodedata
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -11,6 +12,12 @@ from datetime import timedelta
 
 # Import naší zkompilované Rust knihovny pro zrychlení operací
 import flag_search_core
+
+
+def _normalize_search_value(value):
+    if not isinstance(value, str):
+        return ''
+    return unicodedata.normalize('NFD', value).encode('ascii', 'ignore').decode('utf-8').lower()
 
 class Profile(models.Model):
     """Extended user profile"""
@@ -90,6 +97,7 @@ class Country(models.Model):
     # Basic Info
     name_common = models.CharField(max_length=200, db_index=True, verbose_name=_("Common Name"))
     name_official = models.CharField(max_length=200, verbose_name=_("Official Name"))
+    search_name = models.CharField(max_length=255, blank=True, default='', db_index=True)
     cca2 = models.CharField(max_length=2, unique=True, verbose_name=_("ISO Alpha-2"))
     cca3 = models.CharField(max_length=3, unique=True, verbose_name=_("ISO Alpha-3"))
     
@@ -148,6 +156,10 @@ class Country(models.Model):
     
     def __str__(self):
         return f"{self.flag_emoji} {self.name_common}"
+
+    def save(self, *args, **kwargs):
+        self.search_name = _normalize_search_value(self.name_common)
+        super().save(*args, **kwargs)
     
     def get_absolute_url(self):
         from django.urls import reverse
@@ -188,6 +200,7 @@ class FlagCollection(models.Model):
     ]
 
     name = models.CharField(max_length=200, verbose_name=_("Name"))
+    search_name = models.CharField(max_length=255, blank=True, default='', db_index=True)
     name_cs = models.CharField(max_length=200, blank=True, default='', verbose_name=_("Name (Czech)"))
     name_de = models.CharField(max_length=200, blank=True, default='', verbose_name=_("Name (German)"))
     slug = models.SlugField(max_length=255, unique=True, blank=True, verbose_name=_("Slug"))
@@ -250,6 +263,8 @@ class FlagCollection(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        self.search_name = _normalize_search_value(self.name)
+
         # Keep country binding idempotent: consume ISO3 hints from structured description.
         description = self.description if isinstance(self.description, dict) else {}
         parent_iso3 = description.get('parent_country_iso3')

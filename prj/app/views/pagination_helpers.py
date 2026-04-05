@@ -6,7 +6,6 @@ from urllib.parse import urlencode
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.urls import reverse
-from .text_utils import accent_insensitive_match
 from ..models import FlagCollection
 
 
@@ -145,7 +144,6 @@ def normalize_and_paginate(items_list, request, per_page=GALLERY_PER_PAGE):
     search_query = request.GET.get('search') or request.GET.get('q') or ''
     if search_query:
         search_query = search_query.strip()
-        items_list = [i for i in items_list if accent_insensitive_match(i.get('name', ''), search_query)]
 
     paginator = Paginator(items_list, per_page)
     page = paginator.get_page(request.GET.get('page'))

@@ -13,9 +13,11 @@ from app.models import FlagCollection, Country
 load_dotenv()
 
 class Command(BaseCommand):
-    help = 'Master AI Agent: Production Ready. Isolated Search, Few-Shot Prompt, Auto-Repair JSON & Snippet Debugging.'
+    help = 'Master AI Agent: Expanded Context, Perfect Czech Grammar, Auto-Retries, ID matching & Token Fallback.'
 
     MODELS = [
+        {"name": "gemma-3-27b-it", "provider": "google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/", "chunk_size": 1},
+        {"name": "gemma-4-31b-it", "provider": "google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/", "chunk_size": 1},
         {"name": "gemini-3.1-flash-lite-preview", "provider": "google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/", "chunk_size": 4},
         {"name": "gpt-oss-120b", "provider": "sambanova", "base_url": "https://api.sambanova.ai/v1", "chunk_size": 3},
         {"name": "openai/gpt-oss-120b", "provider": "groq", "base_url": None, "chunk_size": 3},
@@ -29,6 +31,8 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--limit', type=int, default=0, help='Omezí počet vlajek ke zpracování')
         parser.add_argument('--reset', action='store_true', help='Resetuje is_verified a vrátí JUNK vlajky do oběhu')
+        # NOVÝ ARGUMENT: Spustí skript od konce abecedy
+        parser.add_argument('--reverse', action='store_true', help='Pojede vlajky od konce (Z do A)')
 
     def log(self, message, style=None, inline=False):
         styled = style(message) if style else message
@@ -39,33 +43,19 @@ class Command(BaseCommand):
         self.stdout.flush()
 
     def extract_json(self, text):
-        """Ultra-robustní parser: Oprava uvozovek u popisků a backtracking u extra závorek."""
+        """Jednodušší a robustnější parser, který neničí Listy."""
         try:
             text = re.sub(r'```[a-zA-Z]*\n?|\n?```', '', text).strip()
-            
-            # Oprava chybějících uvozovek u textových polí (Gemini Glitch)
             text = re.sub(r'":\s?([^"{\[\s0-9\-][^,}\]]+)(?=[,}\]])', r'": "\1"', text)
-            
             start_match = re.search(r'(\[|\{)', text)
             if not start_match: return None
-            start_idx = start_match.start()
-            
-            for end_idx in range(len(text), start_idx, -1):
+            for end_idx in range(len(text), start_match.start(), -1):
                 if text[end_idx-1] in ('}', ']'):
                     try:
-                        parsed = json.loads(text[start_idx:end_idx])
-                        if isinstance(parsed, list):
-                            converted = {}
-                            for item in parsed:
-                                k = str(item.get('qid') or item.get('name'))
-                                converted[k] = item
-                            return converted
-                        return parsed
-                    except json.JSONDecodeError:
-                        continue
+                        return json.loads(text[start_match.start():end_idx])
+                    except: continue
             return None
-        except Exception:
-            return None
+        except: return None
 
     def fetch_wikipedia_clean(self, title, lang="en"):
         url = f"https://{lang}.wikipedia.org/w/api.php"
@@ -95,8 +85,18 @@ class Command(BaseCommand):
         return iso3 if len(iso3) == 3 and iso3.isalpha() else None
 
     def handle(self, *args, **options):
+        # 1. Nejdříve načteme Google klíče samostatně
+        google_keys = [os.getenv(f"GOOGLE_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"GOOGLE_API_KEY_{j}")]
+        
+        # 2. Logika pro paralelní běh (prohození klíčů)
+        if options['reverse'] and len(google_keys) >= 2:
+            # Prohodíme první a druhý klíč. Reverse skript začne s klíčem č. 2.
+            google_keys[0], google_keys[1] = google_keys[1], google_keys[0]
+            self.log("🔀 [KEY SWAP] Reverzní mód aktivní: Skript začíná s GOOGLE_API_KEY_2.", self.style.WARNING)
+
+        # 3. Složení finálního slovníku klíčů
         keys = {
-            "google": [os.getenv(f"GOOGLE_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"GOOGLE_API_KEY_{j}")],
+            "google": google_keys,
             "sambanova": [os.getenv(f"SAMBANOVA_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"SAMBANOVA_API_KEY_{j}")],
             "groq": [os.getenv(f"GROQ_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"GROQ_API_KEY_{j}")]
         }
@@ -106,7 +106,14 @@ class Command(BaseCommand):
             FlagCollection.objects.all().update(is_verified=False, is_public=True)
 
         ddgs = DDGS()
-        flags_qs = FlagCollection.objects.filter(is_verified=False).order_by('name')
+        
+        # LOGIKA PRO REVERZNÍ BĚH (Klešťový obchvat)
+        if options['reverse']:
+            flags_qs = FlagCollection.objects.filter(is_verified=False).order_by('-name')
+            self.log("◀️ [REVERZNÍ MÓD] Jedu od Z do A...", self.style.WARNING)
+        else:
+            flags_qs = FlagCollection.objects.filter(is_verified=False).order_by('name')
+            
         if options['limit'] > 0: flags_qs = flags_qs[:options['limit']]
         
         flags_to_process = list(flags_qs)
@@ -133,23 +140,38 @@ class Command(BaseCommand):
 
             k_idx = current_key_indices[provider]
             c_key = keys[provider][k_idx]
-            client = OpenAI(base_url=m_cfg["base_url"], api_key=c_key) if m_cfg["base_url"] else Groq(api_key=c_key)
+            client = OpenAI(base_url=m_cfg["base_url"], api_key=c_key, timeout=45.0) if m_cfg["base_url"] else Groq(api_key=c_key, timeout=45.0)
 
             attempts = 0
-            max_attempts = 3
+            max_attempts = max(3, len(keys[provider]) + 1)
             success = False
             current_chunk_size = original_chunk_size
+            
+            # Nastavíme výchozí limit kontextu pro tuto dávku
+            current_context_limit = 7500
 
             while attempts < max_attempts and not success:
                 chunk = flags_to_process[i:i + current_chunk_size]
                 if not chunk: break
 
-                self.log(f"\n📦 [BATCH {i+1}-{min(i+current_chunk_size, total_count)}/{total_count}] | Model: {model_name} | Pokus: {attempts+1}/{max_attempts}")
+                self.log(f"\n📦 [BATCH {i+1}-{min(i+len(chunk), total_count)}/{total_count}] | Model: {model_name} | Pokus: {attempts+1}/{max_attempts}")
                 data_to_send = []
+                flags_for_ai = [] 
 
                 for idx, f in enumerate(chunk):
                     real_idx = i + idx + 1
+                    
+                    # RYCHLÁ KONTROLA DATABÁZE (Ochrana proti duplicitě při setkání agentů)
+                    f.refresh_from_db()
+                    desc_cs = f.description.get('cs', '') if isinstance(f.description, dict) else ''
+                    if (len(desc_cs) > 20 and f.population and f.area_km2) or f.is_verified:
+                        f.is_verified = True
+                        f.save()
+                        self.log(f"   ⏭️ [{real_idx}] {f.name[:30]:<30} (Již zpracováno kolegou)", self.style.SUCCESS)
+                        continue
+                    
                     self.log(f"   🔍 [{real_idx}] {f.name[:30]:<30}", inline=True)
+                    flags_for_ai.append((real_idx, f))
                     
                     ctx = ""
                     wiki_stats = []
@@ -160,13 +182,13 @@ class Command(BaseCommand):
                             txt = self.fetch_wikipedia_clean(title, lang)
                             if txt:
                                 wiki_stats.append(f"{lang.upper()}:{len(txt)}")
-                                ctx += f"\n--- WIKI {lang.upper()} ({title}) ---\n{txt[:1200]}\n"
+                                ctx += f"\n--- WIKI {lang.upper()} ({title}) ---\n{txt[:2500]}\n"
 
                     self.log(f" 📖 Wiki [{' | '.join(wiki_stats) if wiki_stats else 'None'}]", inline=True)
 
                     missing_pop = (f.population is None)
                     missing_area = (f.area_km2 is None)
-                    low_data = len(ctx) < 600
+                    low_data = len(ctx) < 1500 
                     web_stats = []
 
                     if missing_pop or missing_area or low_data:
@@ -181,7 +203,7 @@ class Command(BaseCommand):
                         self.log("") 
                         for q in queries:
                             try:
-                                res_web = ddgs.text(q, max_results=2)
+                                res_web = ddgs.text(q, max_results=3)
                                 if res_web:
                                     found_text = " ".join([r.get('body', '') for r in res_web])
                                     q_type = "pop" if "population" in q else ("area" if "area" in q else "details")
@@ -197,97 +219,98 @@ class Command(BaseCommand):
                     self.log(f"🌐 Web [{' | '.join(web_stats) if web_stats else 'None'}]")
 
                     data_to_send.append({
-                        "qid": str(f.wikidata_id or ''), "name": f.name, 
-                        "db_pop": f.population, "db_area": f.area_km2, "web_data": ctx[:4500],
+                        "internal_id": str(real_idx), 
+                        "name": f.name, 
+                        "db_pop": f.population, 
+                        "db_area": f.area_km2, 
+                        # Použije se dynamický limit kontextu (při Token chybě se zmenší)
+                        "web_data": ctx[:current_context_limit],
                     })
 
+                if not data_to_send:
+                    success = True
+                    i += len(chunk)
+                    continue
+
                 prompt = f"""
-            PHASE 1: FAST BULK SORTER - You are a geopolitical categorization engine processing {len(data_to_send)} entities.
-            Your PRIMARY MISSION is PERFECT categorization to prevent data poisoning. Be BRUTALLY strict.
+            PHASE 1: FAST BULK SORTER - Geopolitical categorization for {len(data_to_send)} entities.
+            Your PRIMARY MISSION is PERFECT categorization. Be BRUTALLY strict.
             
-            CATEGORY RULES (ABSOLUTE - NO EXCEPTIONS):
-            
-            1. "country" - ONLY these exactly:
-               - 193 UN member states (sovereign nations recognized by the UN)
-               - 2 UN observer states: Vatican City, Palestine
-               - If unsure whether something is a UN member, mark as "dependency" or "junk" instead
-               - NEVER mark micronations, unrecognized states, or historical entities as "country"
-            
-            2. "dependency" - Real non-sovereign territories ONLY:
-               - Officially recognized overseas territories, autonomous regions, crown dependencies
-               - Examples: Greenland, Aruba, Bermuda, New Caledonia, Puerto Rico, Guam, Faroe Islands
-               - Must be governed by a sovereign state
-               - NOT unrecognized separatist regions or micronations
-            
-            3. "region" - Administrative subdivisions:
-               - States of a federation (e.g., Texas, Bavaria, Johor)
-               - Provinces, counties, districts, oblasts, prefectures
-               - Must be an official administrative division
-            
-            4. "city" - Urban settlements:
-               - Cities, towns, municipalities, villages
-               - Any settlement, regardless of size
-            
-            5. "historical" - Former states that NO LONGER EXIST:
-               - Roman Empire, Soviet Union, Abbasid Caliphate, Yugoslavia, Czechoslovakia
-               - Must have been a recognized state in the past
-               - NOT current entities with historical flags
-            
-            6. "international" - Multinational organizations:
-               - UN, EU, NATO, Arab League, ASEAN, African Union
-               - Must be an official international body
-            
-            7. "junk" - CRITICAL FILTER (mark anything suspicious as junk):
-               - Micronations (Aarianian Union, Aerican Empire, Sealand, etc.)
-               - Unrecognized internet projects or fictional states
-               - Political parties, movements, ideologies (26th of July Movement, Ba'athism)
-               - Specific regimes or dictatorial periods (Nazi Germany, Francoist Spain - use "historical" for the state itself)
-               - Individuals, sports teams, corporations, cultural groups
-               - Separatist movements without official recognition
-               - Anything that seems fake, promotional, or non-governmental
-               - When in doubt between "dependency" and "junk" for obscure entities -> choose "junk"
-            
-            FEW-SHOT EXAMPLES:
-            - "Japan" -> "country" (UN member)
-            - "Greenland" -> "dependency" (Danish territory)
-            - "Texas" -> "region" (US state)
-            - "Munich" -> "city" (German city)
-            - "Soviet Union" -> "historical" (no longer exists)
-            - "United Nations" -> "international" (international org)
-            - "26th of July Movement" -> "junk" (political movement)
-            - "Aarianian Union" -> "junk" (micronation)
-            - "Sealand" -> "junk" (unrecognized micronation)
-            - "Nazi Germany" -> "junk" (regime, not the state itself - use "historical" for German Reich if needed)
-            - "Francoist Spain" -> "junk" (regime period)
+            CATEGORY RULES:
+            1. "country": 193 UN members + 2 observers ONLY.
+            2. "dependency": Real non-sovereign territories (Greenland, Bermuda).
+            3. "region": States of federation, provinces, districts (Texas, Bavaria).
+            4. "city": Cities, towns, municipalities.
+            5. "historical": Former states (Soviet Union).
+            6. "international": UN, EU, NATO.
+            7. "junk": Micronations (Aarianian Union), internet projects, parties, movements, individuals.
             
             DATA EXTRACTION:
-            - STATISTICS: Extract EXACT numbers from web_data. NEVER round. Use null if missing.
-            - NAMES: Translate known exonyms to Czech (name_cs) and German (name_de).
-            - DESCRIPTIONS: Write EXACTLY 3 sentences per language (EN, CS, DE). Focus on history/geography. Max 250 chars per language.
-            - FORBIDDEN: Do NOT mention population or area statistics in description text.
+            - Extract exact numbers for population/area from the web_data. NEVER round. Use null if missing.
+            - NAMES (CS/DE): You MUST prioritize the titles found in WIKI CS (for name_cs) and WIKI DE (for name_de). 
+            - If WIKI CS title is "Království Algarves", use exactly that. 
+            - If no Czech Wikipedia title is available, follow the adjective rule: "Württemberské království" (preferred) over "Království Württembersko".
+            - DESCRIPTIONS: Write exactly 3 highly informative sentences per language (EN, CS, DE). Avoid generic filler phrases. Use specific historical facts, locations, capitals, and ruling dynasties found in the text. Max 300 chars per language. Do NOT mention population or area statistics in the text.
             
-            OUTPUT FORMAT (JSON dictionary, map QID or name to result):
-            {{ "QID": {{ "new_category": "country|dependency|city|region|historical|international|junk", "parent_country_iso3": "ABC", "population": 12345, "area_km2": 67.89, "name_cs": "...", "name_de": "...", "description_en": "...", "description_cs": "...", "description_de": "..." }} }}
+            OUTPUT FORMAT (JSON LIST OF OBJECTS - STRICTLY USE THIS FORMAT):
+            [
+              {{ 
+                "internal_id": "MUST MATCH EXACTLY THE internal_id FROM DATA", 
+                "new_category": "country|dependency|city|region|historical|international|junk", 
+                "parent_country_iso3": "ABC", 
+                "population": 12345, 
+                "area_km2": 67.89, 
+                "name_cs": "...", 
+                "name_de": "...", 
+                "description_en": "...", 
+                "description_cs": "...", 
+                "description_de": "..." 
+              }}
+            ]
             """
 
                 try:
                     self.log(f"   🤖 [AI] Volám AI...", style=self.style.HTTP_INFO)
-                    resp = client.chat.completions.create(
-                        messages=[{"role": "user", "content": f"{prompt}\n\nDATA: {json.dumps(data_to_send)}"}],
-                        model=model_name, temperature=0.0, response_format={"type": "json_object"}
-                    )
+                    
+                    api_args = {
+                        "messages": [{"role": "user", "content": f"{prompt}\n\nDATA: {json.dumps(data_to_send)}"}],
+                        "model": model_name,
+                        "temperature": 0.0,
+                    }
+
+                    if "gemma" not in model_name.lower():
+                        api_args["response_format"] = {"type": "json_object"}
+
+                    resp = client.chat.completions.create(**api_args)
                     
                     content = resp.choices[0].message.content
                     ai_results = self.extract_json(content)
 
                     if not ai_results:
-                        raise ValueError(f"Nečitelný JSON od AI.")
+                        raise ValueError("AI nevrátila validní JSON.")
 
-                    for flag in chunk:
-                        res = ai_results.get(str(flag.wikidata_id or '')) or ai_results.get(flag.name)
-                        if not res: continue
+                    ai_list = []
+                    if isinstance(ai_results, dict):
+                        for val in ai_results.values():
+                            if isinstance(val, list): ai_list.extend(val)
+                            elif isinstance(val, dict): ai_list.append(val)
+                        if not ai_list: ai_list = list(ai_results.values())
+                    elif isinstance(ai_results, list):
+                        ai_list = ai_results
 
-                        # JUNK DETECTION: Mark as not public and verified, then skip
+                    res_by_id = {str(item.get("internal_id")): item for item in ai_list if isinstance(item, dict) and item.get("internal_id")}
+
+                    missing_ids = []
+                    for real_idx, flag in flags_for_ai:
+                        if str(real_idx) not in res_by_id:
+                            missing_ids.append(flag.name)
+                    
+                    if missing_ids:
+                        raise ValueError(f"AI ztratila ID pro tyto položky: {', '.join(missing_ids)}")
+
+                    for real_idx, flag in flags_for_ai:
+                        res = res_by_id[str(real_idx)]
+
                         if str(res.get('new_category')).lower() == 'junk':
                             flag.category = 'junk' if 'junk' in dict(FlagCollection.CATEGORY_CHOICES) else flag.category
                             flag.is_public = False
@@ -296,45 +319,32 @@ class Command(BaseCommand):
                             self.log(f"      🗑️  {flag.name[:25]:<25} -> JUNK (hidden)", self.style.WARNING)
                             continue
 
-                        # CATEGORY VALIDATION: Only assign if valid
                         new_cat = res.get('new_category')
                         valid_categories = [choice[0] for choice in FlagCollection.CATEGORY_CHOICES]
                         if new_cat in valid_categories:
                             flag.category = new_cat
-                        else:
-                            self.log(f"      ⚠️  Invalid category '{new_cat}' for {flag.name}, keeping original", self.style.WARNING)
                         
-                        # PARENT COUNTRY BINDING: Extract ISO3 and bind to Country model
                         ai_iso = self._normalize_iso3(res.get('parent_country_iso3'))
                         bound_country = Country.objects.filter(cca3=ai_iso).first() if ai_iso in sovereign_iso3 else None
                         
                         if bound_country: 
                             flag.country = bound_country
                         
-                        # STATISTICS EXTRACTION: Population and Area
                         try:
-                            if res.get('population'): 
-                                flag.population = int(float(res.get('population')))
-                            if res.get('area_km2'): 
-                                flag.area_km2 = float(res.get('area_km2'))
-                        except: 
-                            pass
+                            if res.get('population'): flag.population = int(float(res.get('population')))
+                            if res.get('area_km2'): flag.area_km2 = float(res.get('area_km2'))
+                        except: pass
 
-                        # DUAL SYNC: Only sync to Country model if this is actually a 'country' category
                         if bound_country and flag.category == 'country':
                             country_updated = False
                             if res.get('population') and flag.population and flag.population > 0:
                                 if bound_country.population == 0 or bound_country.population is None:
-                                    bound_country.population = flag.population
-                                    country_updated = True
+                                    bound_country.population = flag.population; country_updated = True
                             if res.get('area_km2') and flag.area_km2 and flag.area_km2 > 0:
                                 if bound_country.area_km2 == 0 or bound_country.area_km2 is None:
-                                    bound_country.area_km2 = flag.area_km2
-                                    country_updated = True
-                            if country_updated:
-                                bound_country.save()
+                                    bound_country.area_km2 = flag.area_km2; country_updated = True
+                            if country_updated: bound_country.save()
 
-                        # TRANSLATIONS & DESCRIPTIONS
                         flag.name_cs = (res.get('name_cs') or flag.name).strip()
                         flag.name_de = (res.get('name_de') or flag.name).strip()
                         flag.description = {
@@ -357,19 +367,26 @@ class Command(BaseCommand):
                     err = str(e).lower()
                     attempts += 1
                     
-                    if "429" in err or "rate limit" in err:
-                        self.log(f"   ⏳ [RATE LIMIT] Limit. Čekám 15s...", self.style.WARNING)
+                    # 1. FALLBACK PRO TOKENY: Pokud API zakřičí, že je kontext moc velký
+                    if "token" in err or "too large" in err or "context length" in err or "maximum context" in err:
+                        self.log(f"   ✂️ [TOKEN LIMIT] Text je příliš dlouhý. Zkracuji data a zkouším znovu...", self.style.WARNING)
+                        current_context_limit = 3500
+                        time.sleep(2)
+                        
+                    # 2. BĚŽNÉ CHYBY: Rate limity a přetížení
+                    elif "429" in err or "rate limit" in err or "timeout" in err or "503" in err:
+                        self.log(f"   ⏳ [LIMIT / 503] Čekám 15s...", self.style.WARNING)
                         time.sleep(15)
-                        if k_idx < len(keys[provider]) - 1:
-                            k_idx += 1
+                        
+                        if len(keys[provider]) > 1:
+                            k_idx = (k_idx + 1) % len(keys[provider])
                             current_key_indices[provider] = k_idx
-                            self.log(f"      🔄 Přepínám na další klíč ({k_idx+1}).")
+                            self.log(f"      🔄 Přepínám na klíč č. {k_idx+1}.")
                             
-                            # TENTO ŘÁDEK CHYBĚL A ZPŮSOBOVAL NEFUNKČNÍ ROTACI KLÍČŮ:
                             c_key = keys[provider][k_idx]
-                            client = OpenAI(base_url=m_cfg["base_url"], api_key=c_key) if m_cfg["base_url"] else Groq(api_key=c_key)
+                            client = OpenAI(base_url=m_cfg["base_url"], api_key=c_key, timeout=45.0) if m_cfg["base_url"] else Groq(api_key=c_key, timeout=45.0)
                             
-                            attempts -= 1 
+                    # 3. OSTATNÍ CHYBY: Rozbitý JSON atd.
                     else:
                         self.log(f"   ⚠️ [POKUS {attempts} SELHAL] {err[:150]}", self.style.ERROR)
                         if attempts < max_attempts:
@@ -377,7 +394,9 @@ class Command(BaseCommand):
                             self.log(f"      🔄 Snižuji dávku na {current_chunk_size} a zkouším znovu...", self.style.NOTICE)
 
             if not success:
-                self.log(f"   ❌ [CRITICAL] {model_name} selhal 3x po sobě. Fallback na další model.", self.style.ERROR)
+                self.log(f"   ❌ [CRITICAL] Přeskakuji tuto dávku, selhala {max_attempts}x po sobě.", self.style.ERROR)
+                i += len(chunk)
+                current_chunk_size = original_chunk_size
                 current_model_idx += 1
 
         self.log(f"\n🏁 [HOTOVO] Celá fronta zpracována.", self.style.SUCCESS)
