@@ -13,7 +13,7 @@ from app.models import FlagCollection, Country
 load_dotenv()
 
 class Command(BaseCommand):
-    help = 'Master AI Agent: Expanded Context, Perfect Czech Grammar, Auto-Retries, ID matching & Token Fallback.'
+    help = 'Master AI Agent: Parallel Ready, Key Rotation, Perfect Czech Grammar, Token Fallback & Q-Node Exterminator.'
 
     MODELS = [
         {"name": "gemma-3-27b-it", "provider": "google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/", "chunk_size": 1},
@@ -31,7 +31,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--limit', type=int, default=0, help='Omezí počet vlajek ke zpracování')
         parser.add_argument('--reset', action='store_true', help='Resetuje is_verified a vrátí JUNK vlajky do oběhu')
-        # NOVÝ ARGUMENT: Spustí skript od konce abecedy
         parser.add_argument('--reverse', action='store_true', help='Pojede vlajky od konce (Z do A)')
 
     def log(self, message, style=None, inline=False):
@@ -43,7 +42,6 @@ class Command(BaseCommand):
         self.stdout.flush()
 
     def extract_json(self, text):
-        """Jednodušší a robustnější parser, který neničí Listy."""
         try:
             text = re.sub(r'```[a-zA-Z]*\n?|\n?```', '', text).strip()
             text = re.sub(r'":\s?([^"{\[\s0-9\-][^,}\]]+)(?=[,}\]])', r'": "\1"', text)
@@ -73,11 +71,33 @@ class Command(BaseCommand):
     def get_wikipedia_title_from_qid(self, qid, lang="en"):
         if not qid: return None
         url = "https://www.wikidata.org/w/api.php"
-        params = {"action": "wbgetentities", "format": "json", "ids": qid, "props": "sitelinks", "sitefilter": f"{lang}wiki"}
+        params = {"action": "wbgetentities", "format": "json", "ids": qid, "props": "sitelinks|labels"}
         try:
-            r = requests.get(url, params=params, timeout=4)
-            return r.json()["entities"][qid]["sitelinks"][f"{lang}wiki"]["title"]
-        except: return None
+            r = requests.get(url, params=params, timeout=5)
+            
+            # Ochrana proti Wikidata Banu
+            if r.status_code == 429:
+                time.sleep(2)
+                return None
+                
+            data = r.json().get("entities", {}).get(qid, {})
+            
+            if "sitelinks" in data and f"{lang}wiki" in data["sitelinks"]:
+                return data["sitelinks"][f"{lang}wiki"]["title"]
+            
+            if "labels" in data and lang in data["labels"]:
+                return data["labels"][lang]["value"]
+            
+            if "labels" in data and "en" in data["labels"]:
+                return data["labels"]["en"]["value"]
+
+            # ZÁCHRANA: Pokud nemá anglický štítek, vezmi prostě první dostupný!
+            if "labels" in data and data["labels"]:
+                first_lang = list(data["labels"].keys())[0]
+                return data["labels"][first_lang]["value"]
+                
+        except: pass
+        return None
 
     def _normalize_iso3(self, value):
         if not isinstance(value, str): return None
@@ -85,16 +105,12 @@ class Command(BaseCommand):
         return iso3 if len(iso3) == 3 and iso3.isalpha() else None
 
     def handle(self, *args, **options):
-        # 1. Nejdříve načteme Google klíče samostatně
         google_keys = [os.getenv(f"GOOGLE_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"GOOGLE_API_KEY_{j}")]
         
-        # 2. Logika pro paralelní běh (prohození klíčů)
         if options['reverse'] and len(google_keys) >= 2:
-            # Prohodíme první a druhý klíč. Reverse skript začne s klíčem č. 2.
             google_keys[0], google_keys[1] = google_keys[1], google_keys[0]
             self.log("🔀 [KEY SWAP] Reverzní mód aktivní: Skript začíná s GOOGLE_API_KEY_2.", self.style.WARNING)
 
-        # 3. Složení finálního slovníku klíčů
         keys = {
             "google": google_keys,
             "sambanova": [os.getenv(f"SAMBANOVA_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"SAMBANOVA_API_KEY_{j}")],
@@ -107,7 +123,6 @@ class Command(BaseCommand):
 
         ddgs = DDGS()
         
-        # LOGIKA PRO REVERZNÍ BĚH (Klešťový obchvat)
         if options['reverse']:
             flags_qs = FlagCollection.objects.filter(is_verified=False).order_by('-name')
             self.log("◀️ [REVERZNÍ MÓD] Jedu od Z do A...", self.style.WARNING)
@@ -118,7 +133,7 @@ class Command(BaseCommand):
         
         flags_to_process = list(flags_qs)
         total_count = len(flags_to_process)
-        self.log(f"🚀 [START] Produkční Agent inicializován pro {total_count} vlajek.", self.style.NOTICE)
+        self.log(f"🚀 [START] Agent inicializován pro {total_count} vlajek.", self.style.NOTICE)
 
         sovereign_iso3 = set(Country.objects.filter(un_member=True).values_list('cca3', flat=True))
         current_key_indices = {"google": 0, "sambanova": 0, "groq": 0}
@@ -127,7 +142,7 @@ class Command(BaseCommand):
         i = 0
         while i < total_count:
             if current_model_idx >= len(self.MODELS):
-                self.log("\n💤 [PAUZA] Všechny modely vyčerpány (Rate Limit). Čekám 60 sekund...", self.style.ERROR)
+                self.log("\n💤 [PAUZA] Všechny modely vyčerpány. Čekám 60 sekund...", self.style.ERROR)
                 time.sleep(60)
                 current_model_idx = 0 
                 continue
@@ -146,8 +161,6 @@ class Command(BaseCommand):
             max_attempts = max(3, len(keys[provider]) + 1)
             success = False
             current_chunk_size = original_chunk_size
-            
-            # Nastavíme výchozí limit kontextu pro tuto dávku
             current_context_limit = 7500
 
             while attempts < max_attempts and not success:
@@ -161,7 +174,6 @@ class Command(BaseCommand):
                 for idx, f in enumerate(chunk):
                     real_idx = i + idx + 1
                     
-                    # RYCHLÁ KONTROLA DATABÁZE (Ochrana proti duplicitě při setkání agentů)
                     f.refresh_from_db()
                     desc_cs = f.description.get('cs', '') if isinstance(f.description, dict) else ''
                     if (len(desc_cs) > 20 and f.population and f.area_km2) or f.is_verified:
@@ -170,19 +182,42 @@ class Command(BaseCommand):
                         self.log(f"   ⏭️ [{real_idx}] {f.name[:30]:<30} (Již zpracováno kolegou)", self.style.SUCCESS)
                         continue
                     
-                    self.log(f"   🔍 [{real_idx}] {f.name[:30]:<30}", inline=True)
+                    # === Q-NODE EXTERMINATOR ===
+                    search_name = f.name
+                    if re.match(r'^Q\d+$', search_name) and f.wikidata_id:
+                        resolved_name = self.get_wikipedia_title_from_qid(f.wikidata_id, "en")
+                        if resolved_name and not re.match(r'^Q\d+$', resolved_name):
+                            search_name = resolved_name
+                            f.name = search_name
+                            f.save(update_fields=['name']) 
+                            time.sleep(0.5) # Drobné zpomalení pro API
+                    
+                    if re.match(r'^Q\d+$', search_name):
+                        if 'junk' in dict(FlagCollection.CATEGORY_CHOICES):
+                            f.category = 'junk'
+                        
+                        f.is_public = False
+                        f.is_verified = True
+                        f.save()
+                        self.log(f"   🗑️ [{search_name}] -> JUNK (Nerozluštitelný Q-Kód bez názvu)", self.style.WARNING)
+                        time.sleep(1) # Zabrání kulometnému bombardování API a banům
+                        continue
+                    # ============================
+
+                    self.log(f"   🔍 [{real_idx}] {search_name[:30]:<30}", inline=True)
                     flags_for_ai.append((real_idx, f))
                     
                     ctx = ""
                     wiki_stats = []
                     
                     for lang in ("en", "cs", "de"):
-                        title = f.name if lang == "en" else self.get_wikipedia_title_from_qid(f.wikidata_id, lang)
+                        title = search_name if lang == "en" else self.get_wikipedia_title_from_qid(f.wikidata_id, lang)
                         if title:
                             txt = self.fetch_wikipedia_clean(title, lang)
                             if txt:
                                 wiki_stats.append(f"{lang.upper()}:{len(txt)}")
                                 ctx += f"\n--- WIKI {lang.upper()} ({title}) ---\n{txt[:2500]}\n"
+                        time.sleep(0.2) # Ochrana API Wikidat
 
                     self.log(f" 📖 Wiki [{' | '.join(wiki_stats) if wiki_stats else 'None'}]", inline=True)
 
@@ -193,7 +228,7 @@ class Command(BaseCommand):
 
                     if missing_pop or missing_area or low_data:
                         hint = f.country.name_common if f.country else ""
-                        safe_name = f'"{f.name}"' if not f.name.startswith("'") else f.name
+                        safe_name = f'"{search_name}"' if not search_name.startswith("'") else search_name
                         queries = []
                         
                         if missing_pop: queries.append(f"{safe_name} {hint} population site:wikipedia.org".strip())
@@ -220,10 +255,9 @@ class Command(BaseCommand):
 
                     data_to_send.append({
                         "internal_id": str(real_idx), 
-                        "name": f.name, 
+                        "name": search_name, 
                         "db_pop": f.population, 
                         "db_area": f.area_km2, 
-                        # Použije se dynamický limit kontextu (při Token chybě se zmenší)
                         "web_data": ctx[:current_context_limit],
                     })
 
@@ -247,8 +281,8 @@ class Command(BaseCommand):
             
             DATA EXTRACTION:
             - Extract exact numbers for population/area from the web_data. NEVER round. Use null if missing.
-            - NAMES (CS/DE): You MUST prioritize the titles found in WIKI CS (for name_cs) and WIKI DE (for name_de). 
-            - If WIKI CS title is "Království Algarves", use exactly that. 
+            - NAMES (CS/DE): You MUST prioritize the titles found in WIKI CS (for name_cs) and WIKI DE (for name_de).
+            - CRITICAL: NEVER output a raw Wikidata ID (e.g. "Q134486510") as a name. If a real name is missing, infer it from the context or label it "Unknown".
             - If no Czech Wikipedia title is available, follow the adjective rule: "Württemberské království" (preferred) over "Království Württembersko".
             - DESCRIPTIONS: Write exactly 3 highly informative sentences per language (EN, CS, DE). Avoid generic filler phrases. Use specific historical facts, locations, capitals, and ruling dynasties found in the text. Max 300 chars per language. Do NOT mention population or area statistics in the text.
             
@@ -311,8 +345,9 @@ class Command(BaseCommand):
                     for real_idx, flag in flags_for_ai:
                         res = res_by_id[str(real_idx)]
 
-                        if str(res.get('new_category')).lower() == 'junk':
-                            flag.category = 'junk' if 'junk' in dict(FlagCollection.CATEGORY_CHOICES) else flag.category
+                        if str(res.get('new_category')).lower() == 'junk' or re.match(r'^Q\d+$', str(res.get('name_cs', ''))):
+                            if 'junk' in dict(FlagCollection.CATEGORY_CHOICES):
+                                flag.category = 'junk'
                             flag.is_public = False
                             flag.is_verified = True
                             flag.save()
@@ -367,13 +402,11 @@ class Command(BaseCommand):
                     err = str(e).lower()
                     attempts += 1
                     
-                    # 1. FALLBACK PRO TOKENY: Pokud API zakřičí, že je kontext moc velký
                     if "token" in err or "too large" in err or "context length" in err or "maximum context" in err:
                         self.log(f"   ✂️ [TOKEN LIMIT] Text je příliš dlouhý. Zkracuji data a zkouším znovu...", self.style.WARNING)
                         current_context_limit = 3500
                         time.sleep(2)
                         
-                    # 2. BĚŽNÉ CHYBY: Rate limity a přetížení
                     elif "429" in err or "rate limit" in err or "timeout" in err or "503" in err:
                         self.log(f"   ⏳ [LIMIT / 503] Čekám 15s...", self.style.WARNING)
                         time.sleep(15)
@@ -386,7 +419,6 @@ class Command(BaseCommand):
                             c_key = keys[provider][k_idx]
                             client = OpenAI(base_url=m_cfg["base_url"], api_key=c_key, timeout=45.0) if m_cfg["base_url"] else Groq(api_key=c_key, timeout=45.0)
                             
-                    # 3. OSTATNÍ CHYBY: Rozbitý JSON atd.
                     else:
                         self.log(f"   ⚠️ [POKUS {attempts} SELHAL] {err[:150]}", self.style.ERROR)
                         if attempts < max_attempts:
