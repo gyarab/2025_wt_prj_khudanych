@@ -139,6 +139,17 @@ class Country(models.Model):
         ('other', _('Other')),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='sovereign', db_index=True, verbose_name=_("Status"))
+    
+    # Hierarchical relationship for territories
+    owner = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='dependencies',
+        limit_choices_to={'status': 'sovereign'},
+        verbose_name=_("Owner Country")
+    )
 
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))

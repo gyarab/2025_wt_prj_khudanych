@@ -8,27 +8,24 @@ from groq import Groq
 from openai import OpenAI
 from dotenv import load_dotenv
 from django.core.management.base import BaseCommand
+from django.db.models import Count, Q
 from app.models import FlagCollection, Country
-from django.db.models import Q
 
 load_dotenv()
 
 class Command(BaseCommand):
-    help = 'VIP AI Agent: Generates 5-sentence encyclopedic descriptions + stats for PUBLIC Countries and Dependencies.'
+    help = '🚀 VIP AI Agent: Country-centric iteration pro maximální úsporu tokenů a prevenci duplicit.'
 
     MODELS = [
-        {"name": "gemma-3-27b-it", "provider": "google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/", "chunk_size": 1},
-        {"name": "gemini-3.1-flash-lite-preview", "provider": "google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/", "chunk_size": 1},
-        {"name": "gpt-oss-120b", "provider": "sambanova", "base_url": "https://api.sambanova.ai/v1", "chunk_size": 1},
-        {"name": "openai/gpt-oss-120b", "provider": "groq", "base_url": None, "chunk_size": 1},
+        {"name": "gemma-3-27b-it", "provider": "google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/"},
+        {"name": "gemini-3.1-flash-lite-preview", "provider": "google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/"},
+        {"name": "gpt-oss-120b", "provider": "sambanova", "base_url": "https://api.sambanova.ai/v1"},
+        {"name": "openai/gpt-oss-120b", "provider": "groq", "base_url": None},
     ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def add_arguments(self, parser):
-        parser.add_argument('--limit', type=int, default=0, help='Limit records')
-        parser.add_argument('--reset', action='store_true', help='Reset is_verified for VIP categories')
+        parser.add_argument('--limit', type=int, default=0, help='Limit zpracovaných zemí')
+        parser.add_argument('--reset', action='store_true', help='Reset is_verified vlajek')
 
     def log(self, message, style=None, inline=False):
         styled = style(message) if style else message
@@ -63,38 +60,35 @@ class Command(BaseCommand):
         except: pass
         return ""
 
-    def get_wikipedia_title_from_qid(self, qid, lang="en"):
-        if not qid: return None
-        url = "https://www.wikidata.org/w/api.php"
-        params = {"action": "wbgetentities", "format": "json", "ids": qid, "props": "sitelinks", "sitefilter": f"{lang}wiki"}
-        try:
-            r = requests.get(url, params=params, timeout=4)
-            return r.json()["entities"][qid]["sitelinks"][f"{lang}wiki"]["title"]
-        except: return None
-
     def handle(self, *args, **options):
-        google_keys = [os.getenv(f"GOOGLE_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"GOOGLE_API_KEY_{j}")]
-        keys = {"google": google_keys, 
-                "sambanova": [os.getenv(f"SAMBANOVA_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"SAMBANOVA_API_KEY_{j}")],
-                "groq": [os.getenv(f"GROQ_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"GROQ_API_KEY_{j}")]}
+        # Načtení klíčů
+        keys = {
+            "google": [os.getenv(f"GOOGLE_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"GOOGLE_API_KEY_{j}")],
+            "sambanova": [os.getenv(f"SAMBANOVA_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"SAMBANOVA_API_KEY_{j}")],
+            "groq": [os.getenv(f"GROQ_API_KEY_{j}") for j in range(1, 10) if os.getenv(f"GROQ_API_KEY_{j}")]
+        }
 
         if options['reset']:
-            self.log("🧹 [RESET] Vracím VEŘEJNÉ VIP vlajky do oběhu...", self.style.WARNING)
-            FlagCollection.objects.filter(category__in=['country', 'dependency'], is_public=True).update(is_verified=False)
+            self.log("🧹 [RESET] Vracím vlajky do oběhu (is_verified=False)...", self.style.WARNING)
+            FlagCollection.objects.filter(category__in=['country', 'dependency']).update(is_verified=False)
 
         ddgs = DDGS()
+
+        # 🧠 PARADIGM SHIFT: Hledáme v tabulce Country, ne ve vlajkách!
+        # Vezmeme pouze ty země, které mají napojenou alespoň jednu vlajku, co ještě není ověřená
+        countries_qs = Country.objects.filter(
+            additional_flags__isnull=False,
+            additional_flags__is_verified=False,
+            additional_flags__category__in=['country', 'dependency']
+        ).distinct().order_by('name_common')
+
+        if options['limit'] > 0: 
+            countries_qs = countries_qs[:options['limit']]
+
+        countries_list = list(countries_qs)
+        total_count = len(countries_list)
         
-        flags_qs = FlagCollection.objects.filter(
-            category__in=['country', 'dependency'], 
-            is_public=True, 
-            is_verified=False
-        ).order_by('name')
-        
-        if options['limit'] > 0: flags_qs = flags_qs[:options['limit']]
-        
-        flags_to_process = list(flags_qs)
-        total_count = len(flags_to_process)
-        self.log(f"🚀 [VIP START] Zpracovávám {total_count} prioritních veřejných subjektů.", self.style.NOTICE)
+        self.log(f"🚀 [VIP START] Zpracovávám {total_count} unikátních států a závislých území.", self.style.NOTICE)
 
         current_key_indices = {"google": 0, "sambanova": 0, "groq": 0}
         current_model_idx = 0
@@ -102,58 +96,71 @@ class Command(BaseCommand):
 
         while i < total_count:
             if current_model_idx >= len(self.MODELS):
-                time.sleep(60); current_model_idx = 0; continue
+                self.log("💤 Všechny modely vyčerpány. Pauza 60s...", self.style.WARNING)
+                time.sleep(60)
+                current_model_idx = 0
+                continue
 
             m_cfg = self.MODELS[current_model_idx]
             provider, model_name = m_cfg["provider"], m_cfg["name"]
-            if not keys[provider]: current_model_idx += 1; continue
+            
+            if not keys.get(provider): 
+                current_model_idx += 1
+                continue
 
             k_idx = current_key_indices[provider]
             c_key = keys[provider][k_idx]
-            client = OpenAI(base_url=m_cfg["base_url"], api_key=c_key, timeout=60.0) if m_cfg["base_url"] else Groq(api_key=c_key, timeout=60.0)
-
-            f = flags_to_process[i]
-            self.log(f"\n💎 [{i+1}/{total_count}] | 🤖 AI: {model_name} | 🏳️ Entita: {f.name}")
             
+            client = OpenAI(base_url=m_cfg["base_url"], api_key=c_key, timeout=45.0) if m_cfg["base_url"] else Groq(api_key=c_key, timeout=45.0)
+
+            c = countries_list[i]
+            
+            # Najdeme tu "hlavní" vlajku, do které pak uložíme texty (preferujeme is_public=True)
+            main_flag = c.additional_flags.filter(is_public=True, category__in=['country', 'dependency']).first()
+            if not main_flag:
+                main_flag = c.additional_flags.filter(category__in=['country', 'dependency']).first()
+                
+            if not main_flag:
+                self.log(f"   ⚠️ Přeskakuji {c.name_common}, nenašel jsem u ní vhodnou vlajku.")
+                i += 1
+                continue
+
+            self.log(f"\n💎 [{i+1}/{total_count}] | 🤖 AI: {model_name} | 🌍 Stát: {c.name_common}")
+            
+            # --- ZÍSKÁVÁNÍ DAT ---
             ctx = ""
             wiki_stats = []
-            for lang in ("en", "cs", "de"):
-                title = f.name if lang == "en" else self.get_wikipedia_title_from_qid(f.wikidata_id, lang)
-                if title:
-                    txt = self.fetch_wikipedia_clean(title, lang)
-                    if txt: 
-                        wiki_stats.append(f"{lang.upper()}:{len(txt)}")
-                        ctx += f"\n--- WIKI {lang.upper()} ({title}) ---\n{txt[:2000]}\n" # Zkráceno na 2000 pro úsporu TPM
+            for lang in ("en", "cs"):
+                txt = self.fetch_wikipedia_clean(c.name_common, lang)
+                if txt: 
+                    wiki_stats.append(f"{lang.upper()}:{len(txt)}")
+                    ctx += f"\n--- WIKI {lang.upper()} ---\n{txt[:2500]}\n"
 
-            self.log(f"   📖 Wiki nalezeno: [{' | '.join(wiki_stats) if wiki_stats else 'Žádné'}]")
+            self.log(f"   📖 Wiki: [{' | '.join(wiki_stats) if wiki_stats else 'Žádné'}]")
 
             web_stats = []
-            hint = f.country.name_common if f.country else ""
-            queries = [f'"{f.name}" {hint} geography population area']
-            for q in queries:
-                try:
-                    res = ddgs.text(q, max_results=3)
-                    if res: 
-                        found_text = " ".join([r['body'] for r in res])
-                        web_stats.append(f"DDGS:{len(found_text)}")
-                        ctx += f"\n--- WEB ({q}) ---\n" + found_text + "\n"
-                except: pass
-                time.sleep(1)
+            try:
+                res = ddgs.text(f'"{c.name_common}" population area history geography', max_results=2)
+                if res: 
+                    found_text = " ".join([r['body'] for r in res])
+                    web_stats.append(f"DDGS:{len(found_text)}")
+                    ctx += f"\n--- WEB ---\n{found_text}\n"
+            except: pass
             
             if web_stats:
                 self.log(f"   🌐 Web search: [{' | '.join(web_stats)}]")
 
-            # FEW-SHOT PROMPT (Klíč k úspěchu pro Gemmu bez JSON módu)
+            # --- AI PROMPT (FEW-SHOT) ---
             prompt = f"""
-            Act as an elite Geopolitical Historian. Provide structured data for: {f.name}.
+            Act as an elite Geopolitical Historian. Provide structured data for: {c.name_common}.
             
             RULES:
             1. Extract exact numeric population and area_km2. Use null if unknown.
             2. Write EXACTLY 5 sentences per language (EN, CS, DE). Focus on deep history and culture. NO population/area numbers in the text!
-            3. Translate names perfectly (adjective form for CS history, e.g., "Bavorské království").
+            3. Translate names perfectly to Czech and German.
             4. STRICT JSON OUTPUT ONLY. Do NOT wrap in markdown unless it's a JSON block.
 
-            EXAMPLE OUTPUT (Do not copy this data, use it as a structure template):
+            EXAMPLE OUTPUT FORMAT:
             {{
               "name_cs": "Bavorské království",
               "name_de": "Königreich Bayern",
@@ -166,16 +173,16 @@ class Command(BaseCommand):
             """
 
             try:
-                self.log(f"   ⏳ Generuji (max 5 vět, hledám pop/area)...", inline=True)
+                self.log(f"   ⏳ Generuji (5 vět, pop/area)...", inline=True)
                 start_time = time.time()
                 
-                # ZDE JE TA MAGIE OPRAVY PRO GEMMU
                 api_args = {
-                    "messages": [{"role": "user", "content": prompt + f"\n\nDATA TO ANALYZE:\n{ctx[:4500]}"}], # Drasticky zkrácený kontext
+                    "messages": [{"role": "user", "content": prompt + f"\n\nDATA TO ANALYZE:\n{ctx[:4500]}"}],
                     "model": model_name, 
                     "temperature": 0.0
                 }
                 
+                # Gemini podporuje JSON mód, open-source modely (Gemma, Sambanova) potřebují few-shot
                 if "gemma" not in model_name.lower():
                     api_args["response_format"] = {"type": "json_object"}
 
@@ -185,14 +192,10 @@ class Command(BaseCommand):
                 elapsed = time.time() - start_time
                 self.log(f" [Odpověď za {elapsed:.1f}s]", inline=False)
 
-                if not res: raise ValueError("Invalid JSON from AI")
+                if not res: 
+                    raise ValueError("Invalid JSON from AI")
 
-                # Ukládání textů
-                f.name_cs = (res.get('name_cs') or f.name).strip()
-                f.name_de = (res.get('name_de') or f.name).strip()
-                f.description = {'en': res.get('description_en', ''), 'cs': res.get('description_cs', ''), 'de': res.get('description_de', '')}
-                
-                # Opatrné zpracování Population & Area
+                # --- 1. ATOMICKÝ UPDATE MODELU COUNTRY (ZEMĚ) ---
                 pop_val = res.get('population')
                 area_val = res.get('area_km2')
                 
@@ -202,56 +205,41 @@ class Command(BaseCommand):
                 try: area_val = float(area_val) if area_val else None
                 except: area_val = None
 
-                # Pokud má vlajka nulu/None, přepíšeme ji
-                if pop_val and not f.population: f.population = pop_val
-                if area_val and not f.area_km2: f.area_km2 = area_val
+                update_fields = {}
+                if pop_val: update_fields['population'] = pop_val
+                if area_val: 
+                    update_fields['area_km2'] = area_val
+                    if hasattr(Country, 'area'): update_fields['area'] = area_val
 
-                # TVRDÝ SYNC DO HLAVNÍ TABULKY COUNTRY (Přepíše vše!)
-                # TVRDÝ SYNC S OPRAVOU VAZBY
-                if f.country:
-                    # 1. POKUS O ZÁCHRANU: Najdeme tu "pravou" zemi podle jména, pokud je ta současná špatná
-                    # (Hledáme v modelu Country, kde jsou ta hezká data s měnou a ISO)
-                    real_country = Country.objects.filter(
-                        Q(name_common__iexact=f.name) | Q(name_official__iexact=f.name)
-                    ).first()
+                if update_fields:
+                    # Toto přepíše data SQL příkazem přímo v databázi (nejbezpečnější metoda)
+                    Country.objects.filter(id=c.id).update(**update_fields)
+                    self.log(f"   ⚡ Data atomicky uložena do tabulky Country: {update_fields}", self.style.SUCCESS)
 
-                    # Pokud jsme našli tu pravou, přemapujeme vlajku na ni
-                    target_country = real_country if real_country else f.country
-                    
-                    if real_country and f.country != real_country:
-                        self.log(f"   🔗 PŘEMAPOVÁVÁM: Vlajka {f.name} nyní ukazuje na správný Country model.")
-                        f.country = real_country
-                    
-                    country_updated = False
-                    if pop_val:
-                        target_country.population = pop_val
-                        country_updated = True
-                    if area_val:
-                        target_country.area_km2 = area_val
-                        # Pokud tvůj model používá pole 'area' místo 'area_km2', zapíšeme i tam
-                        if hasattr(target_country, 'area'):
-                            target_country.area = area_val
-                        country_updated = True
-                    
-                    if country_updated:
-                        target_country.save()
-                        self.log(f"   🔄 Data TVRDĚ uložena do Country modelu: {target_country.name_common}")
-
-                f.is_verified = True
-                f.save()
+                # --- 2. ULOŽENÍ TEXTŮ DO MODELU FLAGCOLLECTION (VLAJKY) ---
+                main_flag.name_cs = (res.get('name_cs') or main_flag.name).strip()
+                main_flag.name_de = (res.get('name_de') or main_flag.name).strip()
+                main_flag.description = {
+                    'en': res.get('description_en', ''), 
+                    'cs': res.get('description_cs', ''), 
+                    'de': res.get('description_de', '')
+                }
+                main_flag.is_verified = True
+                main_flag.save()
                 
-                # Zobrazení do terminálu
-                p_str = f"{f.population:,}" if f.population else "Neznámá"
-                a_str = f"{f.area_km2:,.2f}" if f.area_km2 else "Neznámá"
-                self.log(f"   ✅ Uloženo: CS={f.name_cs[:20]}... | Pop: {p_str} | Area: {a_str}")
+                # Pokud k této zemi patří i další historické vlajky, odškrtneme je, aby je skript už nebral jako nedodělané
+                c.additional_flags.filter(is_verified=False).update(is_verified=True)
+
+                self.log(f"   ✅ Uloženo: CS={main_flag.name_cs[:20]}... | Pop: {pop_val} | Area: {area_val}")
+                
                 i += 1
-                time.sleep(1.5) # Ochrana TPM
+                time.sleep(1.5)
 
             except Exception as e:
                 err = str(e).lower()
                 if "rate" in err or "limit" in err or "429" in err or "503" in err:
-                    self.log("   ⏳ Rate limit... přepínám klíč (30s pauza).", self.style.WARNING)
-                    time.sleep(30)
+                    self.log("   ⏳ Rate limit... přepínám klíč (20s pauza).", self.style.WARNING)
+                    time.sleep(20)
                     k_idx = (k_idx + 1) % len(keys[provider])
                     current_key_indices[provider] = k_idx
                     if k_idx == 0: current_model_idx += 1
@@ -259,4 +247,4 @@ class Command(BaseCommand):
                     self.log(f"   ⚠️ Chyba parsování/API: {err[:150]}", self.style.ERROR)
                     i += 1 
 
-        self.log("\n🎉 Všechny veřejné VIP subjekty mají své popisy a statistiky!", self.style.SUCCESS)
+        self.log("\n🎉 Celá fronta států úspěšně obsloužena!", self.style.SUCCESS)

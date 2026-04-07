@@ -63,12 +63,20 @@ def is_territory_detail_eligible(country: Country) -> bool:
 
 
 def get_territory_owner_country(territory: Country):
-    """Resolve the sovereign owner country for a territory using Rust optimization."""
-    # Rychlý lookup přes slovník O(1)
+    """Resolve the sovereign owner country for a territory.
+    
+    First tries database relationship, then falls back to dictionary lookup
+    and Rust-based text parsing for edge cases.
+    """
+    # Primary: Use database relationship
+    if territory.owner and is_country_detail_eligible(territory.owner):
+        return territory.owner
+    
+    # Fallback: Dictionary lookup O(1)
     owner_cca3 = TERRITORY_OWNER_BY_CCA3.get(territory.cca3)
     
     if not owner_cca3:
-        # Nasazení Rustu pro náročné prohledávání podřetězců
+        # Last resort: Rust-based substring search
         text = f"{territory.name_common or ''} {territory.name_official or ''}"
         owner_cca3 = flag_search_core.identify_owner_cca3(text)
 

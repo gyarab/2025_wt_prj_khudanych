@@ -85,11 +85,10 @@ def countries_list(request):
     normalized_search_query = normalize_query(search_query)
     region_filter = request.GET.get('region')
 
+    # 1. OPRAVA: Odstraněno .only(), takže Django načte i populaci, rozlohu atd.
     countries_qs = Country.objects.filter(status='sovereign').filter(
         country_detail_quality_filter()
-    ).select_related('region').only(
-        'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji', 'region__name', 'region__slug',
-    ).order_by('name_common')
+    ).select_related('region').order_by('name_common')
 
     if region_filter:
         countries_qs = countries_qs.filter(region__slug=region_filter)
@@ -100,19 +99,14 @@ def countries_list(request):
     paginator = Paginator(countries_qs, COUNTRIES_PER_PAGE)
     page_obj = paginator.get_page(page_number)
 
-    page_items = []
+    # 2. OPRAVA: Místo destrukce objektů na slovníky jim jen přidáme potřebný 'link' a aliasy
     for c in page_obj.object_list:
-        page_items.append({
-            'name': c.name_common,
-            'cca3': c.cca3,
-            'link': reverse('country_detail', kwargs={'cca3': c.cca3}),
-            'capital': c.capital,
-            'img': c.flag_png,
-            'emoji': c.flag_emoji,
-            'region': c.region.name if c.region else '',
-            'type': _('Sovereign State')
-        })
-    page_obj.object_list = page_items
+        c.link = reverse('country_detail', kwargs={'cca3': c.cca3})
+        c.type = _('Sovereign State')
+        # Přidáme aliasy, aby šablona nepadala při hledání starých názvů klíčů
+        c.img = c.flag_png
+        c.emoji = c.flag_emoji
+        c.name = c.name_common
 
     regions = Region.objects.all()
 
@@ -144,6 +138,15 @@ def country_detail(request, cca3):
         neighbor_candidates = Country.objects.filter(cca3__in=country.borders)
         neighbors = [n for n in neighbor_candidates if is_country_detail_eligible(n)]
     
+    # Fetch the main flag for this country from FlagCollection
+    main_flag = country.additional_flags.filter(
+        category__in=['country', 'dependency'],
+        is_public=True
+    ).first()
+    
+    # Get dependencies/territories
+    dependencies = country.dependencies.filter(status='territory').order_by('name_common')
+    
     # Exclude national flags (category='country') to avoid duplication
     # Sort dependencies first, then regions, cities, historical
     additional_flags_qs = FlagCollection.objects.filter(
@@ -169,6 +172,8 @@ def country_detail(request, cca3):
     context = {
         'country': country,
         'neighbors': neighbors,
+        'main_flag': main_flag,
+        'dependencies': dependencies,
         'additional_flags': page_obj,
         'page_obj': page_obj,
     }
@@ -181,7 +186,16 @@ def territory_detail(request, cca3):
     if not is_territory_detail_eligible(territory):
         return redirect('territories')
 
-    owner_country = get_territory_owner_country(territory)
+    # Use database relationship first, fallback to function
+    owner_country = territory.owner
+    if not owner_country:
+        owner_country = get_territory_owner_country(territory)
+    
+    # Fetch the main flag for this territory from FlagCollection
+    main_flag = territory.additional_flags.filter(
+        category__in=['country', 'dependency'],
+        is_public=True
+    ).first()
 
     # Exclude national flags (category='country') to avoid duplication
     # Sort dependencies first, then regions, cities, historical
@@ -208,6 +222,7 @@ def territory_detail(request, cca3):
     context = {
         'territory': territory,
         'owner_country': owner_country,
+        'main_flag': main_flag,
         'additional_flags': page_obj,
         'page_obj': page_obj,
     }
