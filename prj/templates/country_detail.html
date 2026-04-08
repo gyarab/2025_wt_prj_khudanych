@@ -106,7 +106,13 @@
             <div class="col-md-6">
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-building"></i> {% trans "Capital" %}</div>
-                    <div class="detail-value">{{ country.capital|default:"N/A" }}</div>
+                    <div class="detail-value">
+                        {% if main_flag.description.capital %}
+                            {{ main_flag.description.capital }}
+                        {% else %}
+                            {{ country.capital|default:"N/A" }}
+                        {% endif %}
+                    </div>
                 </div>
                 
                 <div class="detail-row">
@@ -123,7 +129,13 @@
                 
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-people-fill"></i> {% trans "Population" %}</div>
-                    <div class="detail-value">{{ country.population|floatformat:0|intcomma }}</div>
+                    <div class="detail-value">
+                        {% if main_flag.population %}
+                            {{ main_flag.population|floatformat:0|intcomma }}
+                        {% else %}
+                            {{ country.population|floatformat:0|intcomma }}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             
@@ -131,7 +143,13 @@
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-rulers"></i> {% trans "Area" %}</div>
                     <div class="detail-value">
-                        {% if country.area %}{{ country.area|floatformat:0|intcomma }} km²{% else %}N/A{% endif %}
+                        {% if main_flag.area_km2 %}
+                            {{ main_flag.area_km2|floatformat:0|intcomma }} km²
+                        {% elif country.area %}
+                            {{ country.area|floatformat:0|intcomma }} km²
+                        {% else %}
+                            N/A
+                        {% endif %}
                     </div>
                 </div>
                 
@@ -151,27 +169,18 @@
     <!-- AI Description from FlagCollection -->
     {% if main_flag and main_flag.description %}
     <div class="detail-card">
-        <h2 class="section-heading"><i class="bi bi-book"></i> {% trans "About" %} {{ country.name_common }}</h2>
+        <h2 class="section-heading"><i class="bi bi-book"></i> {% blocktrans with country_name=country.name_common %}About {{ country_name }}{% endblocktrans %}</h2>
         
         {% with desc=main_flag.description %}
-            {% if desc.en %}
-                <div class="mb-3">
-                    <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
-                </div>
-            {% endif %}
-            
-            {% if desc.cs %}
-                <div class="mb-3">
-                    <h5 class="text-muted">{% trans "Czech" %}</h5>
-                    <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.cs }}</p>
-                </div>
-            {% endif %}
-            
-            {% if desc.de %}
-                <div class="mb-3">
-                    <h5 class="text-muted">{% trans "German" %}</h5>
-                    <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.de }}</p>
-                </div>
+            {% get_current_language as LANGUAGE_CODE %}
+            {% if LANGUAGE_CODE == 'en' and desc.en %}
+                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
+            {% elif LANGUAGE_CODE == 'cs' and desc.cs %}
+                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.cs }}</p>
+            {% elif LANGUAGE_CODE == 'de' and desc.de %}
+                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.de }}</p>
+            {% elif desc.en %}
+                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
             {% endif %}
         {% endwith %}
     </div>
@@ -228,6 +237,14 @@
         <h2 class="section-heading"><i class="bi bi-globe"></i> {% trans "Political Information" %}</h2>
         
         <div class="row">
+            {% if country.status == 'sovereign' and country.system_of_government %}
+            <div class="col-md-12">
+                <div class="detail-row">
+                    <div class="detail-label">{% trans "System of Government" %}</div>
+                    <div class="detail-value">{{ country.system_of_government }}</div>
+                </div>
+            </div>
+            {% endif %}
             <div class="col-md-6">
                 <div class="detail-row">
                     <div class="detail-label">{% trans "Independent" %}</div>

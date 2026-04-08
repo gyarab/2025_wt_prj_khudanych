@@ -151,6 +151,15 @@ class Country(models.Model):
         verbose_name=_("Owner Country")
     )
 
+    # Political Information
+    system_of_government = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name=_("System of Government"),
+        help_text=_("Type of government system (e.g., 'Parliamentary democracy', 'Presidential republic')")
+    )
+
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))

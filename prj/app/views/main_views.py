@@ -55,7 +55,11 @@ def render_homepage(request):
     historical_countries = [c for c in Country.objects.filter(status='historical').select_related('region') if is_country_detail_eligible(c)]
 
     total_countries = len(sovereign_countries)
-    total_territories = len(territory_countries) + FlagCollection.objects.filter(category='dependency', is_public=True).count()
+    # Fixed: Use consistent counting for territories/dependencies
+    total_territories = len(territory_countries)
+    dependency_flags = FlagCollection.objects.filter(category='dependency', is_public=True).count()
+    total_territories += dependency_flags
+    
     total_historical = len(historical_countries) + FlagCollection.objects.filter(category='historical', is_public=True).count()
     total_flags = Country.objects.count() + FlagCollection.objects.filter(is_public=True).count()
     total_regions = Region.objects.count()
@@ -147,13 +151,14 @@ def country_detail(request, cca3):
     # Get dependencies/territories
     dependencies = country.dependencies.filter(status='territory').order_by('name_common')
     
-    # Exclude national flags (category='country') to avoid duplication
+    # Exclude national flags (category='country') and dependencies to avoid duplication
+    # Dependencies are shown in the "Dependencies & Territories" section
     # Sort dependencies first, then regions, cities, historical
     additional_flags_qs = FlagCollection.objects.filter(
         country=country, 
         is_public=True
     ).exclude(
-        category='country'
+        category__in=['country', 'dependency']
     ).annotate(
         sort_priority=Case(
             When(category='dependency', then=1),

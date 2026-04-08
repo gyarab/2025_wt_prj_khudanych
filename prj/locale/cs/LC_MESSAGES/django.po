@@ -138,6 +138,12 @@ msgstr "Ostatní"
 msgid "Status"
 msgstr "Status"
 
+msgid "System of Government"
+msgstr "Systém vlády"
+
+msgid "Type of government system (e.g., 'Parliamentary democracy', 'Presidential republic')"
+msgstr "Typ vládního systému (např. 'Parlamentní demokracie', 'Prezidentská republika')"
+
 msgid "Created At"
 msgstr "Vytvořeno"
 
@@ -274,6 +280,10 @@ msgstr "Galerie"
 
 msgid "About"
 msgstr "O nás"
+
+#, python-format
+msgid "About %(country_name)s"
+msgstr "O %(country_name)s"
 
 msgid "Profile"
 msgstr "Profil"

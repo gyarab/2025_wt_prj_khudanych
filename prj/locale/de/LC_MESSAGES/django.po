@@ -140,6 +140,12 @@ msgstr "Sonstiges"
 msgid "Status"
 msgstr "Status"
 
+msgid "System of Government"
+msgstr "Regierungssystem"
+
+msgid "Type of government system (e.g., 'Parliamentary democracy', 'Presidential republic')"
+msgstr "Art des Regierungssystems (z.B. 'Parlamentarische Demokratie', 'Präsidialrepublik')"
+
 msgid "Created At"
 msgstr "Erstellt am"
 
@@ -276,6 +282,10 @@ msgstr "Galerie"
 
 msgid "About"
 msgstr "Über uns"
+
+#, python-format
+msgid "About %(country_name)s"
+msgstr "Über %(country_name)s"
 
 msgid "Profile"
 msgstr "Profil"

@@ -170,16 +170,6 @@
             <div class="section-card p-3 bg-white mb-4">
                 <h2 class="h5 mb-3">{% trans "Nomenclature and Geography" %}</h2>
                 <p class="mb-2"><strong>{% trans "Category" %}:</strong> {{ flag.get_category_display }}</p>
-                <div class="mb-2">
-                    <strong>{% trans "Wikidata Types" %}:</strong>
-                    {% if wikidata_type_list %}
-                        {% for type in wikidata_type_list %}
-                            <span class="badge text-bg-light border me-1">{{ type }}</span>
-                        {% endfor %}
-                    {% else %}
-                        <span class="text-muted">{% trans "No type data available." %}</span>
-                    {% endif %}
-                </div>
             </div>
 
             {% if localized_description %}

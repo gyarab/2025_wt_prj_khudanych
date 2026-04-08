@@ -62,11 +62,6 @@
         <h2 class="section-heading">{% trans "Territory and Sovereignty" %}</h2>
         <div class="row g-3">
             <div class="col-md-6">
-                <p class="mb-1"><strong>{% trans "Status" %}:</strong> {{ territory.get_status_display }}</p>
-                <p class="mb-1"><strong>{% trans "Independent" %}:</strong> {% if territory.independent %}Yes{% else %}No{% endif %}</p>
-                <p class="mb-0"><strong>{% trans "UN Member" %}:</strong> {% if territory.un_member %}Yes{% else %}No{% endif %}</p>
-            </div>
-            <div class="col-md-6">
                 {% if owner_country %}
                 <div class="alert alert-info mb-2" role="alert">
                     <strong><i class="bi bi-flag"></i> {% trans "Dependency of" %}:</strong>
@@ -77,6 +72,8 @@
                 {% else %}
                 <p class="mb-1"><strong>{% trans "Owner Country" %}:</strong> Not available</p>
                 {% endif %}
+            </div>
+            <div class="col-md-6">
                 <p class="mb-0"><strong>{% trans "Region" %}:</strong> {% if territory.region %}{{ territory.region.name }}{% else %}Not available{% endif %}</p>
             </div>
         </div>
@@ -102,30 +99,24 @@
         <h2 class="section-heading"><i class="bi bi-book"></i> {% trans "About" %} {{ territory.name_common }}</h2>
         
         {% with desc=main_flag.description %}
-            {% if desc.en %}
-                <div class="mb-3">
-                    <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
-                </div>
-            {% endif %}
-            
-            {% if desc.cs %}
-                <div class="mb-3">
-                    <h5 class="text-muted">{% trans "Czech" %}</h5>
-                    <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.cs }}</p>
-                </div>
-            {% endif %}
-            
-            {% if desc.de %}
-                <div class="mb-3">
-                    <h5 class="text-muted">{% trans "German" %}</h5>
-                    <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.de }}</p>
-                </div>
+            {% get_current_language as LANGUAGE_CODE %}
+            {% if LANGUAGE_CODE == 'en' and desc.en %}
+                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
+            {% elif LANGUAGE_CODE == 'cs' and desc.cs %}
+                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.cs }}</p>
+            {% elif LANGUAGE_CODE == 'de' and desc.de %}
+                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.de }}</p>
+            {% elif desc.en %}
+                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
             {% endif %}
         {% endwith %}
     </div>
     {% endif %}
 
-    {% if additional_flags %}
+    {% comment %}
+    Additional Territory Flags section removed - the territory itself is already the dependency
+    {% endcomment %}
+    {% if additional_flags and False %}
     <div class="detail-card" id="flags">
         <h2 class="section-heading">{% trans "Additional Territory Flags" %}</h2>
         <div class="row g-3">
