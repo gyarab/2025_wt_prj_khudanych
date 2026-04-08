@@ -159,6 +159,8 @@ def country_detail(request, cca3):
         is_public=True
     ).exclude(
         category__in=['country', 'dependency']
+    ).select_related(
+        'country'
     ).annotate(
         sort_priority=Case(
             When(category='dependency', then=1),
@@ -236,7 +238,7 @@ def territory_detail(request, cca3):
 
 def flag_detail(request, category, slug):
     """Detail page for a specific flag using category + slug URL."""
-    flag = get_object_or_404(FlagCollection, slug=slug, is_public=True)
+    flag = get_object_or_404(FlagCollection.objects.select_related('country'), slug=slug, is_public=True)
     if category != flag.category:
         return redirect('flag_detail', category=flag.category, slug=flag.slug)
 

@@ -79,6 +79,7 @@
 {% endblock %}
 
 {% block content %}
+{% get_current_language as LANGUAGE_CODE %}
 <div class="country-header">
     <div class="container">
         <div class="row align-items-center">
@@ -98,7 +99,6 @@
 </div>
 
 <div class="container mb-5">
-    <!-- Basic Information -->
     <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-info-circle"></i> {% trans "Basic Information" %}</h2>
         
@@ -107,8 +107,10 @@
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-building"></i> {% trans "Capital" %}</div>
                     <div class="detail-value">
-                        {% if main_flag.description.capital %}
-                            {{ main_flag.description.capital }}
+                        {% if LANGUAGE_CODE == 'cs' and main_flag.description.capital_cs %}
+                            {{ main_flag.description.capital_cs }}
+                        {% elif LANGUAGE_CODE == 'de' and main_flag.description.capital_de %}
+                            {{ main_flag.description.capital_de }}
                         {% else %}
                             {{ country.capital|default:"N/A" }}
                         {% endif %}
@@ -118,22 +120,28 @@
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-map"></i> {% trans "Region" %}</div>
                     <div class="detail-value">
-                        {% if country.region %}
+                        {% if LANGUAGE_CODE == 'cs' and main_flag.description.region_cs %}
+                            {{ main_flag.description.region_cs }}
+                        {% elif LANGUAGE_CODE == 'de' and main_flag.description.region_de %}
+                            {{ main_flag.description.region_de }}
+                        {% elif country.region %}
                             {{ country.region.name }}
-                            {% if country.subregion %} / {{ country.subregion }}{% endif %}
                         {% else %}
                             N/A
                         {% endif %}
+                        {% if country.subregion %} / {{ country.subregion }}{% endif %}
                     </div>
                 </div>
                 
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-people-fill"></i> {% trans "Population" %}</div>
                     <div class="detail-value">
-                        {% if main_flag.population %}
+                        {% if country.population %}
+                            {{ country.population|floatformat:0|intcomma }}
+                        {% elif main_flag.population %}
                             {{ main_flag.population|floatformat:0|intcomma }}
                         {% else %}
-                            {{ country.population|floatformat:0|intcomma }}
+                            N/A
                         {% endif %}
                     </div>
                 </div>
@@ -143,10 +151,12 @@
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-rulers"></i> {% trans "Area" %}</div>
                     <div class="detail-value">
-                        {% if main_flag.area_km2 %}
-                            {{ main_flag.area_km2|floatformat:0|intcomma }} km²
+                        {% if country.area_km2 %}
+                            {{ country.area_km2|floatformat:0|intcomma }} km²
                         {% elif country.area %}
                             {{ country.area|floatformat:0|intcomma }} km²
+                        {% elif main_flag.area_km2 %}
+                            {{ main_flag.area_km2|floatformat:0|intcomma }} km²
                         {% else %}
                             N/A
                         {% endif %}
@@ -166,13 +176,11 @@
         </div>
     </div>
 
-    <!-- AI Description from FlagCollection -->
     {% if main_flag and main_flag.description %}
     <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-book"></i> {% blocktrans with country_name=country.name_common %}About {{ country_name }}{% endblocktrans %}</h2>
         
         {% with desc=main_flag.description %}
-            {% get_current_language as LANGUAGE_CODE %}
             {% if LANGUAGE_CODE == 'en' and desc.en %}
                 <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
             {% elif LANGUAGE_CODE == 'cs' and desc.cs %}
@@ -186,7 +194,6 @@
     </div>
     {% endif %}
 
-    <!-- Dependencies & Territories -->
     {% if dependencies %}
     <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-diagram-3"></i> {% trans "Dependencies & Territories" %}</h2>
@@ -206,7 +213,6 @@
     </div>
     {% endif %}
 
-    <!-- Codes & Identifiers -->
     <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-upc-scan"></i> {% trans "Codes & Identifiers" %}</h2>
         
@@ -232,7 +238,6 @@
         </div>
     </div>
 
-    <!-- Political Information -->
     <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-globe"></i> {% trans "Political Information" %}</h2>
         
@@ -241,7 +246,15 @@
             <div class="col-md-12">
                 <div class="detail-row">
                     <div class="detail-label">{% trans "System of Government" %}</div>
-                    <div class="detail-value">{{ country.system_of_government }}</div>
+                    <div class="detail-value">
+                        {% if LANGUAGE_CODE == 'cs' and main_flag.description.system_of_government_cs %}
+                            {{ main_flag.description.system_of_government_cs }}
+                        {% elif LANGUAGE_CODE == 'de' and main_flag.description.system_of_government_de %}
+                            {{ main_flag.description.system_of_government_de }}
+                        {% else %}
+                            {{ country.system_of_government }}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% endif %}
@@ -272,7 +285,6 @@
         </div>
     </div>
 
-    <!-- Neighboring Countries -->
     {% if neighbors %}
     <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-signpost-2"></i> {% trans "Neighboring Countries" %}</h2>
@@ -292,7 +304,6 @@
     </div>
     {% endif %}
 
-    <!-- Additional Flags -->
     {% if additional_flags %}
     <div class="detail-card" id="flags">
         <h2 class="section-heading"><i class="bi bi-flag"></i> {% trans "Additional Flags & Symbols" %}</h2>
@@ -301,7 +312,7 @@
             {% for flag in additional_flags %}
             <div class="col-6 col-sm-4 col-md-3">
                  <div class="card h-100 shadow-sm border-0 flag-card"
-                     data-flag-detail-link="{% url 'flag_detail' flag.category flag.slug %}?src=country:{{ country.cca3 }}&page={{ additional_flags.number }}"
+                     data-flag-detail-link="{{ flag.get_smart_url }}?src=country:{{ country.cca3 }}&page={{ additional_flags.number }}"
                      data-flag-image-src="{{ flag.flag_image }}"
                      style="transition: transform 0.2s;"
                      onmouseover="this.style.transform='scale(1.03)'"
@@ -317,7 +328,7 @@
                         </div>
                         <div style="font-size: 0.7rem; color: #718096; margin-bottom: 8px;">{{ flag.get_category_display }}</div>
                         <div class="d-grid">
-                            <a href="{% url 'flag_detail' flag.category flag.slug %}?src=country:{{ country.cca3 }}&page={{ additional_flags.number }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ flag.get_smart_url }}?src=country:{{ country.cca3 }}&page={{ additional_flags.number }}" class="btn btn-sm btn-outline-primary">
                                 {% trans "View Details" %}
                             </a>
                         </div>
@@ -327,7 +338,6 @@
             {% endfor %}
         </div>
 
-        <!-- Pagination -->
         {% if additional_flags.has_other_pages %}
         <nav class="mt-4" aria-label="Flags pagination">
             <ul class="pagination justify-content-center flex-wrap">
@@ -367,7 +377,6 @@
     </div>
     {% endif %}
 
-    <!-- Lightbox Modal -->
     <div class="modal fade" id="flagModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
@@ -389,7 +398,6 @@
         document.getElementById('lbTitle').textContent = name;
         document.getElementById('lbBadge').textContent = badge;
         
-        // Increase width for lightbox if possible
         if (img.includes('width=500')) {
             document.getElementById('lbImg').src = img.replace('width=500', 'width=800');
         }
@@ -399,7 +407,6 @@
       }
     </script>
 
-    <!-- Back Button -->
     <div class="text-center mt-4">
         <a href="{% url 'countries' %}" class="btn btn-gradient btn-lg">
             <i class="bi bi-arrow-left"></i> {% trans "Back to Countries" %}

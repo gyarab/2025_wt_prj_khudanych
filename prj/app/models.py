@@ -1,6 +1,7 @@
 import uuid
 import unicodedata
 from django.db import models
+from django.utils.translation import get_language
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -186,18 +187,51 @@ class Country(models.Model):
         return reverse('country_detail', kwargs={'cca3': self.cca3})
     
     @property
-    def currencies_display(self):
-        """Return formatted currency string"""
-        if not self.currencies or not isinstance(self.currencies, dict):
-            return "N/A"
-        return ", ".join([f"{v.get('name', '') if isinstance(v, dict) else v} ({k})" for k, v in self.currencies.items()])
-    
-    @property
     def languages_display(self):
-        """Return formatted languages string"""
-        if not self.languages or not isinstance(self.languages, dict):
-            return "N/A"
-        return ", ".join(self.languages.values())
+        if not self.languages:
+            return ""
+        
+        current_lang = get_language() or 'en'
+        display_langs = []
+        
+        for val in self.languages.values():
+            # Pokud je hodnota náš nový "chytrý" slovník od AI s překlady
+            if isinstance(val, dict):
+                lang_name = val.get(current_lang) or val.get('en') or str(val)
+                display_langs.append(lang_name)
+            # Fallback pro staré, ještě neupravené záznamy
+            else:
+                display_langs.append(str(val))
+                
+        return ", ".join(display_langs)
+
+    @property
+    def currencies_display(self):
+        if not self.currencies:
+            return ""
+            
+        current_lang = get_language() or 'en'
+        display_currs = []
+        
+        for code, val in self.currencies.items():
+            if isinstance(val, dict):
+                # Zkusíme vytáhnout jméno měny podle jazyka
+                name_dict = val.get('name', {})
+                if isinstance(name_dict, dict):
+                    name = name_dict.get(current_lang) or name_dict.get('en') or str(name_dict)
+                else:
+                    name = str(name_dict)
+                
+                # Přidáme symbol, pokud existuje
+                symbol = val.get('symbol', '')
+                if symbol:
+                    display_currs.append(f"{name} ({symbol})")
+                else:
+                    display_currs.append(name)
+            else:
+                display_currs.append(str(val))
+                
+        return ", ".join(display_currs)
 
 class FlagCollection(models.Model):
     """Additional flag collection for territories, historical flags, etc."""
@@ -270,7 +304,17 @@ class FlagCollection(models.Model):
         return f"{self.name} ({self.get_category_display()})"
 
     def get_absolute_url(self):
+        return self.get_smart_url()
+
+    def get_smart_url(self):
         from django.urls import reverse
+
+        if self.category == 'country' and self.country and self.country.cca3:
+            return reverse('country_detail', kwargs={'cca3': self.country.cca3})
+
+        if self.category == 'dependency' and self.country and self.country.status == 'territory' and self.country.cca3:
+            return reverse('territory_detail', kwargs={'cca3': self.country.cca3})
+
         return reverse('flag_detail', kwargs={'category': self.category, 'slug': self.slug})
 
     @property

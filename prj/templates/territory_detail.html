@@ -39,6 +39,7 @@
 {% endblock %}
 
 {% block content %}
+{% get_current_language as LANGUAGE_CODE %}
 <div class="container py-3">
     <div class="territory-header">
         <div class="container">
@@ -74,7 +75,17 @@
                 {% endif %}
             </div>
             <div class="col-md-6">
-                <p class="mb-0"><strong>{% trans "Region" %}:</strong> {% if territory.region %}{{ territory.region.name }}{% else %}Not available{% endif %}</p>
+                <p class="mb-0"><strong>{% trans "Region" %}:</strong> 
+                    {% if LANGUAGE_CODE == 'cs' and main_flag.description.region_cs %}
+                        {{ main_flag.description.region_cs }}
+                    {% elif LANGUAGE_CODE == 'de' and main_flag.description.region_de %}
+                        {{ main_flag.description.region_de }}
+                    {% elif territory.region %}
+                        {{ territory.region.name }}
+                    {% else %}
+                        Not available
+                    {% endif %}
+                </p>
             </div>
         </div>
     </div>
@@ -83,23 +94,47 @@
         <h2 class="section-heading">{% trans "Basic Information" %}</h2>
         <div class="row g-3">
             <div class="col-md-6">
-                <p class="mb-1"><strong>{% trans "Capital" %}:</strong> {{ territory.capital|default:'Not available' }}</p>
-                <p class="mb-0"><strong>{% trans "Population" %}:</strong> {{ territory.population|floatformat:0|intcomma }}</p>
+                <p class="mb-1"><strong>{% trans "Capital" %}:</strong> 
+                    {% if LANGUAGE_CODE == 'cs' and main_flag.description.capital_cs %}
+                        {{ main_flag.description.capital_cs }}
+                    {% elif LANGUAGE_CODE == 'de' and main_flag.description.capital_de %}
+                        {{ main_flag.description.capital_de }}
+                    {% else %}
+                        {{ territory.capital|default:'Not available' }}
+                    {% endif %}
+                </p>
+                <p class="mb-0"><strong>{% trans "Population" %}:</strong> 
+                    {% if territory.population %}
+                        {{ territory.population|floatformat:0|intcomma }}
+                    {% elif main_flag.population %}
+                        {{ main_flag.population|floatformat:0|intcomma }}
+                    {% else %}
+                        Not available
+                    {% endif %}
+                </p>
             </div>
             <div class="col-md-6">
-                <p class="mb-1"><strong>{% trans "Area" %}:</strong> {% if territory.area %}{{ territory.area|floatformat:0|intcomma }} km²{% else %}Not available{% endif %}</p>
+                <p class="mb-1"><strong>{% trans "Area" %}:</strong> 
+                    {% if territory.area_km2 %}
+                        {{ territory.area_km2|floatformat:0|intcomma }} km²
+                    {% elif territory.area %}
+                        {{ territory.area|floatformat:0|intcomma }} km²
+                    {% elif main_flag.area_km2 %}
+                        {{ main_flag.area_km2|floatformat:0|intcomma }} km²
+                    {% else %}
+                        Not available
+                    {% endif %}
+                </p>
                 <p class="mb-0"><strong>{% trans "Subregion" %}:</strong> {{ territory.subregion|default:'Not available' }}</p>
             </div>
         </div>
     </div>
 
-    <!-- AI Description from FlagCollection -->
     {% if main_flag and main_flag.description %}
     <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-book"></i> {% trans "About" %} {{ territory.name_common }}</h2>
         
         {% with desc=main_flag.description %}
-            {% get_current_language as LANGUAGE_CODE %}
             {% if LANGUAGE_CODE == 'en' and desc.en %}
                 <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
             {% elif LANGUAGE_CODE == 'cs' and desc.cs %}
@@ -113,63 +148,5 @@
     </div>
     {% endif %}
 
-    {% comment %}
-    Additional Territory Flags section removed - the territory itself is already the dependency
-    {% endcomment %}
-    {% if additional_flags and False %}
-    <div class="detail-card" id="flags">
-        <h2 class="section-heading">{% trans "Additional Territory Flags" %}</h2>
-        <div class="row g-3">
-            {% for flag in additional_flags %}
-            <div class="col-6 col-sm-4 col-md-3">
-                <div class="card h-100 shadow-sm border-0"
-                     data-flag-detail-link="{% url 'flag_detail' flag.category flag.slug %}?src=territory:{{ territory.cca3 }}&page={{ additional_flags.number }}"
-                     data-flag-image-src="{{ flag.flag_image }}">
-                    <div style="height: 120px; display: flex; align-items: center; justify-content: center; background: #f8fafc; padding: 10px;">
-                        <img src="{{ flag.flag_image }}" alt="{{ flag.localized_name }}"
-                             style="max-width: 100%; max-height: 100%; object-fit: contain;"
-                             loading="lazy" decoding="async">
-                    </div>
-                    <div class="card-body p-2 text-center">
-                        <div style="font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ flag.localized_name }}">
-                            {{ flag.localized_name }}
-                        </div>
-                        <div style="font-size: 0.7rem; color: #718096; margin-bottom: 8px;">{{ flag.get_category_display }}</div>
-                        <div class="d-grid">
-                            <a href="{% url 'flag_detail' flag.category flag.slug %}?src=territory:{{ territory.cca3 }}&page={{ additional_flags.number }}" class="btn btn-sm btn-outline-primary">{% trans "View Details" %}</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        {% if additional_flags.has_other_pages %}
-        <nav class="mt-4" aria-label="Flags pagination">
-            <ul class="pagination justify-content-center flex-wrap">
-                {% if additional_flags.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ additional_flags.previous_page_number }}#flags">&laquo;</a>
-                </li>
-                {% endif %}
-
-                {% for num in additional_flags.paginator.page_range %}
-                    {% if additional_flags.number == num %}
-                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                    {% elif num > additional_flags.number|add:"-3" and num < additional_flags.number|add:"3" %}
-                    <li class="page-item"><a class="page-link" href="?page={{ num }}#flags">{{ num }}</a></li>
-                    {% endif %}
-                {% endfor %}
-
-                {% if additional_flags.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ additional_flags.next_page_number }}#flags">&raquo;</a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-        {% endif %}
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

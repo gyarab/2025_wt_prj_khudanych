@@ -35,7 +35,7 @@ def with_query_params(url, params):
 
 def build_flag_detail_link(flag, source='', search_query='', page=None, gallery_category=''):
     """Create detail URL with optional source context used for prev/next navigation."""
-    base_url = reverse('flag_detail', kwargs={'category': flag.category, 'slug': flag.slug})
+    base_url = flag.get_smart_url()
     return with_query_params(base_url, {
         'src': source,
         'q': search_query,

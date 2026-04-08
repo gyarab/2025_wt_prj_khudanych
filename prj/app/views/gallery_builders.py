@@ -150,11 +150,22 @@ def flags_gallery(request):
     page_obj = paginator.get_page(page_number)
     page_obj.object_list = items_to_display
 
-    fc_counts = dict(FlagCollection.objects.filter(is_public=True).values_list('category').annotate(n=Count('id')))
-    pill_country_count = Country.objects.filter(status='sovereign').count()
-    pill_territory_count = Country.objects.filter(status='territory').count() + fc_counts.get('dependency', 0)
-    pill_historical_count = Country.objects.filter(status='historical').count() + fc_counts.get('historical', 0)
-    total_flags_header = pill_country_count + pill_territory_count + pill_historical_count + fc_counts.get('country', 0) + fc_counts.get('city', 0) + fc_counts.get('region', 0) + fc_counts.get('international', 0)
+    public_flag_qs = FlagCollection.objects.filter(is_public=True)
+    fc_counts = dict(public_flag_qs.values_list('category').annotate(n=Count('id')))
+
+    gallery_country_base_qs = Country.objects.filter(country_detail_quality_filter())
+    country_status_counts = dict(
+        gallery_country_base_qs.values_list('status').annotate(n=Count('id'))
+    )
+
+    pill_country_count = country_status_counts.get('sovereign', 0)
+    pill_territory_count = country_status_counts.get('territory', 0) + fc_counts.get('dependency', 0)
+    pill_historical_count = country_status_counts.get('historical', 0) + fc_counts.get('historical', 0)
+
+    gallery_country_total = gallery_country_base_qs.filter(
+        status__in=['sovereign', 'territory', 'historical']
+    ).count()
+    total_flags_header = gallery_country_total + public_flag_qs.count()
 
     cat_counts = {
         'city': fc_counts.get('city', 0),
