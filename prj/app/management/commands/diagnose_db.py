@@ -1,89 +1,58 @@
 from django.core.management.base import BaseCommand
-from django.db.models import Count, Q
-import re
-from app.models import FlagCollection, Country
+from django.apps import apps
 
 class Command(BaseCommand):
-    help = 'Hloubková diagnostika a telemetrie databáze (Read-Only).'
+    help = 'Dynamický výpis všech tabulek a jejich polí v databázi.'
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.NOTICE("\n" + "="*50))
-        self.stdout.write(self.style.NOTICE("🚀 SPOUŠTÍM KOMPLEXNÍ DIAGNOSTIKU DATABÁZE"))
-        self.stdout.write(self.style.NOTICE("="*50 + "\n"))
+        self.stdout.write(self.style.NOTICE("="*80))
+        self.stdout.write(self.style.NOTICE("🚀 SPOUŠTÍM KOMPLEXNÍ VÝPIS DATABÁZOVÉHO SCHÉMATU"))
+        self.stdout.write(self.style.NOTICE("="*80 + "\n"))
 
-        # --- 1. ZÁKLADNÍ TABULKA: COUNTRY ---
-        total_countries = Country.objects.count()
-        un_members = Country.objects.filter(un_member=True).count()
-        self.stdout.write(self.style.SUCCESS(f"🌍 TABULKA 'Country' (Základní státy):"))
-        self.stdout.write(f"   Celkem záznamů: {total_countries}")
-        self.stdout.write(f"   Z toho UN members: {un_members}")
-        self.stdout.write("-" * 40)
+        # Získáme úplně všechny modely ze všech nainstalovaných aplikací (včetně systémových)
+        all_models = apps.get_models()
 
-        # --- 2. HLAVNÍ TABULKA: FLAG COLLECTION ---
-        total_flags = FlagCollection.objects.count()
-        public_flags = FlagCollection.objects.filter(is_public=True).count()
-        verified_flags = FlagCollection.objects.filter(is_verified=True).count()
-        
-        self.stdout.write(self.style.SUCCESS(f"\n🏳️ TABULKA 'FlagCollection' (Vlajky):"))
-        self.stdout.write(f"   Celkem vlajek: {total_flags}")
-        self.stdout.write(f"   Veřejné (is_public=True): {public_flags} (Tohle by měl vidět web)")
-        self.stdout.write(f"   Ověřené AI (is_verified=True): {verified_flags}")
-        self.stdout.write(f"   Čeká na kontrolu (is_verified=False): {total_flags - verified_flags}")
-        self.stdout.write("-" * 40)
+        for model in all_models:
+            app_label = model._meta.app_label
+            model_name = model.__name__
+            db_table = model._meta.db_table
 
-        # --- 3. ROZPAD PODLE KATEGORIÍ ---
-        self.stdout.write(self.style.SUCCESS(f"\n📊 ROZPAD KATEGORIÍ (Všechny / Veřejné):"))
-        categories = FlagCollection.objects.values('category').annotate(total=Count('id')).order_by('-total')
-        for cat in categories:
-            cat_name = cat['category']
-            total_cat = cat['total']
-            public_cat = FlagCollection.objects.filter(category=cat_name, is_public=True).count()
-            cat_label = cat_name if cat_name else "BEZ KATEGORIE (NULL)"
-            self.stdout.write(f"   - {cat_label:<20} {total_cat:<6} / {public_cat:<6} public")
-        self.stdout.write("-" * 40)
+            # Hlavička pro každý model
+            self.stdout.write(self.style.SUCCESS(f"\n📦 APLIKACE: {app_label} | MODEL: {model_name} | DB TABULKA: {db_table}"))
+            self.stdout.write("-" * 80)
+            self.stdout.write(f"{'NÁZEV POLE':<25} | {'TYP POLE':<25} | {'VLASTNOSTI / VAZBA'}")
+            self.stdout.write("-" * 80)
 
-        # --- 4. KONTROLA INTEGRITY (Chyby a anomálie) ---
-        self.stdout.write(self.style.WARNING(f"\n⚠️ KONTROLA INTEGRITY A CHYB:"))
-        
-        # Státy bez vazby
-        orphaned_countries = FlagCollection.objects.filter(category='country', country__isnull=True).count()
-        self.stdout.write(f"   Falešné státy bez vazby na tabulku Country: {orphaned_countries}")
+            # Získáme všechna pole daného modelu
+            for field in model._meta.get_fields():
+                field_name = field.name
+                field_type = field.__class__.__name__
 
-        # Vlajky úplně bez vazby na zemi (nemusí být nutně chyba u junk/international)
-        orphans_total = FlagCollection.objects.filter(country__isnull=True).count()
-        self.stdout.write(f"   Položky absolutně bez vazby na jakoukoliv zemi: {orphans_total}")
+                details = []
+                
+                # Zjištění, zda jde o relaci (cizí klíč, M2M atd.)
+                if field.is_relation:
+                    related_model = field.related_model
+                    if related_model:
+                        details.append(f"Vazba na -> {related_model.__name__}")
+                    else:
+                        details.append("Zpětná/Generická vazba")
 
-        # Q-Nodes check (Regex)
-        # Protože SQLite nemusí mít nativní Regex podporu přes ORM stejnou jako PostgreSQL, uděláme to bezpečně:
-        q_count = 0
-        unicode_err_count = 0
-        missing_cs_name = 0
-        
-        # Iterujeme po větších dávkách pro šetření paměti
-        for f in FlagCollection.objects.all().iterator(chunk_size=2000):
-            # Kontrola Q-Node
-            if f.name and re.match(r'^Q\d+$', f.name):
-                q_count += 1
-            # Kontrola rozbité diakritiky (\u)
-            if (f.name_cs and '\\u' in f.name_cs) or (f.name_de and '\\u' in f.name_de):
-                unicode_err_count += 1
-            # Kontrola chybějícího českého názvu
-            if not f.name_cs:
-                missing_cs_name += 1
+                # Zjištění dalších užitečných vlastností pole
+                if hasattr(field, 'primary_key') and field.primary_key:
+                    details.append("Primary Key (PK)")
+                if hasattr(field, 'null') and field.null:
+                    details.append("NULL")
+                if hasattr(field, 'blank') and field.blank:
+                    details.append("BLANK")
+                if hasattr(field, 'unique') and field.unique:
+                    details.append("UNIQUE")
 
-        self.stdout.write(f"   Zbývající Q-Nodes v poli 'name': {q_count}")
-        self.stdout.write(f"   Rozbitá diakritika (\\u kódy v name_cs/de): {unicode_err_count}")
-        self.stdout.write(f"   Chybějící český název (name_cs je prázdné): {missing_cs_name}")
-        self.stdout.write("-" * 40)
+                details_str = ", ".join(details)
+                
+                # Výpis samotného řádku s polem
+                self.stdout.write(f"  {field_name:<23} | {field_type:<25} | {details_str}")
 
-        # --- 5. VIP FRONTA ---
-        self.stdout.write(self.style.NOTICE(f"\n💎 PŘIPRAVENOST PRO VIP SKRIPT:"))
-        vip_queue = FlagCollection.objects.filter(category__in=['country', 'dependency'], is_verified=False).count()
-        vip_done = FlagCollection.objects.filter(category__in=['country', 'dependency'], is_verified=True).count()
-        
-        self.stdout.write(f"   Čeká na VIP zpracování: {vip_queue}")
-        self.stdout.write(f"   Již hotovo VIP agentem: {vip_done}")
-        
-        self.stdout.write(self.style.NOTICE("\n" + "="*50))
-        self.stdout.write(self.style.NOTICE("✅ DIAGNOSTIKA DOKONČENA"))
-        self.stdout.write(self.style.NOTICE("="*50 + "\n"))
+        self.stdout.write(self.style.NOTICE("\n" + "="*80))
+        self.stdout.write(self.style.NOTICE(f"✅ VÝPIS DOKONČEN. Celkem nalezeno {len(all_models)} modelů."))
+        self.stdout.write(self.style.NOTICE("="*80 + "\n"))

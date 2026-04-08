@@ -49,7 +49,7 @@ class CountryAdmin(admin.ModelAdmin):
             'fields': ('name_common', 'name_official', 'cca2', 'cca3')
         }),
         (_('Geographic Information'), {
-            'fields': ('capital', 'region', 'subregion', 'latitude', 'longitude', 'area', 'continents')
+            'fields': ('capital', 'region', 'subregion', 'latitude', 'longitude', 'area_km2', 'continents')
         }),
         (_('Flags & Symbols'), {
             'fields': ('flag_emoji', 'flag_svg', 'flag_png', 'coat_of_arms_svg', 'coat_of_arms_png')
