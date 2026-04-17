@@ -1,0 +1,480 @@
+[
+{
+  "model": "app.country",
+  "pk": 2166,
+  "fields": {
+    "name_common": "Czechia",
+    "name_official": "Czech Republic",
+    "search_name": "czechia",
+    "cca2": "CZ",
+    "cca3": "CZE",
+    "capital": "Prague",
+    "region": 52,
+    "subregion": "Central Europe",
+    "population": 10513209,
+    "area_km2": "78871.00",
+    "latitude": "49.7500000",
+    "longitude": "15.5000000",
+    "flag_svg": "https://flagcdn.com/cz.svg",
+    "flag_png": "https://flagcdn.com/w320/cz.png",
+    "flag_emoji": "🇨🇿",
+    "coat_of_arms_svg": "",
+    "coat_of_arms_png": "",
+    "currencies": {
+      "CZK": {
+        "symbol": "Kč",
+        "name": {
+          "en": "Czech koruna",
+          "cs": "Česká koruna",
+          "de": "Tschechische Krone"
+        }
+      }
+    },
+    "languages": {
+      "ces": {
+        "en": "Czech",
+        "cs": "Čeština",
+        "de": "Tschechisch"
+      }
+    },
+    "timezones": [],
+    "continents": [
+      "Europe"
+    ],
+    "borders": [
+      "AUT",
+      "DEU",
+      "POL",
+      "SVK"
+    ],
+    "independent": true,
+    "un_member": true,
+    "status": "sovereign",
+    "owner": null,
+    "system_of_government": "Parliamentary Republic",
+    "created_at": "2026-04-02T20:28:47.736Z",
+    "updated_at": "2026-04-05T22:52:05.216Z"
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17122,
+  "fields": {
+    "name": "Olomouc",
+    "search_name": "olomouc",
+    "name_cs": "Olomouc",
+    "name_de": "Olmütz",
+    "slug": "olomouc-q81137",
+    "category": "city",
+    "description": {
+      "en": "Olomouc is a major city in the Czech Republic serving as the administrative center of the Olomouc Region. It is historically significant as a former co-capital of Moravia and features a well-preserved historic center. The city is home to the UNESCO-listed Holy Trinity Column, a Baroque masterpiece.",
+      "cs": "Olomouc je významné město v České republice a správní středisko Olomouckého kraje. Historicky sloužilo jako jedno z hlavních měst Moravy a pyšní se zachovalým historickým jádrem. Dominantou města je sloup Nejsvětější Trojice, který je zapsán na seznamu světového dědictví UNESCO.",
+      "de": "Olmütz ist eine bedeutende Stadt in der Tschechischen Republik und das Verwaltungszentrum der Region Olmütz. Historisch diente sie als eine der Hauptstädte Mährens und besitzt einen gut erhaltenen Stadtkern. Die Stadt beherbergt die UNESCO-geschützte Dreifaltigkeitssäule, ein barockes Meisterwerk."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Olomouc.svg?width=640",
+    "image_file": "",
+    "population": 103063,
+    "area_km2": 103.334582,
+    "latitude": 49.593888888,
+    "longitude": 17.250833333,
+    "wikidata_id": "Q81137",
+    "country": 2166,
+    "created_at": "2026-04-02T20:37:12.320Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17345,
+  "fields": {
+    "name": "Carpatho-Ukraine",
+    "search_name": "",
+    "name_cs": "Karpatská Ukrajina",
+    "name_de": "Karpato-Ukraine",
+    "slug": "carpatho-ukraine-q950644",
+    "category": "historical",
+    "description": {
+      "en": "Carpatho-Ukraine was an autonomous region within the Second Czechoslovak Republic. It briefly declared independence as a republic in March 1939. The territory was subsequently occupied and annexed by the Kingdom of Hungary.",
+      "cs": "Karpatská Ukrajina byla autonomní oblastí v rámci druhé československé republiky. V březnu 1939 krátce vyhlásila nezávislost jako samostatná republika. Území bylo následně obsazeno a anektováno Maďarským královstvím.",
+      "de": "Die Karpato-Ukraine war eine autonome Region innerhalb der Zweiten Tschechoslowakischen Republik. Im März 1939 erklärte sie kurzzeitig ihre Unabhängigkeit als Republik. Das Gebiet wurde anschließend vom Königreich Ungarn besetzt und annektiert."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Ukraine.svg?width=640",
+    "image_file": "",
+    "population": 796400,
+    "area_km2": 13352.0,
+    "latitude": 48.433333333,
+    "longitude": 23.066666666,
+    "wikidata_id": "Q950644",
+    "country": 2166,
+    "created_at": "2026-04-02T20:38:45.640Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17551,
+  "fields": {
+    "name": "Czechoslovak Socialist Republic",
+    "search_name": "",
+    "name_cs": "Československá socialistická republika",
+    "name_de": "Tschechoslowakische Sozialistische Republik",
+    "slug": "czechoslovak-socialist-republic-q853348",
+    "category": "historical",
+    "description": {
+      "en": "This historical state existed under communist rule during the Cold War era. It was a key member of the Eastern Bloc and the Warsaw Pact. The period was characterized by a centrally planned economy and alignment with the Soviet Union.",
+      "cs": "Tento historický stát existoval pod komunistickou vládou během éry studené války. Byl klíčovým členem východního bloku a Varšavské smlouvy. Období bylo charakterizováno centrálně plánovanou ekonomikou a spojenectvím se Sovětským svazem.",
+      "de": "Dieser historische Staat existierte während des Kalten Krieges unter kommunistischer Herrschaft. Er war ein wichtiges Mitglied des Ostblocks und des Warschauer Paktes. Die Zeit war durch eine zentral geplante Wirtschaft und die Ausrichtung an der Sowjetunion geprägt."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20the%20Czech%20Republic.svg?width=640",
+    "image_file": "",
+    "population": 15600000,
+    "area_km2": 127900.0,
+    "latitude": 50.0833,
+    "longitude": 14.4667,
+    "wikidata_id": "Q853348",
+    "country": 2166,
+    "created_at": "2026-04-02T20:39:14.906Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17552,
+  "fields": {
+    "name": "First Czechoslovak Republic",
+    "search_name": "",
+    "name_cs": "První československá republika",
+    "name_de": "Erste Tschechoslowakische Republik",
+    "slug": "first-czechoslovak-republic-q140359",
+    "category": "historical",
+    "description": {
+      "en": "The First Czechoslovak Republic was the initial iteration of the Czechoslovak state formed after the collapse of Austria-Hungary. It functioned as a parliamentary democracy in Central Europe until the Munich Agreement. The state was composed of territories from the former Bohemian and Hungarian lands.",
+      "cs": "První československá republika byla počáteční formou československého státu vzniklého po rozpadu Rakouska-Uherska. Fungovala jako parlamentní demokracie ve střední Evropě až do Mnichovské dohody. Stát se skládal z území bývalých českých a uherských zemí.",
+      "de": "Die Erste Tschechoslowakische Republik war die erste Form des tschechoslowakischen Staates, der nach dem Zusammenbruch Österreich-Ungarns entstand. Sie fungierte bis zum Münchner Abkommen als parlamentarische Demokratie in Mitteleuropa. Der Staat setzte sich aus Gebieten der ehemaligen böhmischen und ungarischen Länder zusammen."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Bohemia.svg?width=640",
+    "image_file": "",
+    "population": 14800000,
+    "area_km2": null,
+    "latitude": 50.0833,
+    "longitude": 14.4667,
+    "wikidata_id": "Q140359",
+    "country": 2166,
+    "created_at": "2026-04-02T20:39:15.032Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17554,
+  "fields": {
+    "name": "Czechoslovakia",
+    "search_name": "",
+    "name_cs": "Československo",
+    "name_de": "Tschechoslowakei",
+    "slug": "czechoslovakia-q33946",
+    "category": "historical",
+    "description": {
+      "en": "This Central European state was established following the collapse of Austria-Hungary after the First World War. It served as a democratic republic before experiencing occupation and subsequent communist governance. The country eventually ceased to exist as a unified entity.",
+      "cs": "Tento středoevropský stát byl založen po rozpadu Rakouska-Uherska po první světové válce. Před okupací a následnou komunistickou vládou fungoval jako demokratická republika. Země nakonec přestala existovat jako jednotný celek.",
+      "de": "Dieser mitteleuropäische Staat wurde nach dem Zusammenbruch Österreich-Ungarns nach dem Ersten Weltkrieg gegründet. Er fungierte als demokratische Republik, bevor er eine Besatzung und eine anschließende kommunistische Herrschaft erlebte. Das Land hörte schließlich als geeinte Einheit auf zu existieren."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20the%20Czech%20Republic.svg?width=640",
+    "image_file": "",
+    "population": 15700000,
+    "area_km2": 127900.0,
+    "latitude": 50.083333333,
+    "longitude": 14.416666666,
+    "wikidata_id": "Q33946",
+    "country": 2166,
+    "created_at": "2026-04-02T20:39:15.255Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17574,
+  "fields": {
+    "name": "Czech and Slovak Federative Republic",
+    "search_name": "",
+    "name_cs": "Česká a Slovenská Federativní Republika",
+    "name_de": "Tschechische und Slowakische Föderative Republik",
+    "slug": "czech-and-slovak-federal-republic-q1998866",
+    "category": "historical",
+    "description": {
+      "en": "This state represented the final iteration of the federal union between Czechs and Slovaks. It emerged following the Velvet Revolution as a democratic successor to the previous socialist regime. The federation eventually dissolved peacefully into two independent nations.",
+      "cs": "Tento stát představoval poslední podobu federativního svazku mezi Čechy a Slováky. Vznikl po sametové revoluci jako demokratický nástupce předchozího socialistického režimu. Federace se nakonec pokojně rozdělila na dva nezávislé národy.",
+      "de": "Dieser Staat stellte die letzte Iteration der föderalen Union zwischen Tschechen und Slowaken dar. Er entstand nach der Samtenen Revolution als demokratischer Nachfolger des vorherigen sozialistischen Regimes. Die Föderation löste sich schließlich friedlich in zwei unabhängige Nationen auf."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20the%20Czech%20Republic.svg?width=640",
+    "image_file": "",
+    "population": 15600000,
+    "area_km2": 127900.0,
+    "latitude": 50.0,
+    "longitude": 15.0,
+    "wikidata_id": "Q1998866",
+    "country": 2166,
+    "created_at": "2026-04-02T20:39:18.674Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17584,
+  "fields": {
+    "name": "Third Czechoslovak Republic",
+    "search_name": "third czechoslovak republic",
+    "name_cs": "Třetí československá republika",
+    "name_de": "Dritte Tschechoslowakische Republik",
+    "slug": "third-czechoslovak-republic-q2454585",
+    "category": "historical",
+    "description": {
+      "en": "This state existed between the end of World War II and the 1948 communist coup d'état. It was characterized by the restoration of pre-war borders and the expulsion of the German-speaking population. The period ended with the establishment of a socialist regime under the influence of the Soviet Union.",
+      "cs": "Tento státní útvar existoval mezi koncem druhé světové války a komunistickým převratem v roce 1948. Období bylo charakteristické obnovou předválečných hranic a odsunem německy mluvícího obyvatelstva. Éra skončila nastolením socialistického režimu pod vlivem Sovětského svazu.",
+      "de": "Dieser Staat existierte zwischen dem Ende des Zweiten Weltkriegs und dem kommunistischen Staatsstreich von 1948. Er war durch die Wiederherstellung der Vorkriegsgrenzen und die Vertreibung der deutschsprachigen Bevölkerung geprägt. Die Ära endete mit der Errichtung eines sozialistischen Regimes."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20the%20Czech%20Republic.svg?width=640",
+    "image_file": "",
+    "population": null,
+    "area_km2": 127900.0,
+    "latitude": 50.0833,
+    "longitude": 14.4667,
+    "wikidata_id": "Q2454585",
+    "country": 2166,
+    "created_at": "2026-04-02T20:39:19.872Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17604,
+  "fields": {
+    "name": "Kingdom of Bohemia",
+    "search_name": "",
+    "name_cs": "České království",
+    "name_de": "Königreich Böhmen",
+    "slug": "kingdom-of-bohemia-q42585",
+    "category": "historical",
+    "description": {
+      "en": "The Kingdom of Bohemia was a medieval monarchy located in Central Europe. It served as a predecessor state to the modern Czech Republic. The realm was a significant imperial state within the Holy Roman Empire.",
+      "cs": "České království bylo středověkou monarchií nacházející se ve střední Evropě. Sloužilo jako předchůdce moderní České republiky. Území bylo významným říšským státem v rámci Svaté říše římské.",
+      "de": "Das Königreich Böhmen war eine mittelalterliche Monarchie in Mitteleuropa. Es diente als Vorgängerstaat der modernen Tschechischen Republik. Das Reich war ein bedeutender Reichsstand innerhalb des Heiligen Römischen Reiches."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Bohemia.svg?width=640",
+    "image_file": "",
+    "population": null,
+    "area_km2": null,
+    "latitude": 50.0875,
+    "longitude": 14.421388888,
+    "wikidata_id": "Q42585",
+    "country": 2166,
+    "created_at": "2026-04-02T20:39:22.171Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17839,
+  "fields": {
+    "name": "Protectorate of Bohemia and Moravia",
+    "search_name": "protectorate of bohemia and moravia",
+    "name_cs": "Protektorát Čechy a Morava",
+    "name_de": "Protektorat Böhmen und Mähren",
+    "slug": "protectorate-of-bohemia-and-moravia-q152750",
+    "category": "historical",
+    "description": {
+      "en": "Established on March 16, 1939, the Protectorate of Bohemia and Moravia was a German-controlled territory formed after the occupation of the Czech lands.  Prague Castle served as the location for Hitler's proclamation establishing the protectorate, violating the Munich Agreement. The region's industry was exploited to support the German war effort during WWII.",
+      "cs": "Protektorát Čechy a Morava byl zřízen 16. března 1939 po německé okupaci českých zemí. Proklamace o zřízení protektorátu byla vydána z Pražského hradu a porušovala Mnichovskou dohodu. Během druhé světové války byla průmyslová základna protektorátu využívána pro německou válečnou ekonomiku.",
+      "de": "Der Protektorat Böhmen und Mähren wurde am 16. März 1939 nach der deutschen Besetzung der böhmischen und mährischen Gebiete gegründet. Die Proklamation zur Errichtung des Protektorats erfolgte von der Prager Burg aus und verletzte das Münchner Abkommen. Die Industrie der Region wurde während des Zweiten Weltkriegs zur Unterstützung der deutschen Kriegswirtschaft genutzt."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20the%20Protectorate%20of%20Bohemia%20and%20Moravia.svg?width=640",
+    "image_file": "",
+    "population": 7380000,
+    "area_km2": 49363.0,
+    "latitude": 50.0833,
+    "longitude": 14.4667,
+    "wikidata_id": "Q152750",
+    "country": 2166,
+    "created_at": "2026-04-02T20:39:59.261Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17908,
+  "fields": {
+    "name": "Bukovinka",
+    "search_name": "",
+    "name_cs": "Bukovinka",
+    "name_de": "Bukovinka",
+    "slug": "bukovinka-q1003368",
+    "category": "city",
+    "description": {
+      "en": "Bukovinka is a municipality and village in the South Moravian Region. It is located in the Blansko District, northeast of Brno. The first written mention of the village dates back to the 13th century.",
+      "cs": "Bukovinka je obec a vesnice v Jihomoravském kraji. Nachází se v okrese Blansko, severovýchodně od Brna. První písemná zmínka o obci pochází ze 13. století.",
+      "de": "Bukovinka ist eine Gemeinde und ein Dorf in der südmährischen Region. Sie liegt im Bezirk Blansko, nordöstlich von Brünn. Die erste schriftliche Erwähnung des Dorfes stammt aus dem 13. Jahrhundert."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bukovinka%20Flag.jpg?width=640",
+    "image_file": "",
+    "population": 651,
+    "area_km2": 8.484261,
+    "latitude": 49.294202072,
+    "longitude": 16.804953674,
+    "wikidata_id": "Q1003368",
+    "country": 2166,
+    "created_at": "2026-04-02T20:40:41.945Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17910,
+  "fields": {
+    "name": "Bukovec (Frýdek-Místek District)",
+    "search_name": "",
+    "name_cs": "Bukovec",
+    "name_de": "Bukowetz",
+    "slug": "bukovec-q1003355",
+    "category": "city",
+    "description": {
+      "en": "Bukovec is the easternmost municipality in the Czech Republic, located in the Moravian-Silesian Region. It lies within the historical territory of Cieszyn Silesia near the borders with Poland and Slovakia. The landscape is defined by the Silesian Beskids and the Jablunkov Furrow.",
+      "cs": "Bukovec je nejvýchodnější obcí České republiky, která se nachází v Moravskoslezském kraji. Leží na historickém území Těšínského Slezska poblíž hranic s Polskem a Slovenskem. Krajinu zde utvářejí Slezské Beskydy a Jablunkovská brázda.",
+      "de": "Bukovec ist die östlichste Gemeinde der Tschechischen Republik und liegt in der Mährisch-Schlesischen Region. Sie befindet sich im historischen Gebiet Teschener Schlesien nahe der Grenzen zu Polen und der Slowakei. Die Landschaft wird durch die Schlesischen Beskiden und die Jablunkauer Furche geprägt."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bukovec%20flag.svg?width=640",
+    "image_file": "",
+    "population": 1375,
+    "area_km2": 17.04543,
+    "latitude": 49.551117557,
+    "longitude": 18.826856664,
+    "wikidata_id": "Q1003355",
+    "country": 2166,
+    "created_at": "2026-04-02T20:40:42.144Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17911,
+  "fields": {
+    "name": "Bukovany (Sokolov District)",
+    "search_name": "",
+    "name_cs": "Bukovany",
+    "name_de": "Bukwa",
+    "slug": "bukovany-q1003333",
+    "category": "city",
+    "description": {
+      "en": "Bukovany is a municipality located in the Karlovy Vary Region. It is situated within the Sokolov District in the western part of the country. The village maintains historical ties to the surrounding industrial and mining landscape.",
+      "cs": "Bukovany jsou obec nacházející se v Karlovarském kraji. Leží v okrese Sokolov v západní části země. Obec si udržuje historické vazby na okolní průmyslovou a těžařskou krajinu.",
+      "de": "Bukovany ist eine Gemeinde in der Region Karlsbad. Sie liegt im Bezirk Sokolov im westlichen Teil des Landes. Der Ort pflegt historische Verbindungen zur umliegenden Industrie- und Bergbaulandschaft."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bukovany%20Sokolov%20Flag.gif?width=640",
+    "image_file": "",
+    "population": 1479,
+    "area_km2": 3.099881,
+    "latitude": 50.16644414,
+    "longitude": 12.572727582,
+    "wikidata_id": "Q1003333",
+    "country": 2166,
+    "created_at": "2026-04-02T20:40:42.220Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17921,
+  "fields": {
+    "name": "Bulovka",
+    "search_name": "",
+    "name_cs": "Bulovka",
+    "name_de": "Bullendorf",
+    "slug": "bulovka-q1004713",
+    "category": "city",
+    "description": {
+      "en": "Bulovka is a municipality in the Liberec Region of the Czech Republic, situated in the Frýdlant Hook microregion. The village was first mentioned in historical records during the 14th century. Its landscape is characterized by the Jizera Foothills and local streams.",
+      "cs": "Bulovka je obec v Libereckém kraji, která se nachází ve Frýdlantském výběžku. První písemná zmínka o obci pochází ze 14. století. Krajina je zde formována Jizerskými horami a místními vodními toky.",
+      "de": "Bulovka ist eine Gemeinde in der Region Liberec in der Tschechischen Republik, die im Mikrogebiet Frýdlant Hook liegt. Das Dorf wurde erstmals im 14. Jahrhundert urkundlich erwähnt. Die Landschaft ist durch das Isergebirgsvorland und lokale Bäche geprägt."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Bulovka.svg?width=640",
+    "image_file": "",
+    "population": 916,
+    "area_km2": 28.879316,
+    "latitude": 50.971198268,
+    "longitude": 15.123679827,
+    "wikidata_id": "Q1004713",
+    "country": 2166,
+    "created_at": "2026-04-02T20:40:44.767Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17926,
+  "fields": {
+    "name": "Velehrad",
+    "search_name": "velehrad",
+    "name_cs": "Velehrad",
+    "name_de": "Velehrad",
+    "slug": "velehrad-q1004655",
+    "category": "city",
+    "description": {
+      "en": "Velehrad is a municipality in the Zlín Region of the Czech Republic, known for its historical Cistercian monastery. Founded in 1205 by Vladislaus III, the monastery became a significant religious center. It is now a major Christian pilgrimage site, visited by Pope John Paul II in the 1990s.",
+      "cs": "Velehrad je obec v Zlínském kraji, proslulá bývalým cisterciáckým klášterem. Klášter založil v roce 1205 Vladislav III., a stal se významným náboženským centrem. Dnes je to hlavní poutní místo, které navštívil v 90. letech papež Jan Pavel II.",
+      "de": "Velehrad ist eine Gemeinde im Zlínský kraj, bekannt für das ehemalige Zisterzienserkloster. Das Kloster wurde 1205 von Vladislav III. gegründet und wurde ein bedeutendes religiöses Zentrum. Es ist heute ein wichtiges christliches Wallfahrtsziel, das in den 1990er Jahren von Papst Johannes Paul II. besucht wurde."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Velehrad%20CZ%20flag.gif?width=640",
+    "image_file": "",
+    "population": 1130,
+    "area_km2": 22.252413,
+    "latitude": 49.105436846,
+    "longitude": 17.394271564,
+    "wikidata_id": "Q1004655",
+    "country": 2166,
+    "created_at": "2026-04-02T20:40:45.240Z",
+    "is_verified": true,
+    "is_public": true
+  }
+},
+{
+  "model": "app.flagcollection",
+  "pk": 17930,
+  "fields": {
+    "name": "Bukovice (Náchod District)",
+    "search_name": "",
+    "name_cs": "Bukovice",
+    "name_de": "Bukovice",
+    "slug": "bukovice-q1003350",
+    "category": "city",
+    "description": {
+      "en": "Bukovice is a village situated in the Broumov Highlands within the Hradec Králové Region. The area is part of the Broumovsko Protected Landscape Area. Historical records of the settlement date back to the early 15th century.",
+      "cs": "Bukovice je obec ležící v Broumovské vrchovině v Královéhradeckém kraji. Území je součástí Chráněné krajinné oblasti Broumovsko. První písemné zmínky o sídle pocházejí z počátku 15. století.",
+      "de": "Bukovice ist ein Dorf im Braunauer Bergland in der Region Hradec Králové. Das Gebiet ist Teil des Landschaftsschutzgebiets Broumovsko. Historische Aufzeichnungen über die Siedlung reichen bis ins frühe 15. Jahrhundert zurück."
+    },
+    "flag_image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bukovice%20%28okres%20N%C3%A1chod%29%20vlajka.jpg?width=640",
+    "image_file": "",
+    "population": 398,
+    "area_km2": 2.434623,
+    "latitude": 50.549581055,
+    "longitude": 16.228025538,
+    "wikidata_id": "Q1003350",
+    "country": 2166,
+    "created_at": "2026-04-02T20:40:45.625Z",
+    "is_verified": true,
+    "is_public": true
+  }
+}
+]
+
