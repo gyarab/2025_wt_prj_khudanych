@@ -23,13 +23,13 @@ def robots_txt(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
     path('favicon.ico', RedirectView.as_view(url='/static/app/logo.svg')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', robots_txt),
 ]
 
 urlpatterns += i18n_patterns(
+    path('accounts/', include('allauth.urls')),
     path('', include('app.urls')),
 )
 

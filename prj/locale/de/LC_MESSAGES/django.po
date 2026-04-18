@@ -258,6 +258,21 @@ msgstr "Hauptterritorium"
 msgid "Territory / Dependency"
 msgstr "Territorium / Abhängigkeit"
 
+msgid "Global Leaderboards"
+msgstr "Globale Ranglisten"
+
+msgid "Top Population"
+msgstr "Bevölkerung"
+
+msgid "Top Area"
+msgstr "Fläche"
+
+msgid "Top Density"
+msgstr "Dichte"
+
+msgid "People/km²"
+msgstr "Einw./km²"
+
 msgid "Territories & Dependencies"
 msgstr "Territorien und Abhängigkeiten"
 

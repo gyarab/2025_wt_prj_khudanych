@@ -259,6 +259,21 @@ msgstr "Území / Závislost"
 msgid "Territories & Dependencies"
 msgstr "Území a závislosti"
 
+msgid "Global Leaderboards"
+msgstr "Světové žebříčky"
+
+msgid "Top Population"
+msgstr "Populace"
+
+msgid "Top Area"
+msgstr "Rozloha"
+
+msgid "Top Density"
+msgstr "Hustota"
+
+msgid "People/km²"
+msgstr "Obyv./km²"
+
 msgid "Former Country"
 msgstr "Bývalá země"
 

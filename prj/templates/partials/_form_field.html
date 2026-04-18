@@ -23,8 +23,10 @@
 </div>
 
 <style>
-    /* Ensure inputs get form-control class even if not set in widget */
-    #{{ field.id_for_label }}:not([type="checkbox"]):not([type="radio"]) {
+    /* Ensure standard styling even when widget classes are missing */
+    .mb-3 input:not([type="checkbox"]):not([type="radio"]),
+    .mb-3 select,
+    .mb-3 textarea {
         display: block;
         width: 100%;
         padding: 0.75rem 1rem;
@@ -39,7 +41,10 @@
         border-radius: 10px;
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
-    #{{ field.id_for_label }}:focus {
+
+    .mb-3 input:not([type="checkbox"]):not([type="radio"]):focus,
+    .mb-3 select:focus,
+    .mb-3 textarea:focus {
         border-color: #667eea;
         outline: 0;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);

@@ -25,13 +25,10 @@
     {% load static %}
     <link rel="icon" type="image/svg+xml" href="{% static 'app/logo.svg' %}">
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -39,6 +36,9 @@
             --ocean-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --forest-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             --sunset-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --scrollbar-track: #e2e8f0;
+            --scrollbar-thumb: #5a67d8;
+            --scrollbar-thumb-hover: #434fb0;
         }
 
         * {
@@ -55,6 +55,48 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        @media (min-width: 992px) and (hover: hover) and (pointer: fine) {
+            html {
+                scrollbar-width: auto;
+                scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+            }
+
+            *::-webkit-scrollbar {
+                width: 12px;
+                height: 12px;
+            }
+
+            *::-webkit-scrollbar-track {
+                background: var(--scrollbar-track);
+                border-radius: 999px;
+            }
+
+            *::-webkit-scrollbar-thumb {
+                background: var(--scrollbar-thumb);
+                border: 2px solid var(--scrollbar-track);
+                border-radius: 999px;
+            }
+
+            *::-webkit-scrollbar-thumb:hover {
+                background: var(--scrollbar-thumb-hover);
+            }
+        }
+
+        @media (max-width: 991.98px), (hover: none), (pointer: coarse) {
+            html {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            *::-webkit-scrollbar {
+                width: 0;
+                height: 0;
+                display: none;
+                background: transparent;
+            }
         }
 
         /* Navigation */
@@ -70,7 +112,7 @@
 
         .navbar-brand {
             font-weight: 800;
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             letter-spacing: -0.5px;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
@@ -90,7 +132,7 @@
         .nav-link {
             color: #4a5568 !important;
             font-weight: 600;
-            margin: 0 0.3rem;
+            margin: 0 0.15rem;
             padding: 0.6rem 1rem !important;
             border-radius: 12px;
             transition: all 0.2s ease;
@@ -101,6 +143,11 @@
             background: rgba(102, 126, 234, 0.08);
             color: #667eea !important;
             transform: translateY(-1px);
+        }
+
+        /* Ochrana proti zalamování u odkazů v menu */
+        .navbar .nav-link, .navbar .btn {
+            white-space: nowrap;
         }
 
         .dropdown-menu {
@@ -125,22 +172,81 @@
             transform: translateX(4px);
         }
 
-        /* Responsive Navbar Fix */
-        @media (max-width: 991.98px) {
+        /* Responsive Navbar Fix - Nyní pro velikost XL a menší (tablety a mobily) */
+        @media (max-width: 1199.98px) {
             .navbar-collapse {
-                background: white;
-                margin-top: 1rem;
-                padding: 1rem;
-                border-radius: 20px;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+                padding: 0;
+                margin: 0;
+                background: transparent;
+                box-shadow: none;
             }
+
+            .navbar-collapse .navbar-nav {
+                background: white;
+                border-radius: 16px;
+                padding: 1rem;
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+                box-shadow: none;
+                border: 1.5px solid #e2e8f0; 
+            }
+
             .nav-link {
                 margin: 0.2rem 0;
                 padding: 0.8rem 1.2rem !important;
             }
+            
             .navbar-brand {
                 font-size: 1.2rem;
             }
+        }
+
+        /* --- CUSTOM HAMBURGER ANIMATION --- */
+        .custom-toggler {
+            border: none;
+            padding: 0.5rem;
+            background: transparent;
+        }
+        
+        .custom-toggler:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            position: relative;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .hamburger-icon span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: #2d3748;
+            border-radius: 2px;
+            opacity: 1;
+            left: 0;
+            transition: 0.3s ease-in-out;
+        }
+
+        .hamburger-icon span:nth-child(1) { top: 0px; }
+        .hamburger-icon span:nth-child(2) { top: 8px; }
+        .hamburger-icon span:nth-child(3) { top: 16px; }
+
+        .custom-toggler[aria-expanded="true"] .hamburger-icon span:nth-child(1) {
+            top: 8px;
+            transform: rotate(45deg);
+        }
+        .custom-toggler[aria-expanded="true"] .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+        }
+        .custom-toggler[aria-expanded="true"] .hamburger-icon span:nth-child(3) {
+            top: 8px;
+            transform: rotate(-45deg);
         }
 
         /* Main Content */
@@ -174,12 +280,22 @@
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
+            text-align: center;
+            white-space: normal;
+            line-height: 1.25;
         }
 
         .btn-gradient:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
             color: white;
+        }
+
+        .btn,
+        .btn-sm,
+        .btn-lg {
+            /* Odstraněny škodlivé vlastnosti pro neřízené zalamování (overflow-wrap) */
+            line-height: 1.25;
         }
 
         /* Footer */
@@ -202,18 +318,6 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             font-weight: 600;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         /* Form Styling */
@@ -255,6 +359,14 @@
                 width: 100%;
                 text-align: center;
             }
+
+            .btn {
+                min-height: 42px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.35rem;
+            }
         }
     </style>
     
@@ -262,14 +374,18 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-xl">
         <div class="container">
             <a class="navbar-brand" href="{% url 'homepage' %}">
                 <img src="{% static 'app/logo.svg' %}" alt="{% trans 'Logo' %}" class="navbar-logo">
                 {% trans "Just Enough Flags" %}
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <div class="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
@@ -315,7 +431,7 @@
                             <a class="nav-link" href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> {% trans "Login" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-sm btn-outline-primary ms-lg-2 rounded-pill px-3" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+                            <a class="nav-link btn btn-sm btn-outline-primary ms-xl-2 rounded-pill px-3" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -349,7 +465,6 @@
         </div>
     </footer>
 
-    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         (function () {

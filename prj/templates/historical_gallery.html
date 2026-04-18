@@ -48,14 +48,31 @@
     }
 
     .flag-caption {
-        padding: 0.5rem;
+        padding: 0.75rem 0.5rem;
         text-align: center;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         font-weight: 500;
         color: #2d3748;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        /* Oprava ořezávání a vyklouzávání textu */
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        line-height: 1.3;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @media (max-width: 575.98px) {
+        .flag-caption {
+            font-size: 0.76rem;
+        }
+
+        .flag-badge {
+            font-size: 0.6rem;
+            padding: 0.12rem 0.4rem;
+        }
     }
 
     .flag-badge {
@@ -67,66 +84,17 @@
         display: inline-block;
     }
 
+    .flag-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
     .search-box {
         max-width: 400px;
         margin: 0 auto 1.5rem;
     }
 
-    /* Lightbox modal */
-    #flagModal .modal-content {
-        background: transparent;
-        border: none;
-    }
-    #flagModal .modal-body {
-        background: white;
-        border-radius: 16px;
-        padding: 1.5rem;
-        text-align: center;
-    }
-    #flagModal .lightbox-img {
-        max-width: 100%;
-        max-height: 65vh;
-        object-fit: contain;
-        border-radius: 8px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-    }
-    #flagModal .lightbox-title {
-        margin-top: 1rem;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #2d3748;
-    }
-    #flagModal .lightbox-badge {
-        font-size: 0.8rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 50px;
-        background: #edf2f7;
-        color: #718096;
-        display: inline-block;
-        margin-top: 0.4rem;
-    }
-    #flagModal .btn-close-custom {
-        position: absolute;
-        top: 10px;
-        right: 14px;
-        font-size: 1.5rem;
-        background: rgba(0,0,0,0.5);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 10;
-    }
-    #flagModal .btn-close-custom:hover { background: rgba(0,0,0,0.7); }
-    #flagModal .lightbox-link {
-        display: inline-block;
-        margin-top: 0.75rem;
-    }
 </style>
 {% endblock %}
 
@@ -140,24 +108,22 @@
 </div>
 
 <div class="container mb-5">
-    <!-- Search -->
     <div class="search-box">
         <form method="get" action="{% url 'historical' %}" id="historical-search-form">
             {% include 'includes/_search_bar.html' with search_input_id='historical-search-input' search_query_name='q' search_placeholder=historical_search_placeholder search_query=search_query|default:'' show_search_button=True search_input_class='form-control' %}
         </form>
     </div>
 
-    <!-- Flags Grid -->
     <div class="row g-3" id="historical-grid">
         {% for item in page_obj %}
         <div class="col-6 col-sm-4 col-md-3 col-lg-2 historical-card-col">
-            <div class="flag-item"
+            {% if item.link %}
+            <a href="{{ item.link }}" class="flag-link h-100">
+            {% endif %}
+            <div class="flag-item h-100 d-flex flex-column m-0"
                   data-flag-detail-link="{{ item.link|default:'' }}"
-                  data-flag-image-src="{{ item.img|default:'' }}"
-                 onclick="openFlag('{{ item.img|escapejs }}', '{{ item.localized_name|default:item.name|escapejs }}', '{{ item.type|escapejs }}', '{{ item.link|escapejs }}')"
-                 role="button" tabindex="0"
-                 onkeydown="if(event.key==='Enter')this.click()">
-                <div class="flag-img-wrap">
+                  data-flag-image-src="{{ item.img|default:'' }}">
+                <div class="flag-img-wrap flex-shrink-0">
                     {% if item.img %}
                         <img src="{{ item.img }}" alt="{{ item.localized_name|default:item.name }}" class="flag-display" loading="lazy" decoding="async">
                     {% elif item.emoji %}
@@ -166,11 +132,14 @@
                         <span class="flag-emoji-display">📜</span>
                     {% endif %}
                 </div>
-                <div class="flag-caption" title="{{ item.localized_name|default:item.name }}">
-                    {{ item.localized_name|default:item.name }}
-                    <br><span class="flag-badge">{{ item.type }}</span>
+                <div class="flag-caption flex-grow-1" title="{{ item.localized_name|default:item.name }}">
+                    <span>{{ item.localized_name|default:item.name }}</span>
+                    <span class="flag-badge mt-2">{{ item.type }}</span>
                 </div>
             </div>
+            {% if item.link %}
+            </a>
+            {% endif %}
         </div>
         {% empty %}
         <div class="col-12 text-center py-5">
@@ -187,7 +156,6 @@
         </div>
     </div>
 
-    <!-- Pagination -->
     {% if page_obj.has_other_pages %}
     <nav class="mt-4" aria-label="Gallery pagination">
         <ul class="pagination justify-content-center flex-wrap">
@@ -217,62 +185,7 @@
     {% endif %}
 </div>
 
-<!-- Lightbox Modal -->
-<div class="modal fade" id="flagModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-body position-relative">
-        <button class="btn-close-custom" onclick="document.getElementById('flagModal')._modal.hide()">&times;</button>
-        <img id="lbImg" class="lightbox-img" src="" alt="">
-        <div class="lightbox-title" id="lbTitle"></div>
-        <span class="lightbox-badge" id="lbBadge"></span>
-        <div id="lbLinkWrap" class="lightbox-link" style="display:none">
-          <a id="lbLink" href="#" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-box-arrow-up-right"></i> {% trans "View Details" %}
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
-  let _flagModal = null;
-  function getFlagModal() {
-    if (!_flagModal) {
-      const el = document.getElementById('flagModal');
-      _flagModal = new bootstrap.Modal(el);
-      el._modal = _flagModal;
-    }
-    return _flagModal;
-  }
-
-  function openFlag(img, name, badge, link) {
-    document.getElementById('lbImg').src = img || '';
-    document.getElementById('lbTitle').textContent = name;
-    document.getElementById('lbBadge').textContent = badge;
-
-    const linkWrap = document.getElementById('lbLinkWrap');
-    const linkEl = document.getElementById('lbLink');
-    if (link) {
-      linkEl.href = link;
-      linkWrap.style.display = '';
-            if (window.FlagImageCache && typeof window.FlagImageCache.prime === 'function') {
-                    window.FlagImageCache.prime(link, img).catch(function () {
-                            // Keep modal behavior even when cache prime fails.
-                    });
-            }
-    } else {
-      linkWrap.style.display = 'none';
-    }
-
-    if (img && img.includes('width=320')) {
-      document.getElementById('lbImg').src = img.replace('width=320', 'width=640');
-    }
-
-    getFlagModal().show();
-  }
-
     (function () {
         const form = document.getElementById('historical-search-form');
         const input = document.getElementById('historical-search-input');
@@ -317,25 +230,25 @@
                 const emoji = escapeHtml(item.emoji || '📜');
                 const type = escapeHtml(item.type || '{% trans "Historical Flag" %}');
                 const link = item.link ? escapeHtml(item.link) : '';
-
-                return `
-                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 historical-card-col">
-                        <div class="flag-item"
+                const cardInner = `
+                        <div class="flag-item h-100 d-flex flex-column m-0"
                                  data-flag-detail-link="${link}"
-                                 data-flag-image-src="${img}"
-                                 onclick="openFlag('${img}', '${name}', '${type}', '${link}')"
-                                 role="button" tabindex="0"
-                                 onkeydown="if(event.key==='Enter')this.click()">
-                            <div class="flag-img-wrap">
+                                 data-flag-image-src="${img}">
+                            <div class="flag-img-wrap flex-shrink-0">
                                 ${img
                                     ? `<img src="${img}" alt="${name}" class="flag-display" loading="lazy" decoding="async">`
                                     : `<span class="flag-emoji-display">${emoji}</span>`}
                             </div>
-                            <div class="flag-caption" title="${name}">
-                                ${name}
-                                <br><span class="flag-badge">${type}</span>
+                            <div class="flag-caption flex-grow-1" title="${name}">
+                                <span>${name}</span>
+                                <span class="flag-badge mt-2">${type}</span>
                             </div>
                         </div>
+                `;
+
+                return `
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 historical-card-col">
+                        ${link ? `<a href="${link}" class="flag-link h-100">${cardInner}</a>` : cardInner}
                     </div>
                 `;
             }).join('');

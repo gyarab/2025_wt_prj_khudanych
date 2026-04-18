@@ -63,7 +63,7 @@
         padding: 1.25rem;
         display: flex;
         flex-direction: column;
-        min-height: 150px;
+        justify-content: flex-start;
     }
 
     .country-card-body.compact-territory {
@@ -80,6 +80,10 @@
         font-weight: 600;
         color: #2d3748;
         margin-bottom: 0.75rem;
+        /* Oprava vyklouzávání dlouhých jmen na mobilech */
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        white-space: normal;
     }
 
     .info-badge {
@@ -90,6 +94,32 @@
         font-size: 0.85rem;
         color: #4a5568;
         margin: 0.25rem;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        white-space: normal;
+    }
+
+    @media (max-width: 575.98px) {
+        .country-card-body {
+            padding: 0.85rem;
+            min-height: 85px;
+        }
+
+        .country-title {
+            font-size: 1rem;
+            margin-bottom: 0.45rem;
+        }
+
+        .info-badge {
+            font-size: 0.78rem;
+            padding: 0.2rem 0.55rem;
+            margin: 0.12rem;
+        }
+
+        .flag-thumbnail {
+            height: 108px;
+            padding: 8px;
+        }
     }
 </style>
 {% endblock %}
@@ -97,7 +127,6 @@
 {% block content %}
 {% trans "Country Explorer" as default_country_explorer %}
 {% trans "Search countries..." as default_search_placeholder %}
-{% trans "Search" as search_label_text %}
 <div class="page-header">
     <div class="container text-center">
         <h1><i class="bi bi-globe-americas"></i> {{ page_title|default:default_country_explorer }}</h1>
@@ -106,19 +135,18 @@
 </div>
 
 <div class="container mb-5">
-    <!-- Search and Filter Section -->
     <div class="search-section">
         <form method="get" action="" id="countries-search-form">
             <div class="row g-3 align-items-end">
                 <div class="{% if regions %}col-md-8{% else %}col-12{% endif %}">
-                    {% include 'includes/_search_bar.html' with search_input_id='search' search_query_name='q' search_placeholder=search_placeholder|default:default_search_placeholder search_query=search_query|default:'' search_label=search_label_text search_label_icon='bi bi-search' search_input_class='form-control form-control-lg' show_search_button=False %}
+                    {% include 'includes/_search_bar.html' with search_input_id='search' search_query_name='q' search_placeholder=search_placeholder|default:default_search_placeholder search_query=search_query|default:'' search_input_class='form-control' show_search_button=True %}
                 </div>
                 {% if regions %}
                 <div class="col-md-4">
                     <label for="region" class="form-label">
                         <i class="bi bi-funnel"></i> {% trans "Filter by Region" %}
                     </label>
-                    <select class="form-select form-select-lg" id="region" name="region">
+                    <select class="form-select" id="region" name="region">
                         <option value="">{% trans "All Regions" %}</option>
                         {% for region in regions %}
                             <option value="{{ region.slug }}" {% if selected_region == region.slug %}selected{% endif %}>
@@ -134,37 +162,30 @@
         </form>
     </div>
 
-    <!-- Countries Grid -->
     <div class="row g-4 countries-grid" id="countries-grid">
         {% for item in page_obj %}
-        <div class="col-sm-6 col-md-4 col-lg-3 country-card-col">
+        <div class="col-6 col-md-4 col-lg-3 country-card-col">
             {% if item.link %}
-            <a href="{{ item.link }}" class="text-decoration-none">
+            <a href="{{ item.link }}" class="text-decoration-none d-block h-100">
             {% else %}
-            <div class="text-decoration-none">
+            <div class="text-decoration-none d-block h-100">
             {% endif %}
-                <div class="country-grid-card"
+                <div class="country-grid-card d-flex flex-column m-0"
                      data-flag-detail-link="{{ item.link|default:'' }}"
                      data-flag-image-src="{{ item.flag_png|default:item.img|default:'' }}">
                     {% if item.flag_png or item.img %}
-                         <img src="{{ item.flag_png|default:item.img }}" alt="Flag of {{ item.name }}" class="flag-thumbnail" loading="lazy" decoding="async">
+                         <img src="{{ item.flag_png|default:item.img }}" alt="Flag of {{ item.name }}" class="flag-thumbnail flex-shrink-0" loading="lazy" decoding="async">
                     {% else %}
-                        <div class="flag-thumbnail d-flex align-items-center justify-content-center" style="font-size: 4rem;">
+                        <div class="flag-thumbnail flex-shrink-0 d-flex align-items-center justify-content-center" style="font-size: 4rem;">
                             {{ item.flag_emoji|default:item.emoji }}
                         </div>
                     {% endif %}
-                    <div class="country-card-body {% if compact_territory_cards %}compact-territory{% endif %}">
+                    <div class="country-card-body flex-grow-1 {% if compact_territory_cards %}compact-territory{% endif %}">
                         <h3 class="country-title">{{ item.name }}</h3>
-                        {% if compact_territory_cards and item.link %}
-                            <div class="d-grid">
-                                <span class="btn btn-sm btn-outline-primary">{% trans "View Details" %}</span>
+                        {% if item.capital %}
+                            <div class="info-badge">
+                                <i class="bi bi-building"></i> {{ item.capital }}
                             </div>
-                        {% else %}
-                            {% if item.capital %}
-                                <div class="info-badge">
-                                    <i class="bi bi-building"></i> {{ item.capital }}
-                                </div>
-                            {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -183,7 +204,6 @@
         {% endfor %}
     </div>
 
-    <!-- Pagination -->
     {% if page_obj.has_other_pages %}
     <nav class="mt-4" aria-label="Countries pagination">
         <ul class="pagination justify-content-center flex-wrap">
@@ -228,11 +248,11 @@
     const countriesGrid = document.getElementById('countries-grid');
     const paginationBlock = document.querySelector('nav[aria-label="Countries pagination"]');
     const searchApiUrl = "{{ search_api_url }}";
-    
+
     if (!form || !searchInput || !countriesGrid) {
         return;
     }
-    
+
     // Store initial page cards
     const initialCards = Array.from(countriesGrid.querySelectorAll('.country-card-col')).map(card => card.cloneNode(true));
     
@@ -255,28 +275,29 @@
         
         countriesGrid.innerHTML = items.map(function(item) {
             const name = escapeHtml(item.localized_name || item.name);
-            const capital = escapeHtml(item.capital);
+            const capital = escapeHtml(item.capital || '');
             const img = item.img ? escapeHtml(item.img) : '';
             const emoji = escapeHtml(item.emoji || '🏳️');
             const link = item.link ? escapeHtml(item.link) : '';
-            const region = escapeHtml(item.region);
-            
-            return `
-                <div class="col-sm-6 col-md-4 col-lg-3 country-card-col">
-                    <div class="country-grid-card h-100 d-flex flex-column"
+            const cardInner = `
+                    <div class="country-grid-card d-flex flex-column m-0 h-100"
                          data-flag-detail-link="${link}"
                          data-flag-image-src="${img}">
-                        <div>
+                        <div class="flex-shrink-0">
                             ${img
-                                ? `<img src="${img}" alt="{% trans 'Flag of' %} ${name}" class="flag-thumbnail" loading="lazy" decoding="async">`
-                                : `<span class="flag-emoji-display" style="font-size: 4rem;">${emoji}</span>`}
+                                ? `<img src="${img}" alt="{% trans 'Flag of' %} ${name}" class="flag-thumbnail flex-shrink-0" loading="lazy" decoding="async">`
+                                : `<span class="flag-thumbnail flex-shrink-0 d-flex align-items-center justify-content-center" style="font-size: 4rem;">${emoji}</span>`}
                         </div>
-                        <div class="country-card-body mt-auto{% if compact_territory_cards %} compact-territory{% endif %}">
+                        <div class="country-card-body flex-grow-1 mt-auto{% if compact_territory_cards %} compact-territory{% endif %}">
                             <h3 class="country-title">${name}</h3>
                             ${capital ? `<div class="info-badge"><i class="bi bi-building"></i> ${capital}</div>` : ''}
-                            ${link ? `<div class="d-grid mt-2"><a class="btn btn-sm btn-outline-primary" href="${link}">{% trans "View Details" %}</a></div>` : ''}
                         </div>
                     </div>
+            `;
+            
+            return `
+                <div class="col-6 col-md-4 col-lg-3 country-card-col">
+                    ${link ? `<a href="${link}" class="text-decoration-none d-block h-100">${cardInner}</a>` : `<div class="text-decoration-none d-block h-100">${cardInner}</div>`}
                 </div>
             `;
         }).join('');

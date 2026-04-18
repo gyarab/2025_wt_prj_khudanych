@@ -75,10 +75,15 @@
     }
 
     .stat-number {
-        font-size: 2.5rem;
+        font-size: clamp(1.7rem, 4.6vw, 2.5rem);
         font-weight: 700;
         color: #2d3748;
         margin: 0;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-variant-numeric: tabular-nums;
     }
 
     .stat-label {
@@ -87,7 +92,7 @@
         margin-top: 0.5rem;
     }
 
-    /* Featured Countries */
+    /* Leaderboards */
     .section-title {
         font-size: 2.5rem;
         font-weight: 700;
@@ -104,59 +109,138 @@
         border-radius: 2px;
     }
 
-    .country-card {
+    .leaderboard-shell {
         background: white;
-        border-radius: 16px;
+        border-radius: 20px;
+        box-shadow: 0 10px 35px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e2e8f0;
         overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        height: 100%;
-        cursor: pointer;
     }
 
-    .country-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    .leaderboard-nav-wrap {
+        padding: 1.2rem 1rem 0.35rem;
+        background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
     }
 
-    .flag-container {
+    .leaderboard-nav {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    .leaderboard-nav .nav-link {
+        border-radius: 999px;
+        border: 1px solid #dbe2ef;
+        color: #4a5568 !important;
+        font-weight: 600;
+        font-size: clamp(0.72rem, 2.35vw, 0.92rem);
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 0.52rem 0.5rem;
         width: 100%;
-        height: 180px;
-        overflow: hidden;
-        display: flex;
+        background: #ffffff;
+        min-height: 44px;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
+        text-align: center;
+        transform: none;
+    }
+
+    .leaderboard-nav .nav-link:hover {
+        color: #2d3748 !important;
         background: #f8fafc;
-        padding: 15px;
-        border-bottom: 1px solid #edf2f7;
+        border-color: #cfd8ea;
     }
 
-    .flag-image {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
+    .leaderboard-nav .nav-link.active,
+    .leaderboard-nav .show > .nav-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        color: #ffffff !important;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.28);
     }
 
-    .country-info {
-        padding: 1.5rem;
+    .leaderboard-table {
+        margin: 0;
+        --bs-table-bg: transparent;
     }
 
-    .country-name {
-        font-size: 1.4rem;
-        font-weight: 600;
+    .leaderboard-table thead th {
+        color: #64748b;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .leaderboard-table tbody td {
+        border-color: #edf2f7;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        vertical-align: middle;
+        font-size: 0.93rem;
         color: #2d3748;
-        margin-bottom: 0.5rem;
     }
 
-    .country-detail {
-        color: #718096;
-        font-size: 0.9rem;
-        margin: 0.25rem 0;
+    .leaderboard-table tbody tr:hover {
+        background: #f8fafc;
     }
 
-    .country-detail i {
-        color: #667eea;
-        margin-right: 0.5rem;
+    .rank-pill {
+        min-width: 2rem;
+        text-align: center;
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .country-link {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .country-link:hover {
+        color: #5a67d8;
+    }
+
+    .country-identity {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        min-width: 0;
+    }
+
+    .country-flag-mini {
+        width: 24px;
+        height: 16px;
+        border-radius: 3px;
+        object-fit: cover;
+        border: 1px solid #cbd5e0;
+        flex-shrink: 0;
+        background: #f8fafc;
+    }
+
+    .country-name-mini {
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .metric-value {
+        font-weight: 700;
+        color: #1e293b;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
     }
 
     /* Regions Section */
@@ -231,20 +315,119 @@
         color: #764ba2;
     }
 
+    /* OPRAVA: Flexbox místo gridu pro lepší responzivitu tlačítek */
+    .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.85rem;
+        max-width: 540px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-btn {
+        border-radius: 50px;
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        border: 1px solid transparent;
+        padding: 0.7rem 1.5rem;
+        /* OPRAVA: Zákaz ořezávání a smršťování na tabletu */
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .hero-btn-secondary {
+        color: white;
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.52);
+        backdrop-filter: blur(3px);
+    }
+
+    .hero-btn-secondary:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.24);
+        border-color: rgba(255, 255, 255, 0.7);
+        transform: translateY(-1px);
+    }
+
     @media (max-width: 768px) {
+        .hero-section {
+            padding: 3.5rem 0;
+        }
+
         .hero-title {
-            font-size: 2.5rem;
+            font-size: 2.15rem;
         }
 
         .hero-subtitle {
-            font-size: 1.1rem;
+            font-size: 1.02rem;
+        }
+
+        .stats-section {
+            margin-top: -2rem;
+        }
+
+        .stat-card {
+            padding: 1.35rem 1rem;
+        }
+
+        .hero-actions {
+            gap: 0.7rem;
+            max-width: 100%;
+        }
+
+        .hero-btn {
+            font-size: 0.94rem;
+            min-height: 46px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .leaderboard-nav .nav-link {
+            font-size: clamp(0.7rem, 2.9vw, 0.82rem);
+            padding: 0.48rem 0.4rem;
+            min-height: 40px;
+        }
+
+        .leaderboard-table tbody td {
+            font-size: 0.86rem;
+            padding-top: 0.65rem;
+            padding-bottom: 0.65rem;
+        }
+    }
+
+    @media (max-width: 460px) {
+        .hero-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .leaderboard-nav {
+            gap: 0.35rem;
+        }
+
+        .leaderboard-nav .nav-link {
+            font-size: 0.69rem;
+            padding: 0.42rem 0.3rem;
+            min-height: 38px;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
 <section class="hero-section">
     <div class="container hero-content">
         <div class="row">
@@ -253,11 +436,11 @@
                 <p class="hero-subtitle animate-fade-in">
                     {% trans "Explore comprehensive database of countries, flags, capitals, and geographic information from around the globe" %}
                 </p>
-                <div class="mt-4">
-                    <a href="{% url 'countries' %}" class="btn-gradient me-3">
+                <div class="hero-actions mt-4">
+                    <a href="{% url 'countries' %}" class="btn-gradient hero-btn">
                         <i class="bi bi-map"></i> {% trans "Browse Countries" %}
                     </a>
-                    <a href="{% url 'flags_gallery' %}" class="btn btn-outline-light btn-lg" style="border-radius: 50px;">
+                    <a href="{% url 'flags_gallery' %}" class="hero-btn hero-btn-secondary">
                         <i class="bi bi-flag"></i> {% trans "View Flags" %}
                     </a>
                 </div>
@@ -266,12 +449,11 @@
     </div>
 </section>
 
-<!-- Statistics Section -->
 <section class="stats-section">
     <div class="container">
         <div class="row g-4">
-            <div class="col-md-3">
-                <div class="stat-card">
+            <div class="col-6 col-lg-3">
+                <div class="stat-card h-100">
                     <div class="stat-icon">
                         <i class="bi bi-globe-americas"></i>
                     </div>
@@ -279,8 +461,8 @@
                     <p class="stat-label">{% trans "Sovereign Nations" %}</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
+            <div class="col-6 col-lg-3">
+                <div class="stat-card h-100">
                     <div class="stat-icon">
                         <i class="bi bi-map"></i>
                     </div>
@@ -288,8 +470,8 @@
                     <p class="stat-label">{% trans "Territories & Dependencies" %}</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
+            <div class="col-6 col-lg-3">
+                <div class="stat-card h-100">
                     <div class="stat-icon">
                         <i class="bi bi-clock-history"></i>
                     </div>
@@ -297,8 +479,8 @@
                     <p class="stat-label">{% trans "Historical States" %}</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
+            <div class="col-6 col-lg-3">
+                <div class="stat-card h-100">
                     <div class="stat-icon">
                         <i class="bi bi-flag-fill"></i>
                     </div>
@@ -310,53 +492,151 @@
     </div>
 </section>
 
-<!-- Featured Countries Section -->
 <section class="py-5 mt-5">
     <div class="container">
-        <h2 class="section-title">{% trans "Most Populous Countries" %}</h2>
+        <h2 class="section-title">{% trans "Global Leaderboards" %}</h2>
         <div class="gradient-underline"></div>
-        
-        <div class="row g-4">
-            {% for country in featured_countries %}
-            <div class="col-md-6 col-lg-4">
-                <a href="{% url 'country_detail' country.cca3 %}" class="text-decoration-none">
-                    <div class="country-card">
-                        <div class="flag-container">
-                            {% if country.flag_png %}
-                                <img src="{{ country.flag_png }}" alt="Flag of {{ country.name_common }}" class="flag-image" loading="lazy" decoding="async">
-                            {% else %}
-                                <div style="font-size: 6rem;">{{ country.flag_emoji }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="country-info">
-                            <h3 class="country-name">{{ country.flag_emoji }} {{ country.name_common }}</h3>
-                            {% if country.capital %}
-                                <p class="country-detail">
-                                    <i class="bi bi-building"></i> {% trans "Capital" %}: {{ country.capital }}
-                                </p>
-                            {% endif %}
-                            <p class="country-detail">
-                                <i class="bi bi-people-fill"></i> {% trans "Population" %}: {{ country.population|floatformat:0|intcomma }}
-                            </p>
-                            {% if country.region %}
-                                <p class="country-detail">
-                                    <i class="bi bi-geo-alt-fill"></i> {% trans "Region" %}: {{ country.region.name }}
-                                </p>
-                            {% endif %}
-                        </div>
+
+        <div class="leaderboard-shell">
+            <div class="leaderboard-nav-wrap">
+                <ul class="nav leaderboard-nav" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#board-population" type="button" role="tab" aria-selected="true">
+                            {% trans "Population" %}
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#board-area" type="button" role="tab" aria-selected="false">
+                            {% trans "Area" %}
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#board-density" type="button" role="tab" aria-selected="false">
+                            {% trans "People/km²" %}
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="board-population" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table leaderboard-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "#" %}</th>
+                                    <th>{% trans "Country" %}</th>
+                                    <th class="d-none d-md-table-cell">{% trans "Capital" %}</th>
+                                    <th class="d-none d-lg-table-cell">{% trans "Region" %}</th>
+                                    <th>{% trans "Population" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for country in leaderboard_population %}
+                                <tr>
+                                    <td><span class="rank-pill">{{ forloop.counter }}</span></td>
+                                    <td>
+                                        <a href="{% url 'country_detail' country.cca3 %}" class="country-link">
+                                            <span class="country-identity">
+                                                {% if country.flag_png %}
+                                                    <img src="{{ country.flag_png }}" alt="{{ country.name_common }}" class="country-flag-mini" loading="lazy" decoding="async">
+                                                {% else %}
+                                                    <span>{{ country.flag_emoji }}</span>
+                                                {% endif %}
+                                                <span class="country-name-mini">{{ country.name_common }}</span>
+                                            </span>
+                                        </a>
+                                    </td>
+                                    <td class="d-none d-md-table-cell">{{ country.capital|default:"-" }}</td>
+                                    <td class="d-none d-lg-table-cell">{{ country.region.name|default:"-" }}</td>
+                                    <td class="metric-value">{{ country.population|floatformat:0|intcomma }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                </a>
+                </div>
+
+                <div class="tab-pane fade" id="board-area" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table leaderboard-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "#" %}</th>
+                                    <th>{% trans "Country" %}</th>
+                                    <th class="d-none d-md-table-cell">{% trans "Capital" %}</th>
+                                    <th class="d-none d-lg-table-cell">{% trans "Region" %}</th>
+                                    <th>{% trans "Area (km²)" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for country in leaderboard_area %}
+                                <tr>
+                                    <td><span class="rank-pill">{{ forloop.counter }}</span></td>
+                                    <td>
+                                        <a href="{% url 'country_detail' country.cca3 %}" class="country-link">
+                                            <span class="country-identity">
+                                                {% if country.flag_png %}
+                                                    <img src="{{ country.flag_png }}" alt="{{ country.name_common }}" class="country-flag-mini" loading="lazy" decoding="async">
+                                                {% else %}
+                                                    <span>{{ country.flag_emoji }}</span>
+                                                {% endif %}
+                                                <span class="country-name-mini">{{ country.name_common }}</span>
+                                            </span>
+                                        </a>
+                                    </td>
+                                    <td class="d-none d-md-table-cell">{{ country.capital|default:"-" }}</td>
+                                    <td class="d-none d-lg-table-cell">{{ country.region.name|default:"-" }}</td>
+                                    <td class="metric-value">{{ country.area_km2|floatformat:0|intcomma }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="board-density" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table leaderboard-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "#" %}</th>
+                                    <th>{% trans "Country" %}</th>
+                                    <th class="d-none d-md-table-cell">{% trans "Capital" %}</th>
+                                    <th class="d-none d-lg-table-cell">{% trans "Region" %}</th>
+                                    <th>{% trans "People/km²" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in leaderboard_density %}
+                                <tr>
+                                    <td><span class="rank-pill">{{ forloop.counter }}</span></td>
+                                    <td>
+                                        <a href="{% url 'country_detail' row.country.cca3 %}" class="country-link">
+                                            <span class="country-identity">
+                                                {% if row.country.flag_png %}
+                                                    <img src="{{ row.country.flag_png }}" alt="{{ row.country.name_common }}" class="country-flag-mini" loading="lazy" decoding="async">
+                                                {% else %}
+                                                    <span>{{ row.country.flag_emoji }}</span>
+                                                {% endif %}
+                                                <span class="country-name-mini">{{ row.country.name_common }}</span>
+                                            </span>
+                                        </a>
+                                    </td>
+                                    <td class="d-none d-md-table-cell">{{ row.country.capital|default:"-" }}</td>
+                                    <td class="d-none d-lg-table-cell">{{ row.country.region.name|default:"-" }}</td>
+                                    <td class="metric-value">{{ row.density|floatformat:1|intcomma }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            {% empty %}
-            <div class="col-12 text-center">
-                <p class="text-muted">{% trans "Stay tuned! Our global directory is currently being updated with new information." %}</p>
-            </div>
-            {% endfor %}
         </div>
     </div>
 </section>
 
-<!-- Regions Section -->
 {% if regions %}
 <section class="py-5">
     <div class="container">
@@ -367,7 +647,7 @@
             {% for region in regions %}
             <div class="col-6 col-md-4 col-lg-4">
                 <a href="{% url 'countries' %}?region={{ region.slug }}" class="text-decoration-none">
-                    <div class="region-card">
+                    <div class="region-card h-100">
                         <div class="region-icon">
                             {% if region.name == "Africa" %}🌍
                             {% elif region.name == "Americas" %}🌎
@@ -391,7 +671,6 @@
 </section>
 {% endif %}
 
-<!-- Call to Action -->
 <section class="container mb-5">
     <div class="cta-section">
         <div class="container">
@@ -406,4 +685,4 @@
     </div>
 </section>
 
-{% endblock %}    
+{% endblock %}

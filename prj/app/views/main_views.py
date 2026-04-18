@@ -65,6 +65,38 @@ def render_homepage(request):
     total_regions = Region.objects.count()
     
     featured_countries = sorted(sovereign_countries, key=lambda c: c.population, reverse=True)[:6]
+
+    leaderboard_population = sorted(
+        sovereign_countries,
+        key=lambda c: c.population or 0,
+        reverse=True,
+    )[:10]
+
+    leaderboard_area = sorted(
+        [c for c in sovereign_countries if c.area_km2],
+        key=lambda c: c.area_km2,
+        reverse=True,
+    )[:10]
+
+    density_candidates = []
+    for country in sovereign_countries:
+        if not country.population or not country.area_km2:
+            continue
+
+        area_value = float(country.area_km2)
+        if area_value <= 0:
+            continue
+
+        density_candidates.append({
+            'country': country,
+            'density': country.population / area_value,
+        })
+
+    leaderboard_density = sorted(
+        density_candidates,
+        key=lambda item: item['density'],
+        reverse=True,
+    )[:10]
     
     regions = Region.objects.annotate(
         country_count=Count('countries', filter=Q(countries__status='sovereign'))
@@ -77,6 +109,9 @@ def render_homepage(request):
         'total_flags': total_flags,
         'total_regions': total_regions,
         'featured_countries': featured_countries,
+        'leaderboard_population': leaderboard_population,
+        'leaderboard_area': leaderboard_area,
+        'leaderboard_density': leaderboard_density,
         'regions': regions,
     }
     return render(request, 'home.html', context)
