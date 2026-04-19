@@ -40,13 +40,26 @@ class RegionAdmin(admin.ModelAdmin):
 
 @admin.register(Country)
 class CountryAdmin(admin.ModelAdmin):
-    list_display = ['flag_emoji', 'name_common', 'capital', 'region', 'population', 'independent']
-    list_filter = ['region', 'independent', 'un_member']
+    # Vylepšený výpis: hned uvidíš status, nezávislost i vlastníka bez rozklikávání
+    list_display = ['flag_emoji', 'name_common', 'status', 'independent', 'owner', 'region']
+    list_filter = ['status', 'independent', 'region', 'un_member']
     search_fields = ['name_common', 'name_official', 'capital', 'cca2', 'cca3']
     readonly_fields = ['created_at', 'updated_at']
+    
     fieldsets = (
         (_('Basic Information'), {
             'fields': ('name_common', 'name_official', 'cca2', 'cca3')
+        }),
+        (_('Translations & Descriptions'), {
+            # Tady jsou všechny nové lokalizační sloupce na jednom místě
+            'fields': (
+                'name_cs', 'name_de', 
+                'capital_cs', 'capital_de',
+                'region_cs', 'region_de',
+                'subregion_cs', 'subregion_de',
+                'system_of_government_cs', 'system_of_government_de',
+                'description', 'description_cs', 'description_de'
+            )
         }),
         (_('Geographic Information'), {
             'fields': ('capital', 'region', 'subregion', 'latitude', 'longitude', 'area_km2', 'continents')
@@ -58,7 +71,8 @@ class CountryAdmin(admin.ModelAdmin):
             'fields': ('population', 'currencies', 'languages', 'timezones')
         }),
         (_('Political Information'), {
-            'fields': ('independent', 'un_member', 'borders')
+            # Tady jsou přidána chybějící politická pole
+            'fields': ('status', 'independent', 'owner', 'un_member', 'borders', 'system_of_government')
         }),
         (_('Metadata'), {
             'fields': ('created_at', 'updated_at'),
@@ -80,8 +94,9 @@ class FlagCollectionAdmin(admin.ModelAdmin):
 
     @admin.action(description=_('Verify selected flags'))
     def mark_as_verified(self, request, queryset):
-        queryset.update(is_verified=True)
-        self.stdout.write(_("Successfully verified %(count)s flags.") % {'count': queryset.count()})
+        count = queryset.update(is_verified=True)
+        # Použití správné metody pro vypsání zprávy v administraci
+        self.message_user(request, _("Successfully verified %(count)s flags.") % {'count': count})
 
     @admin.action(description=_('Hide selected flags from website'))
     def hide_from_public(self, request, queryset):

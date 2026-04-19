@@ -296,10 +296,14 @@ def flag_detail(request, category, slug):
             native_names.extend([p.strip() for p in value.split('||') if p.strip()])
     native_names = list(dict.fromkeys(native_names))
 
-    area_km2 = flag.area_km2
-    population = flag.population
-    latitude = flag.latitude
-    longitude = flag.longitude
+    linked_country = flag.country if flag.country_id else None
+
+    # Prefer explicit FlagCollection telemetry fields for gallery entities.
+    # If they are missing and a country exists, use country values as a fallback.
+    area_km2 = flag.area_km2 if flag.area_km2 is not None else (float(linked_country.area_km2) if linked_country and linked_country.area_km2 is not None else None)
+    population = flag.population if flag.population is not None else (linked_country.population if linked_country and linked_country.population is not None else None)
+    latitude = flag.latitude if flag.latitude is not None else (float(linked_country.latitude) if linked_country and linked_country.latitude is not None else None)
+    longitude = flag.longitude if flag.longitude is not None else (float(linked_country.longitude) if linked_country and linked_country.longitude is not None else None)
 
     has_area_km2 = area_km2 is not None
     has_population = population is not None
@@ -318,6 +322,7 @@ def flag_detail(request, category, slug):
     
     context = {
         'flag': flag,
+        'linked_country': linked_country,
         'native_names': native_names,
         'wikidata_type_list': wikidata_type_list,
         'population': population,

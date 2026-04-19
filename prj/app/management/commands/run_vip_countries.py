@@ -14,7 +14,7 @@ from app.models import FlagCollection, Country
 load_dotenv()
 
 class Command(BaseCommand):
-    help = '🚀 VIP AI Agent: Komplexní databázová korekce s hlubokou telemetrií.'
+    help = '🚀 VIP AI Agent: Komplexní databázová korekce s hlubokou telemetrií a 100% lokalizací.'
 
     MODELS = [
         {"name": "gemma-3-27b-it", "provider": "google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/"},
@@ -60,7 +60,6 @@ class Command(BaseCommand):
             "exchars": 7000, 
             "redirects": 1
         }
-        # Tímto se představíme Wikipedii, aby nás neblokovala
         headers = {
             'User-Agent': 'JustEnoughFlags/1.0 (Educational Project; Python/Django)'
         }
@@ -86,10 +85,8 @@ class Command(BaseCommand):
         ddgs = DDGS()
 
         countries_qs = Country.objects.filter(
-            status__in=['sovereign', 'territory'],
-            additional_flags__isnull=False,
-            additional_flags__is_verified=False
-        ).distinct().order_by('name_common')
+            status__in=['sovereign', 'territory']
+        ).order_by('name_common')
 
         if options['limit'] > 0: 
             countries_qs = countries_qs[:options['limit']]
@@ -124,76 +121,110 @@ class Command(BaseCommand):
 
             c = countries_list[i]
             
-            main_flag = c.additional_flags.filter(category__in=['country', 'dependency']).first()
-            if not main_flag:
-                i += 1
-                continue
-
             self.log(f"\n" + "="*80)
             self.log(f"💎 [{i+1}/{total_count}] | 🤖 {model_name} | 🌍 {c.name_common} ({c.status})")
             
-            # --- ZÍSKÁVÁNÍ DAT ---
+            # --- ZÍSKÁVÁNÍ DAT (VYLEPŠENÉ VYHLEDÁVÁNÍ) ---
             ctx = ""
+            
+            local_names = {"en": c.name_common, "cs": c.name_cs or c.name_common, "de": c.name_de or c.name_common}
+            
+            if not local_names["cs"] or local_names["cs"] == c.name_common:
+                try:
+                    res_cs = ddgs.text(f'"{c.name_common}" země česky', max_results=1)
+                    if res_cs: local_names["cs"] = res_cs[0]['title'].split()[0]
+                except: pass
+                
+            if not local_names["de"] or local_names["de"] == c.name_common:
+                try:
+                    res_de = ddgs.text(f'"{c.name_common}" Land auf Deutsch', max_results=1)
+                    if res_de: local_names["de"] = res_de[0]['title'].split()[0]
+                except: pass
+
             for lang in ("en", "cs", "de"):
-                txt = self.fetch_wikipedia_clean(c.name_common, lang)
-                if txt: ctx += f"\n--- WIKI {lang.upper()} ---\n{txt[:5000]}\n"
+                search_term = local_names[lang]
+                txt = self.fetch_wikipedia_clean(search_term, lang)
+                if not txt and lang != "en": 
+                    txt = self.fetch_wikipedia_clean(c.name_common, lang)
+                if txt: 
+                    ctx += f"\n--- WIKI {lang.upper()} ---\n{txt[:4000]}\n"
 
             try:
-                # Upravený vyhledávací dotaz pro DuckDuckGo
-                res = ddgs.text(f'"{c.name_common}" current exact population estimate', max_results=5)
-                if res: ctx += f"\n--- WEB ---\n{' '.join([r['body'] for r in res])}\n"
+                res_pop = ddgs.text(f'"{c.name_common}" current exact population estimate demographic', max_results=3)
+                if res_pop: ctx += f"\n--- WEB POPULATION ---\n{' '.join([r['body'] for r in res_pop])}\n"
             except: pass
 
-            # --- TELEMETRIE KONTEXTU ---
             self.log(self.style.WARNING(f"   📡 [TELEMETRIE] Staženo znaků pro AI: {len(ctx)}"))
-            self.log(self.style.WARNING(f"   📡 [TELEMETRIE] Ukázka z nalezených dat: {ctx[:150].strip()}..."))
 
             region_name = c.region.name if c.region else "Unknown"
+            subregion_name = c.subregion or "Unknown"
+            capital_name = c.capital or "Unknown"
 
-            # --- PROMPT ---
+            # --- PROMPT S FEW-SHOT PŘÍKLADEM ---
             prompt = f"""
-            Act as an elite Geopolitical Historian and Data Specialist. Provide PERFECTLY structured JSON data for: {c.name_common} (Status: {c.status}).
+            You are an elite Geopolitical Data Translator. Provide PERFECTLY structured JSON for: {c.name_common} (Status: {c.status}).
             
-            CRITICAL RULES:
-            1. EXACT NUMBERS: Find the absolute most exact and precise numeric population and area_km2. 
-               - If the CONTEXT contains an exact figure (like 40,218,234), use it without rounding.
-               - If the CONTEXT only has rounded numbers (like 45 million), IGNORE IT and rely on your own vast internal knowledge base (e.g. World Bank, UN, or CIA World Factbook data) to provide a precise, unrounded figure.
-               - DO NOT USE rounded numbers like 40000000 or 45000000.
-            2. DESCRIPTIONS: Write EXACTLY 5 sentences per language (EN, CS, DE). Focus on history. NO population/area numbers in the text!
-            3. NAMES: Translate country name and capital city perfectly to Czech and German.
-            4. SYSTEM OF GOVERNMENT: Provide the exact form of government STRICTLY translated into EN, CS, and DE (e.g., if EN is "Islamic Republic", CS must be "Islámská republika" and DE "Islamische Republik"). If status='territory', use null.
-            5. REGION TRANSLATION: Translate the region "{region_name}" to Czech and German (e.g. "Asia" -> "Asie", "Asien").
-            6. LANGUAGES (CRITICAL): Review the existing languages. REMOVE any languages that are NOT officially recognized at the national level. Translate language names to EN, CS, DE.
-            7. CURRENCIES: Translate currency names to EN, CS, DE. Keep exact codes and symbols.
-            8. STRICT JSON OUTPUT ONLY.
+            CRITICAL TRANSLATION RULES:
+            1. FULL LOCALIZATION: You MUST translate the Country Name, Capital, Region, Subregion, and System of Government into BOTH Czech (cs) and German (de). Do not leave them in English!
+            2. EXACT NUMBERS: Find the absolute most exact and precise numeric population and area_km2 from the context or your knowledge. NO ROUNDED NUMBERS.
+            3. DESCRIPTIONS: Write EXACTLY 5 high-quality sentences per language (EN, CS, DE). Focus on history, geography, and economy.
+            4. LANGUAGES & CURRENCIES: Translate names strictly to EN, CS, DE.
+            5. STRICT JSON OUTPUT ONLY.
 
-            EXISTING DATABASE DATA TO FIX/TRANSLATE:
-            Existing Currencies: {c.currencies}
-            Existing Languages: {c.languages}
+            DATA TO TRANSLATE/FIX:
+            Region: {region_name}
+            Subregion: {subregion_name}
+            Capital: {capital_name}
+            System of Gov: {c.system_of_government or 'Find and translate'}
+            Currencies: {c.currencies}
+            Languages: {c.languages}
 
-            EXPECTED JSON STRUCTURE:
+            --- FEW-SHOT EXAMPLE OF PERFECT OUTPUT FOR "Germany" ---
             {{
-              "name_cs": "...",
-              "name_de": "...",
-              "population": 12345678,
-              "area_km2": 123.45,
-              "system_of_government_en": "...",
-              "system_of_government_cs": "...",
-              "system_of_government_de": "...",
-              "region_cs": "...",
-              "region_de": "...",
-              "capital_cs": "...",
-              "capital_de": "...",
-              "official_languages": {{ "code": {{"en": "...", "cs": "...", "de": "..."}} }},
-              "currencies": {{ "CODE": {{"symbol": "...", "name": {{"en": "...", "cs": "...", "de": "..."}}}} }},
-              "description_en": "...",
-              "description_cs": "...",
-              "description_de": "..."
+              "name_en": "Germany",
+              "name_cs": "Německo",
+              "name_de": "Deutschland",
+              "population": 84432670,
+              "area_km2": 357022.0,
+              "system_of_government_en": "Federal Parliamentary Republic",
+              "system_of_government_cs": "Federativní parlamentní republika",
+              "system_of_government_de": "Föderale parlamentarische Republik",
+              "region_en": "Europe",
+              "region_cs": "Evropa",
+              "region_de": "Europa",
+              "subregion_en": "Western Europe",
+              "subregion_cs": "Západní Evropa",
+              "subregion_de": "Westeuropa",
+              "capital_en": "Berlin",
+              "capital_cs": "Berlín",
+              "capital_de": "Berlin",
+              "official_languages": {{ "de": {{"en": "German", "cs": "Němčina", "de": "Deutsch"}} }},
+              "currencies": {{ "EUR": {{"symbol": "€", "name": {{"en": "Euro", "cs": "Euro", "de": "Euro"}}}} }},
+              "description_en": "Germany is a country in Central Europe. It has a rich history marked by the Holy Roman Empire, the Reformation, and modern unification. Following World War II, it was divided but reunited in 1990. Today, it is a global economic powerhouse and a leading member of the European Union. Its landscape varies from the Alps in the south to the North Sea coast.",
+              "description_cs": "Německo je stát ve střední Evropě. Má bohatou historii poznamenanou Svatou říší římskou, reformací a moderním sjednocením. Po druhé světové válce bylo rozděleno, ale v roce 1990 se znovu sjednotilo. Dnes je globální ekonomickou velmocí a předním členem Evropské unie. Jeho krajina se rozkládá od Alp na jihu až po pobřeží Severního moře.",
+              "description_de": "Deutschland ist ein Staat in Mitteleuropa. Es hat eine reiche Geschichte, die vom Heiligen Römischen Reich, der Reformation und der modernen Einigung geprägt ist. Nach dem Zweiten Weltkrieg wurde es geteilt, aber 1990 wiedervereinigt. Heute ist es eine globale Wirtschaftsmacht und ein führendes Mitglied der Europäischen Union. Seine Landschaft reicht von den Alpen im Süden bis zur Nordseeküste."
             }}
+            EXAMPLE 2: Dependent Territory (Åland Islands)
+            {{
+              "name_en": "Åland Islands", "name_cs": "Ålandy", "name_de": "Åland-Inseln",
+              "population": 30359, "area_km2": 1580.0,
+              "system_of_government_en": null, "system_of_government_cs": null, "system_of_government_de": null,
+              "region_en": "Europe", "region_cs": "Evropa", "region_de": "Europa",
+              "subregion_en": "Northern Europe", "subregion_cs": "Severní Evropa", "subregion_de": "Nordeuropa",
+              "capital_en": "Mariehamn", "capital_cs": "Mariehamn", "capital_de": "Mariehamn",
+              "official_languages": {{ "sv": {{"en": "Swedish", "cs": "Švédština", "de": "Schwedisch"}} }},
+              "currencies": {{ "EUR": {{"symbol": "€", "name": {{"en": "Euro", "cs": "Euro", "de": "Euro"}}}} }},
+              "description_en": "The Åland Islands are an autonomous, demilitarized, and Swedish-speaking region of Finland located in the Baltic Sea. They consist of a large main island and thousands of smaller skerries and islands. Their unique status was confirmed by the League of Nations in 1921, ensuring the preservation of the Swedish language and local culture. Shipping and tourism are the backbones of the local economy, with frequent ferry connections to Stockholm and Turku. The islands are famous for their maritime history and beautiful, rugged archipelago landscapes.",
+              "description_cs": "Ålandy jsou autonomní, demilitarizovaná a švédsky mluvící oblast Finska nacházející se v Baltském moři. Skládají se z velkého hlavního ostrova a tisíců menších ostrůvků a útesů. Jejich jedinečný status potvrdila Společnost národů v roce 1921, čímž zajistila zachování švédského jazyka a místní kultury. Námořní doprava a cestovní ruch jsou pilíři místní ekonomiky s častým trajektovým spojením do Stockholmu a Turku. Ostrovy jsou známé svou námořní historií a krásnou, drsnou krajinou souostroví.",
+              "description_de": "Die Åland-Inseln sind eine autonome, demilitarisierte und schwedischsprachige Region Finnlands, die in der Ostsee liegt. Sie bestehen aus einer großen Hauptinsel und Tausenden von kleineren Schären und Inseln. Ihr besonderer Status wurde 1921 vom Völkerbund bestätigt, um die Erhaltung der schwedischen Sprache und Kultur zu gewährleisten. Schifffahrt und Tourismus sind die Stützen der lokalen Wirtschaft mit regelmäßigen Fährverbindungen nach Stockholm und Turku. Die Inseln sind bekannt für ihre maritime Geschichte und die wunderschöne, zerklüftete Schärenlandschaft."
+            }}
+            --- END OF EXAMPLE ---
+
+            Now, generate the JSON for: {c.name_common}
             """
 
             try:
-                self.log(f"   ⏳ AI Generuje data...", inline=True)
+                self.log(f"   ⏳ AI Generuje a překládá data...", inline=True)
                 start_time = time.time()
                 
                 api_args = {
@@ -212,13 +243,12 @@ class Command(BaseCommand):
                 elapsed = time.time() - start_time
                 self.log(f" [Za {elapsed:.1f}s]", inline=False)
 
-                # --- TELEMETRIE AI ODPOVĚDI ---
                 self.log(self.style.SUCCESS(f"   🤖 [TELEMETRIE] Syrová odpověď od AI (ukázka):\n   {raw_ai_text[:300].strip()}..."))
 
                 if not res: 
                     raise ValueError("Neplatný JSON od AI")
 
-                # --- 1. ATOMICKÝ UPDATE MODELU COUNTRY (ZEMĚ) ---
+                # --- 1. ATOMICKÝ UPDATE MODELU COUNTRY ---
                 pop_val = res.get('population')
                 area_val = res.get('area_km2')
                 
@@ -227,44 +257,41 @@ class Command(BaseCommand):
                 try: area_val = float(area_val) if area_val else None
                 except: area_val = None
 
-                update_fields = {}
-                if pop_val: update_fields['population'] = pop_val
-                if area_val: update_fields['area_km2'] = area_val
+                if pop_val: c.population = pop_val
+                if area_val: c.area_km2 = area_val
                 
                 sys_gov = res.get('system_of_government_en')
                 if sys_gov and c.status == 'sovereign': 
-                    update_fields['system_of_government'] = sys_gov
+                    c.system_of_government = sys_gov
                     
                 langs = res.get('official_languages')
-                if langs: update_fields['languages'] = langs
+                if langs: c.languages = langs
                 
                 currs = res.get('currencies')
-                if currs: update_fields['currencies'] = currs
+                if currs: c.currencies = currs
 
-                if update_fields:
-                    Country.objects.filter(id=c.id).update(**update_fields)
+                # ---> ULOŽENÍ LOKALIZACÍ <---
+                c.name_cs = (res.get('name_cs') or c.name_common).strip()
+                c.name_de = (res.get('name_de') or c.name_common).strip()
+                c.description = res.get('description_en', '').strip()
+                c.description_cs = res.get('description_cs', '').strip()
+                c.description_de = res.get('description_de', '').strip()
 
-                # --- 2. ULOŽENÍ TEXTŮ A PŘEKLADŮ DO FLAGCOLLECTION ---
-                main_flag.name_cs = (res.get('name_cs') or main_flag.name).strip()
-                main_flag.name_de = (res.get('name_de') or main_flag.name).strip()
-                
-                main_flag.description = {
-                    'en': res.get('description_en', ''), 
-                    'cs': res.get('description_cs', ''), 
-                    'de': res.get('description_de', ''),
-                    'capital_cs': res.get('capital_cs', ''),
-                    'capital_de': res.get('capital_de', ''),
-                    'system_of_government_cs': res.get('system_of_government_cs', ''),
-                    'system_of_government_de': res.get('system_of_government_de', ''),
-                    'region_cs': res.get('region_cs', ''),
-                    'region_de': res.get('region_de', '')
-                }
-                main_flag.is_verified = True
-                main_flag.save()
-                
+                if hasattr(c, 'capital_cs'): c.capital_cs = res.get('capital_cs', '')
+                if hasattr(c, 'capital_de'): c.capital_de = res.get('capital_de', '')
+                if hasattr(c, 'region_cs'): c.region_cs = res.get('region_cs', '')
+                if hasattr(c, 'region_de'): c.region_de = res.get('region_de', '')
+                if hasattr(c, 'subregion_cs'): c.subregion_cs = res.get('subregion_cs', '')
+                if hasattr(c, 'subregion_de'): c.subregion_de = res.get('subregion_de', '')
+                if hasattr(c, 'system_of_government_cs'): c.system_of_government_cs = res.get('system_of_government_cs', '')
+                if hasattr(c, 'system_of_government_de'): c.system_of_government_de = res.get('system_of_government_de', '')
+
+                c.save()
+
+                # --- 2. VERIFIKACE VLAJEK ---
                 c.additional_flags.filter(is_verified=False).update(is_verified=True)
 
-                self.log(f"   ✅ Uloženo: Pop={pop_val} | Vláda_CS='{res.get('system_of_government_cs')}' | Reg_CS='{res.get('region_cs')}'", self.style.SUCCESS)
+                self.log(f"   ✅ Uloženo: Pop={pop_val} | Reg_CS='{res.get('region_cs')}' | Vláda_DE='{res.get('system_of_government_de')}'", self.style.SUCCESS)
                 
                 i += 1
                 time.sleep(1.5)

@@ -1,11 +1,14 @@
 """
-Blended views combining Country and FlagCollection items (territories and historical).
+Blended views combining Country and FlagCollection items.
+Note: Territories have been migrated purely to the Country model, 
+so only historical views remain truly 'blended'.
 """
 
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Q
 
 from ..models import Country, FlagCollection
 from .search_filters import country_detail_quality_filter, build_country_search_filter
@@ -14,87 +17,33 @@ from .pagination_helpers import build_flag_detail_link, CountOnlyPaginator, COUN
 
 
 def territories_list(request):
-    """List territories and dependencies with DB-level pagination and instant search."""
+    """List territories and dependencies with DB-level pagination and instant search.
+    Now queries purely from the Country model since the DB cleanup."""
+    
     page_number = int(request.GET.get('page', 1))
     search_query = (request.GET.get('q') or request.GET.get('search') or '').strip()
     normalized_search_query = normalize_query(search_query)
-    per_page = COUNTRIES_PER_PAGE
 
-    territory_qs = Country.objects.filter(status='territory').filter(
-        country_detail_quality_filter()
-    ).select_related('region').only(
-        'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji', 'region__name',
-    ).order_by('name_common')
+    # 1. Povolíme VŠECHNA teritoria a území bez ohledu na to, jak moc jsou vyplněná
+    territory_qs = Country.objects.filter(
+        Q(status='territory') | Q(independent=False) | Q(owner__isnull=False)
+    ).select_related('region').order_by('name_common')
 
     if normalized_search_query:
         territory_qs = territory_qs.filter(build_country_search_filter(normalized_search_query))
 
-    extra_territories_qs = FlagCollection.objects.filter(
-        category='dependency',
-        is_public=True,
-    ).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
-    if normalized_search_query:
-        extra_territories_qs = extra_territories_qs.filter(build_country_search_filter(normalized_search_query))
-
-    total_territories_count = territory_qs.count()
-    total_extra_count = extra_territories_qs.count()
-    total_combined = total_territories_count + total_extra_count
-
-    start_index = (page_number - 1) * per_page
-    end_index = start_index + per_page
-
-    items_to_display = []
-
-    if start_index < total_territories_count:
-        territory_items = territory_qs[start_index:end_index]
-        for c in territory_items:
-            items_to_display.append({
-                'name': c.name_common,
-                'cca3': c.cca3,
-                'link': reverse('territory_detail', kwargs={'cca3': c.cca3}),
-                'img': c.flag_png,
-                'emoji': c.flag_emoji,
-                'type': _('Major Territory'),
-                'capital': c.capital,
-                'region': c.region.name if c.region else '',
-            })
-
-        remaining_slots = per_page - len(items_to_display)
-        if remaining_slots > 0:
-            for f in extra_territories_qs[:remaining_slots]:
-                items_to_display.append({
-                    'name': f.name,
-                    'localized_name': f.localized_name,
-                    'img': f.flag_image,
-                    'type': _('Territory / Dependency'),
-                    'link': build_flag_detail_link(
-                        f,
-                        source='gallery',
-                        search_query=search_query,
-                        page=page_number,
-                        gallery_category='dependency',
-                    ),
-                })
-    else:
-        db_offset = start_index - total_territories_count
-        for f in extra_territories_qs[db_offset:db_offset + per_page]:
-            items_to_display.append({
-                'name': f.name,
-                'localized_name': f.localized_name,
-                'img': f.flag_image,
-                'type': _('Territory / Dependency'),
-                'link': build_flag_detail_link(
-                    f,
-                    source='gallery',
-                    search_query=search_query,
-                    page=page_number,
-                    gallery_category='dependency',
-                ),
-            })
-
-    paginator = CountOnlyPaginator(total_combined, per_page)
+    # 2. Standardní Django stránkování (konec falešného CountOnlyPaginatoru)
+    paginator = Paginator(territory_qs, COUNTRIES_PER_PAGE)
     page_obj = paginator.get_page(page_number)
-    page_obj.object_list = items_to_display
+
+    # 3. Dodání aliasů pro šablonu (aby šablona našla obrázky a URL adresy)
+    for c in page_obj.object_list:
+        c.link = reverse('territory_detail', kwargs={'cca3': c.cca3})
+        c.type = _('Territory / Dependency')
+        c.img = c.flag_png
+        c.emoji = c.flag_emoji
+        c.name = c.name_common
+        # Region a Capital si šablona automaticky vytáhne z objektu Country
 
     context = {
         'countries': page_obj,

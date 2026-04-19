@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 {% load i18n humanize %}
 
-{% block title %}{{ country.name_common }} - {% trans "Country Details" %}{% endblock %}
+{% block title %}
+    {% get_current_language as LANGUAGE_CODE %}
+    {% if LANGUAGE_CODE == 'cs' and country.name_cs %}{{ country.name_cs }}
+    {% elif LANGUAGE_CODE == 'de' and country.name_de %}{{ country.name_de }}
+    {% else %}{{ country.name_common }}{% endif %} 
+    - {% trans "Country Details" %}
+{% endblock %}
 
 {% block head %}
 <style>
@@ -84,7 +90,16 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h1 class="display-4 mb-3">{{ country.flag_emoji }} {{ country.name_common }}</h1>
+                <h1 class="display-4 mb-3">
+                    {{ country.flag_emoji }} 
+                    {% if LANGUAGE_CODE == 'cs' and country.name_cs %}
+                        {{ country.name_cs }}
+                    {% elif LANGUAGE_CODE == 'de' and country.name_de %}
+                        {{ country.name_de }}
+                    {% else %}
+                        {{ country.name_common }}
+                    {% endif %}
+                </h1>
                 <p class="lead">{{ country.name_official }}</p>
             </div>
             <div class="col-md-4 text-center">
@@ -99,6 +114,7 @@
 </div>
 
 <div class="container mb-5">
+    
     <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-info-circle"></i> {% trans "Basic Information" %}</h2>
         
@@ -107,12 +123,14 @@
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-building"></i> {% trans "Capital" %}</div>
                     <div class="detail-value">
-                        {% if LANGUAGE_CODE == 'cs' and main_flag.description.capital_cs %}
-                            {{ main_flag.description.capital_cs }}
-                        {% elif LANGUAGE_CODE == 'de' and main_flag.description.capital_de %}
-                            {{ main_flag.description.capital_de }}
+                        {% if LANGUAGE_CODE == 'cs' and country.capital_cs %}
+                            {{ country.capital_cs }}
+                        {% elif LANGUAGE_CODE == 'de' and country.capital_de %}
+                            {{ country.capital_de }}
+                        {% elif country.capital %}
+                            {{ country.capital }}
                         {% else %}
-                            {{ country.capital|default:"N/A" }}
+                            {% trans "Not available" %}
                         {% endif %}
                     </div>
                 </div>
@@ -120,16 +138,26 @@
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-map"></i> {% trans "Region" %}</div>
                     <div class="detail-value">
-                        {% if LANGUAGE_CODE == 'cs' and main_flag.description.region_cs %}
-                            {{ main_flag.description.region_cs }}
-                        {% elif LANGUAGE_CODE == 'de' and main_flag.description.region_de %}
-                            {{ main_flag.description.region_de }}
+                        {% if LANGUAGE_CODE == 'cs' and country.region_cs %}
+                            {{ country.region_cs }}
+                        {% elif LANGUAGE_CODE == 'de' and country.region_de %}
+                            {{ country.region_de }}
                         {% elif country.region %}
                             {{ country.region.name }}
                         {% else %}
-                            N/A
+                            {% trans "Not available" %}
                         {% endif %}
-                        {% if country.subregion %} / {{ country.subregion }}{% endif %}
+                        
+                        {% if country.subregion %}
+                            / 
+                            {% if LANGUAGE_CODE == 'cs' and country.subregion_cs %}
+                                {{ country.subregion_cs }}
+                            {% elif LANGUAGE_CODE == 'de' and country.subregion_de %}
+                                {{ country.subregion_de }}
+                            {% else %}
+                                {{ country.subregion }}
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </div>
                 
@@ -138,10 +166,8 @@
                     <div class="detail-value">
                         {% if country.population %}
                             {{ country.population|floatformat:0|intcomma }}
-                        {% elif main_flag.population %}
-                            {{ main_flag.population|floatformat:0|intcomma }}
                         {% else %}
-                            N/A
+                            {% trans "Not available" %}
                         {% endif %}
                     </div>
                 </div>
@@ -153,44 +179,51 @@
                     <div class="detail-value">
                         {% if country.area_km2 %}
                             {{ country.area_km2|floatformat:0|intcomma }} km²
-                        {% elif country.area %}
-                            {{ country.area|floatformat:0|intcomma }} km²
-                        {% elif main_flag.area_km2 %}
-                            {{ main_flag.area_km2|floatformat:0|intcomma }} km²
                         {% else %}
-                            N/A
+                            {% trans "Not available" %}
                         {% endif %}
                     </div>
                 </div>
                 
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-credit-card"></i> {% trans "Currencies" %}</div>
-                    <div class="detail-value">{{ country.currencies_display }}</div>
+                    <div class="detail-value">
+                        {% if country.currencies_display %}
+                            {{ country.currencies_display }}
+                        {% else %}
+                            {% trans "Not available" %}
+                        {% endif %}
+                    </div>
                 </div>
                 
                 <div class="detail-row">
                     <div class="detail-label"><i class="bi bi-translate"></i> {% trans "Languages" %}</div>
-                    <div class="detail-value">{{ country.languages_display }}</div>
+                    <div class="detail-value">
+                        {% if country.languages_display %}
+                            {{ country.languages_display }}
+                        {% else %}
+                            {% trans "Not available" %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {% if main_flag and main_flag.description %}
+    {% if country.description or country.description_cs or country.description_de %}
     <div class="detail-card">
-        <h2 class="section-heading"><i class="bi bi-book"></i> {% blocktrans with country_name=country.name_common %}About {{ country_name }}{% endblocktrans %}</h2>
-        
-        {% with desc=main_flag.description %}
-            {% if LANGUAGE_CODE == 'en' and desc.en %}
-                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
-            {% elif LANGUAGE_CODE == 'cs' and desc.cs %}
-                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.cs }}</p>
-            {% elif LANGUAGE_CODE == 'de' and desc.de %}
-                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.de }}</p>
-            {% elif desc.en %}
-                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
+        <h2 class="section-heading"><i class="bi bi-book"></i> {% trans "About country" %}</h2>
+        <p style="line-height: 1.8; color: #2d3748; text-align: justify;">
+            {% if LANGUAGE_CODE == 'cs' and country.description_cs %}
+                {{ country.description_cs }}
+            {% elif LANGUAGE_CODE == 'de' and country.description_de %}
+                {{ country.description_de }}
+            {% elif country.description %}
+                {{ country.description }}
+            {% else %}
+                <span class="text-muted"><i>{% trans "Description is not yet available in your language." %}</i></span>
             {% endif %}
-        {% endwith %}
+        </p>
     </div>
     {% endif %}
 
@@ -204,7 +237,11 @@
                 <a href="{% url 'territory_detail' dependency.cca3 %}" class="text-decoration-none">
                     <div class="neighbor-card">
                         <div class="neighbor-flag">{{ dependency.flag_emoji }}</div>
-                        <div style="font-size: 0.9rem; color: #4a5568;">{{ dependency.name_common }}</div>
+                        <div style="font-size: 0.9rem; color: #4a5568;">
+                            {% if LANGUAGE_CODE == 'cs' and dependency.name_cs %}{{ dependency.name_cs }}
+                            {% elif LANGUAGE_CODE == 'de' and dependency.name_de %}{{ dependency.name_de }}
+                            {% else %}{{ dependency.name_common }}{% endif %}
+                        </div>
                     </div>
                 </a>
             </div>
@@ -214,50 +251,28 @@
     {% endif %}
 
     <div class="detail-card">
-        <h2 class="section-heading"><i class="bi bi-upc-scan"></i> {% trans "Codes & Identifiers" %}</h2>
-        
-        <div class="row">
-            <div class="col-md-4">
-                <div class="detail-row">
-                    <div class="detail-label">{% trans "ISO 3166-1 Alpha-2" %}</div>
-                    <div class="detail-value"><code>{{ country.cca2 }}</code></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="detail-row">
-                    <div class="detail-label">{% trans "ISO 3166-1 Alpha-3" %}</div>
-                    <div class="detail-value"><code>{{ country.cca3 }}</code></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="detail-row">
-                    <div class="detail-label">{% trans "Flag Emoji" %}</div>
-                    <div class="detail-value" style="font-size: 2rem;">{{ country.flag_emoji }}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-globe"></i> {% trans "Political Information" %}</h2>
         
         <div class="row">
-            {% if country.status == 'sovereign' and country.system_of_government %}
+            {% if country.status == 'sovereign' %}
             <div class="col-md-12">
                 <div class="detail-row">
                     <div class="detail-label">{% trans "System of Government" %}</div>
                     <div class="detail-value">
-                        {% if LANGUAGE_CODE == 'cs' and main_flag.description.system_of_government_cs %}
-                            {{ main_flag.description.system_of_government_cs }}
-                        {% elif LANGUAGE_CODE == 'de' and main_flag.description.system_of_government_de %}
-                            {{ main_flag.description.system_of_government_de }}
-                        {% else %}
+                        {% if LANGUAGE_CODE == 'cs' and country.system_of_government_cs %}
+                            {{ country.system_of_government_cs }}
+                        {% elif LANGUAGE_CODE == 'de' and country.system_of_government_de %}
+                            {{ country.system_of_government_de }}
+                        {% elif country.system_of_government %}
                             {{ country.system_of_government }}
+                        {% else %}
+                            {% trans "Not available" %}
                         {% endif %}
                     </div>
                 </div>
             </div>
             {% endif %}
+            
             <div class="col-md-6">
                 <div class="detail-row">
                     <div class="detail-label">{% trans "Independent" %}</div>
@@ -285,6 +300,31 @@
         </div>
     </div>
 
+    <div class="detail-card">
+        <h2 class="section-heading"><i class="bi bi-upc-scan"></i> {% trans "Codes & Identifiers" %}</h2>
+        
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="detail-row">
+                    <div class="detail-label">{% trans "ISO 3166-1 Alpha-2" %}</div>
+                    <div class="detail-value"><code>{{ country.cca2 }}</code></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="detail-row">
+                    <div class="detail-label">{% trans "ISO 3166-1 Alpha-3" %}</div>
+                    <div class="detail-value"><code>{{ country.cca3 }}</code></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="detail-row">
+                    <div class="detail-label">{% trans "Flag Emoji" %}</div>
+                    <div class="detail-value" style="font-size: 2rem;">{{ country.flag_emoji }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% if neighbors %}
     <div class="detail-card">
         <h2 class="section-heading"><i class="bi bi-signpost-2"></i> {% trans "Neighboring Countries" %}</h2>
@@ -295,7 +335,11 @@
                 <a href="{% url 'country_detail' neighbor.cca3 %}" class="text-decoration-none">
                     <div class="neighbor-card">
                         <div class="neighbor-flag">{{ neighbor.flag_emoji }}</div>
-                        <div style="font-size: 0.9rem; color: #4a5568;">{{ neighbor.name_common }}</div>
+                        <div style="font-size: 0.9rem; color: #4a5568;">
+                            {% if LANGUAGE_CODE == 'cs' and neighbor.name_cs %}{{ neighbor.name_cs }}
+                            {% elif LANGUAGE_CODE == 'de' and neighbor.name_de %}{{ neighbor.name_de }}
+                            {% else %}{{ neighbor.name_common }}{% endif %}
+                        </div>
                     </div>
                 </a>
             </div>
@@ -377,38 +421,8 @@
     </div>
     {% endif %}
 
-    <div class="modal fade" id="flagModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-          <div class="modal-body p-0 position-relative">
-            <button type="button" class="btn-close position-absolute top-0 end-0 m-3 z-3 bg-white p-2 rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
-            <div class="text-center p-4">
-                <img id="lbImg" src="" alt="" style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-                <h3 class="mt-4 mb-2" id="lbTitle"></h3>
-                <span class="badge bg-light text-secondary rounded-pill px-3 py-2" id="lbBadge"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      function openFlag(img, name, badge) {
-        document.getElementById('lbImg').src = img;
-        document.getElementById('lbTitle').textContent = name;
-        document.getElementById('lbBadge').textContent = badge;
-        
-        if (img.includes('width=500')) {
-            document.getElementById('lbImg').src = img.replace('width=500', 'width=800');
-        }
-
-        const modal = new bootstrap.Modal(document.getElementById('flagModal'));
-        modal.show();
-      }
-    </script>
-
-    <div class="text-center mt-4">
-        <a href="{% url 'countries' %}" class="btn btn-gradient btn-lg">
+    <div class="text-center mt-4 mb-5">
+        <a href="{% url 'countries' %}" class="btn btn-outline-secondary px-4 py-2">
             <i class="bi bi-arrow-left"></i> {% trans "Back to Countries" %}
         </a>
     </div>
