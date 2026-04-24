@@ -252,6 +252,17 @@
         </div>
     </div>
 </div>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    "name": "{{ flag.localized_name|escapejs }}",
+    "description": "{% if localized_description %}{{ localized_description|striptags|escapejs }}{% else %}{% blocktrans with flag_name=flag.localized_name %}Official details and symbolism of the flag {{ flag_name }}.{% endblocktrans %}{% endif %}",
+    "contentUrl": "{% if flag.image_file %}{{ request.scheme }}://{{ request.get_host }}{{ flag.image_file.url }}{% else %}{{ flag.flag_image }}{% endif %}",
+    "url": "{{ request.build_absolute_uri }}"
+}
+</script>
 {% endblock %}
 
 {% block scripts %}

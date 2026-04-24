@@ -10,6 +10,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q, Count, Case, When, IntegerField
 from django.urls import reverse
+from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _, get_language
 
 from ..models import Country, Region, FlagCollection
@@ -25,6 +26,24 @@ from .pagination_helpers import (
     build_flag_navigation_context,
     COUNTRIES_PER_PAGE
 )
+
+ANTARCTICA_REGION_FILTER = Q(name__iexact='Antarctica') | Q(slug__iexact='antarctica') | Q(slug__icontains='antarct')
+
+
+def robots_txt(request):
+    """Serve robots.txt rules that prevent crawl bleed into low-value URLs."""
+    lines = [
+        "User-agent: *",
+        "Disallow: /accounts/",
+        "Disallow: /cs/accounts/",
+        "Disallow: /de/accounts/",
+        "Disallow: /en/accounts/",
+        "Disallow: /*?*",
+        "Disallow: /search/",
+        "",
+        "Sitemap: https://jef.world-quiz.com/sitemap.xml",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
 @login_required
@@ -62,7 +81,7 @@ def render_homepage(request):
     
     total_historical = len(historical_countries) + FlagCollection.objects.filter(category='historical', is_public=True).count()
     total_flags = Country.objects.count() + FlagCollection.objects.filter(is_public=True).count()
-    total_regions = Region.objects.count()
+    total_regions = Region.objects.exclude(ANTARCTICA_REGION_FILTER).count()
     
     featured_countries = sorted(sovereign_countries, key=lambda c: c.population, reverse=True)[:6]
 
@@ -98,7 +117,9 @@ def render_homepage(request):
         reverse=True,
     )[:10]
     
-    regions = Region.objects.annotate(
+    regions = Region.objects.exclude(
+        ANTARCTICA_REGION_FILTER
+    ).annotate(
         country_count=Count('countries', filter=Q(countries__status='sovereign'))
     ).order_by('-country_count')
     
@@ -122,7 +143,10 @@ def countries_list(request):
     page_number = int(request.GET.get('page', 1))
     search_query = (request.GET.get('q') or request.GET.get('search') or '').strip()
     normalized_search_query = normalize_query(search_query)
-    region_filter = request.GET.get('region')
+    region_filter = (request.GET.get('region') or '').strip()
+
+    if region_filter and Region.objects.filter(slug=region_filter).filter(ANTARCTICA_REGION_FILTER).exists():
+        region_filter = ''
 
     # 1. OPRAVA: Odstraněno .only(), takže Django načte i populaci, rozlohu atd.
     countries_qs = Country.objects.filter(status='sovereign').filter(
@@ -147,7 +171,7 @@ def countries_list(request):
         c.emoji = c.flag_emoji
         c.name = c.name_common
 
-    regions = Region.objects.all()
+    regions = Region.objects.exclude(ANTARCTICA_REGION_FILTER).order_by('name')
 
     context = {
         'countries': page_obj,

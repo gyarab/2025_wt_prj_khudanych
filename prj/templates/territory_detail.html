@@ -9,6 +9,31 @@
     - {% trans "Territory Details" %}
 {% endblock %}
 
+{% block meta_description %}
+{% get_current_language as LANGUAGE_CODE %}
+{% if LANGUAGE_CODE == 'cs' and territory.description_cs %}
+<meta name="description" content="{{ territory.description_cs|striptags|truncatechars:160 }}">
+{% elif LANGUAGE_CODE == 'de' and territory.description_de %}
+<meta name="description" content="{{ territory.description_de|striptags|truncatechars:160 }}">
+{% elif territory.description %}
+<meta name="description" content="{{ territory.description|striptags|truncatechars:160 }}">
+{% else %}
+    {% trans "its region" as default_region_label %}
+    {% if LANGUAGE_CODE == 'cs' %}
+        {% firstof territory.name_cs territory.name_common as seo_country_name %}
+        {% firstof territory.region_cs territory.region.name default_region_label as seo_region_name %}
+    {% elif LANGUAGE_CODE == 'de' %}
+        {% firstof territory.name_de territory.name_common as seo_country_name %}
+        {% firstof territory.region_de territory.region.name default_region_label as seo_region_name %}
+    {% else %}
+        {% firstof territory.name_common as seo_country_name %}
+        {% firstof territory.region.name default_region_label as seo_region_name %}
+    {% endif %}
+    {% blocktrans with country_name=seo_country_name region_name=seo_region_name asvar fallback_meta_description %}Learn about the history, geography, and flag of {{ country_name }} located in {{ region_name }}.{% endblocktrans %}
+<meta name="description" content="{{ fallback_meta_description|truncatechars:160 }}">
+{% endif %}
+{% endblock %}
+
 {% block head %}
 <style>
     .territory-header {

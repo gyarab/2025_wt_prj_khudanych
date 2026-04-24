@@ -3,10 +3,11 @@ AJAX/JSON search endpoints for instant client-side search.
 """
 
 from django.http import JsonResponse
+from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from ..models import Country, FlagCollection
+from ..models import Country, FlagCollection, Region
 from .search_filters import (
     country_detail_quality_filter,
     build_country_search_filter,
@@ -23,7 +24,7 @@ def flags_search_api(request):
     search_query = (request.GET.get('q') or '').strip()
     normalized_search_query = normalize_query(search_query)
 
-    if len(search_query) < 2:
+    if len(search_query) < 1:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
 
     max_items = 200
@@ -101,11 +102,15 @@ def flags_search_api(request):
 
 def countries_search_api(request):
     """AJAX search endpoint for countries section with instant search"""
-    region_filter = request.GET.get('region', '')
+    region_filter = (request.GET.get('region') or '').strip()
     search_query = (request.GET.get('q') or '').strip()
     normalized_search_query = normalize_query(search_query)
+
+    antarctica_filter = Q(name__iexact='Antarctica') | Q(slug__iexact='antarctica') | Q(slug__icontains='antarct')
+    if region_filter and Region.objects.filter(slug=region_filter).filter(antarctica_filter).exists():
+        region_filter = ''
     
-    if len(search_query) < 2:
+    if len(search_query) < 1:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
     
     max_items = 200
@@ -146,7 +151,7 @@ def territories_search_api(request):
     search_query = (request.GET.get('q') or '').strip()
     normalized_search_query = normalize_query(search_query)
 
-    if len(search_query) < 2:
+    if len(search_query) < 1:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
 
     max_items = 200
@@ -199,7 +204,7 @@ def historical_search_api(request):
     search_query = (request.GET.get('q') or '').strip()
     normalized_search_query = normalize_query(search_query)
 
-    if len(search_query) < 2:
+    if len(search_query) < 1:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
 
     max_items = 200

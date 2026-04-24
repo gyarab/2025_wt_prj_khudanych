@@ -321,7 +321,7 @@
     async function applySearch() {
         const query = searchInput.value.trim();
         
-        if (query.length < 2) {
+        if (query.length < 1) {
             if (activeController) {
                 activeController.abort();
                 activeController = null;
@@ -384,13 +384,13 @@
     
     // Trigger search on region change
     regionSelect.addEventListener('change', function() {
-        if (searchInput.value.trim().length >= 2) {
+        if (searchInput.value.trim().length >= 1) {
             applySearch();
         }
     });
     
     // Apply search if there's already a query
-    if (searchInput.value.trim().length >= 2) {
+    if (searchInput.value.trim().length >= 1) {
         applySearch();
     }
 })();

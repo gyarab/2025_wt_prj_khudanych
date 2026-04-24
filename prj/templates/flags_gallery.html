@@ -362,7 +362,7 @@
         let activeController = null;
         async function applyGlobalFilter() {
             const query = input.value.trim();
-            if (query.length < 2) {
+                if (query.length < 1) {
                 if (activeController) {
                     activeController.abort();
                     activeController = null;
