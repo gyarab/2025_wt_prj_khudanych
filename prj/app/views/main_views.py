@@ -20,7 +20,7 @@ from .eligibility import (
     is_territory_detail_eligible,
     get_territory_owner_country
 )
-from .search_filters import country_detail_quality_filter, build_country_search_filter
+from .search_filters import country_detail_quality_filter, build_country_search_filter, get_country_search_rank
 from .text_utils import normalize_query
 from .pagination_helpers import (
     build_flag_navigation_context,
@@ -157,7 +157,15 @@ def countries_list(request):
         countries_qs = countries_qs.filter(region__slug=region_filter)
 
     if normalized_search_query:
-        countries_qs = countries_qs.filter(build_country_search_filter(normalized_search_query))
+        candidate_countries = list(countries_qs.filter(build_country_search_filter(search_query)))
+        ranked_countries = []
+        for country in candidate_countries:
+            rank = get_country_search_rank(country, search_query)
+            if rank > 0:
+                ranked_countries.append((rank, country))
+
+        ranked_countries.sort(key=lambda item: (-item[0], item[1].name_common))
+        countries_qs = [country for _, country in ranked_countries]
 
     paginator = Paginator(countries_qs, COUNTRIES_PER_PAGE)
     page_obj = paginator.get_page(page_number)
@@ -169,7 +177,7 @@ def countries_list(request):
         # Přidáme aliasy, aby šablona nepadala při hledání starých názvů klíčů
         c.img = c.flag_png
         c.emoji = c.flag_emoji
-        c.name = c.name_common
+        c.name = c.localized_name
 
     regions = Region.objects.exclude(ANTARCTICA_REGION_FILTER).order_by('name')
 

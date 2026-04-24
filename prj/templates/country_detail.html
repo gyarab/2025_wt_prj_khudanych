@@ -5,7 +5,7 @@
     {% get_current_language as LANGUAGE_CODE %}
     {% if LANGUAGE_CODE == 'cs' and country.name_cs %}{{ country.name_cs }}
     {% elif LANGUAGE_CODE == 'de' and country.name_de %}{{ country.name_de }}
-    {% else %}{{ country.name_common }}{% endif %} 
+    {% else %}{{ country.localized_name }}{% endif %}
     - {% trans "Country Details" %}
 {% endblock %}
 
@@ -20,13 +20,13 @@
 {% else %}
     {% trans "its region" as default_region_label %}
     {% if LANGUAGE_CODE == 'cs' %}
-        {% firstof country.name_cs country.name_common as seo_country_name %}
+        {% firstof country.name_cs country.localized_name as seo_country_name %}
         {% firstof country.region_cs country.region.name default_region_label as seo_region_name %}
     {% elif LANGUAGE_CODE == 'de' %}
-        {% firstof country.name_de country.name_common as seo_country_name %}
+        {% firstof country.name_de country.localized_name as seo_country_name %}
         {% firstof country.region_de country.region.name default_region_label as seo_region_name %}
     {% else %}
-        {% firstof country.name_common as seo_country_name %}
+        {% firstof country.localized_name as seo_country_name %}
         {% firstof country.region.name default_region_label as seo_region_name %}
     {% endif %}
     {% blocktrans with country_name=seo_country_name region_name=seo_region_name asvar fallback_meta_description %}Learn about the history, geography, and flag of {{ country_name }} located in {{ region_name }}.{% endblocktrans %}
@@ -122,16 +122,16 @@
                     {% elif LANGUAGE_CODE == 'de' and country.name_de %}
                         {{ country.name_de }}
                     {% else %}
-                        {{ country.name_common }}
+                        {{ country.localized_name }}
                     {% endif %}
                 </h1>
                 <p class="lead">{{ country.name_official }}</p>
             </div>
             <div class="col-md-4 text-center">
                 {% if country.flag_svg %}
-                    <img src="{{ country.flag_svg }}" alt="Flag of {{ country.name_common }}" class="flag-showcase">
+                    <img src="{{ country.flag_svg }}" alt="Flag of {{ country.localized_name }}" class="flag-showcase">
                 {% elif country.flag_png %}
-                    <img src="{{ country.flag_png }}" alt="Flag of {{ country.name_common }}" class="flag-showcase">
+                    <img src="{{ country.flag_png }}" alt="Flag of {{ country.localized_name }}" class="flag-showcase">
                 {% endif %}
             </div>
         </div>
@@ -265,7 +265,7 @@
                         <div style="font-size: 0.9rem; color: #4a5568;">
                             {% if LANGUAGE_CODE == 'cs' and dependency.name_cs %}{{ dependency.name_cs }}
                             {% elif LANGUAGE_CODE == 'de' and dependency.name_de %}{{ dependency.name_de }}
-                            {% else %}{{ dependency.name_common }}{% endif %}
+                            {% else %}{{ dependency.localized_name }}{% endif %}
                         </div>
                     </div>
                 </a>
@@ -363,7 +363,7 @@
                         <div style="font-size: 0.9rem; color: #4a5568;">
                             {% if LANGUAGE_CODE == 'cs' and neighbor.name_cs %}{{ neighbor.name_cs }}
                             {% elif LANGUAGE_CODE == 'de' and neighbor.name_de %}{{ neighbor.name_de }}
-                            {% else %}{{ neighbor.name_common }}{% endif %}
+                            {% else %}{{ neighbor.localized_name }}{% endif %}
                         </div>
                     </div>
                 </a>

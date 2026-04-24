@@ -217,6 +217,15 @@ class Country(models.Model):
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse('country_detail', kwargs={'cca3': self.cca3})
+
+    @property
+    def localized_name(self):
+        cur_lang = (translation.get_language() or '').split('-')[0]
+        if cur_lang == 'cs' and self.name_cs:
+            return self.name_cs
+        if cur_lang == 'de' and self.name_de:
+            return self.name_de
+        return self.name_common
     
     @property
     def languages_display(self):

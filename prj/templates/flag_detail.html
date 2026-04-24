@@ -101,11 +101,11 @@
             <span class="badge rounded-pill text-bg-light border text-dark px-3 py-2">
                 {% if linked_country.status == 'territory' %}
                     <a href="{% url 'territory_detail' linked_country.cca3 %}" class="text-decoration-none text-dark">
-                        {% trans "Dependency of" %}: {{ linked_country.name_common }}
+                        {% trans "Dependency of" %}: {{ linked_country.localized_name }}
                     </a>
                 {% else %}
                     <a href="{% url 'country_detail' linked_country.cca3 %}" class="text-decoration-none text-dark">
-                        {% trans "Dependency of" %}: {{ linked_country.name_common }}
+                        {% trans "Dependency of" %}: {{ linked_country.localized_name }}
                     </a>
                 {% endif %}
             </span>

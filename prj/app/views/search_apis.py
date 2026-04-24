@@ -12,6 +12,7 @@ from .search_filters import (
     country_detail_quality_filter,
     build_country_search_filter,
     build_flag_name_search_filter,
+    get_country_search_rank,
 )
 from .pagination_helpers import build_flag_detail_link
 from .eligibility import is_country_detail_eligible, is_territory_detail_eligible
@@ -43,14 +44,22 @@ def flags_search_api(request):
         country_qs = Country.objects.filter(
             status__in=statuses,
         ).filter(
-            build_country_search_filter(normalized_search_query)
+            build_country_search_filter(search_query)
         ).select_related('region').only(
-            'name_common', 'name_official', 'cca2', 'cca3', 'capital', 'region',
+            'name_common', 'name_cs', 'name_de', 'search_name', 'name_official', 'cca2', 'cca3', 'capital', 'region',
             'area_km2', 'population', 'currencies', 'languages',
             'flag_png', 'flag_svg', 'flag_emoji', 'status',
-        )[:600]
+        )
 
-        for c in country_qs:
+        ranked_countries = []
+        for country in country_qs:
+            rank = get_country_search_rank(country, search_query)
+            if rank > 0:
+                ranked_countries.append((rank, country))
+
+        ranked_countries.sort(key=lambda item: (-item[0], item[1].name_common))
+
+        for _, c in ranked_countries[:600]:
             if c.status == 'territory':
                 if not is_territory_detail_eligible(c):
                     continue
@@ -62,6 +71,7 @@ def flags_search_api(request):
 
             items.append({
                 'name': c.name_common,
+                'localized_name': c.localized_name,
                 'img': c.flag_png,
                 'emoji': c.flag_emoji,
                 'link': link,
@@ -71,7 +81,7 @@ def flags_search_api(request):
 
     if category != 'country' and len(items) < max_items:
         flag_qs = FlagCollection.objects.filter(is_public=True).filter(
-            build_flag_name_search_filter(normalized_search_query)
+            build_flag_name_search_filter(search_query)
         ).only('name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug')
         if category != 'all':
             flag_qs = flag_qs.filter(category=category)
@@ -119,16 +129,29 @@ def countries_search_api(request):
     countries_qs = Country.objects.filter(status='sovereign').filter(
         country_detail_quality_filter()
     ).select_related('region').only(
-        'name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji', 'region__name', 'region__slug'
+        'name_common', 'name_cs', 'name_de', 'search_name', 'cca3', 'capital', 'flag_png', 'flag_emoji', 'region__name', 'region__slug'
     ).order_by('name_common')
 
     if region_filter:
         countries_qs = countries_qs.filter(region__slug=region_filter)
 
-    countries_qs = countries_qs.filter(build_country_search_filter(normalized_search_query))
-    for c in countries_qs[:max_items]:
+    if normalized_search_query:
+        countries_qs = countries_qs.filter(build_country_search_filter(search_query))
+
+    matched_countries = list(countries_qs)
+    if normalized_search_query:
+        ranked = []
+        for country in matched_countries:
+            rank = get_country_search_rank(country, search_query)
+            if rank > 0:
+                ranked.append((rank, country))
+        ranked.sort(key=lambda item: (-item[0], item[1].name_common))
+        matched_countries = [country for _, country in ranked]
+
+    for c in matched_countries[:max_items]:
         items.append({
             'name': c.name_common,
+            'localized_name': c.localized_name,
             'cca3': c.cca3,
             'link': reverse('country_detail', kwargs={'cca3': c.cca3}),
             'capital': c.capital or '',
@@ -159,12 +182,23 @@ def territories_search_api(request):
 
     territory_qs = Country.objects.filter(status='territory').filter(
         country_detail_quality_filter()
-    ).only('name_common', 'cca3', 'capital', 'flag_png', 'flag_emoji').order_by('name_common')
-    territory_qs = territory_qs.filter(build_country_search_filter(normalized_search_query))
+    ).only('name_common', 'name_cs', 'name_de', 'search_name', 'cca3', 'capital', 'flag_png', 'flag_emoji').order_by('name_common')
 
-    for c in territory_qs[:max_items]:
+    if normalized_search_query:
+        territory_qs = territory_qs.filter(build_country_search_filter(search_query))
+
+    ranked_territories = []
+    for territory in territory_qs:
+        rank = get_country_search_rank(territory, search_query)
+        if rank > 0:
+            ranked_territories.append((rank, territory))
+
+    ranked_territories.sort(key=lambda item: (-item[0], item[1].name_common))
+
+    for _, c in ranked_territories[:max_items]:
         items.append({
             'name': c.name_common,
+            'localized_name': c.localized_name,
             'cca3': c.cca3,
             'link': reverse('territory_detail', kwargs={'cca3': c.cca3}),
             'capital': c.capital or '',
@@ -176,7 +210,7 @@ def territories_search_api(request):
         extra_qs = FlagCollection.objects.filter(
             category='dependency',
             is_public=True,
-        ).filter(build_flag_name_search_filter(normalized_search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
+        ).filter(build_flag_name_search_filter(search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
         for f in extra_qs[:max_items - len(items)]:
             items.append({
@@ -212,12 +246,23 @@ def historical_search_api(request):
 
     country_qs = Country.objects.filter(status='historical').filter(
         country_detail_quality_filter()
-    ).only('name_common', 'cca3', 'flag_png', 'flag_emoji').order_by('name_common')
-    country_qs = country_qs.filter(build_country_search_filter(normalized_search_query))
+    ).only('name_common', 'name_cs', 'name_de', 'search_name', 'cca3', 'flag_png', 'flag_emoji').order_by('name_common')
 
-    for c in country_qs[:max_items]:
+    if normalized_search_query:
+        country_qs = country_qs.filter(build_country_search_filter(search_query))
+
+    ranked_historical_countries = []
+    for country in country_qs:
+        rank = get_country_search_rank(country, search_query)
+        if rank > 0:
+            ranked_historical_countries.append((rank, country))
+
+    ranked_historical_countries.sort(key=lambda item: (-item[0], item[1].name_common))
+
+    for _, c in ranked_historical_countries[:max_items]:
         items.append({
             'name': c.name_common,
+            'localized_name': c.localized_name,
             'link': reverse('country_detail', kwargs={'cca3': c.cca3}),
             'img': c.flag_png,
             'emoji': c.flag_emoji,
@@ -228,7 +273,7 @@ def historical_search_api(request):
         flag_qs = FlagCollection.objects.filter(
             category='historical',
             is_public=True,
-        ).filter(build_flag_name_search_filter(normalized_search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
+        ).filter(build_flag_name_search_filter(search_query)).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
         for f in flag_qs[:max_items - len(items)]:
             items.append({

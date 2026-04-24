@@ -538,11 +538,11 @@
                                         <a href="{% url 'country_detail' country.cca3 %}" class="country-link">
                                             <span class="country-identity">
                                                 {% if country.flag_png %}
-                                                    <img src="{{ country.flag_png }}" alt="{{ country.name_common }}" class="country-flag-mini" loading="lazy" decoding="async">
+                                                    <img src="{{ country.flag_png }}" alt="{{ country.localized_name }}" class="country-flag-mini" loading="lazy" decoding="async">
                                                 {% else %}
                                                     <span>{{ country.flag_emoji }}</span>
                                                 {% endif %}
-                                                <span class="country-name-mini">{{ country.name_common }}</span>
+                                                <span class="country-name-mini">{{ country.localized_name }}</span>
                                             </span>
                                         </a>
                                     </td>
@@ -576,11 +576,11 @@
                                         <a href="{% url 'country_detail' country.cca3 %}" class="country-link">
                                             <span class="country-identity">
                                                 {% if country.flag_png %}
-                                                    <img src="{{ country.flag_png }}" alt="{{ country.name_common }}" class="country-flag-mini" loading="lazy" decoding="async">
+                                                    <img src="{{ country.flag_png }}" alt="{{ country.localized_name }}" class="country-flag-mini" loading="lazy" decoding="async">
                                                 {% else %}
                                                     <span>{{ country.flag_emoji }}</span>
                                                 {% endif %}
-                                                <span class="country-name-mini">{{ country.name_common }}</span>
+                                                <span class="country-name-mini">{{ country.localized_name }}</span>
                                             </span>
                                         </a>
                                     </td>
@@ -614,11 +614,11 @@
                                         <a href="{% url 'country_detail' row.country.cca3 %}" class="country-link">
                                             <span class="country-identity">
                                                 {% if row.country.flag_png %}
-                                                    <img src="{{ row.country.flag_png }}" alt="{{ row.country.name_common }}" class="country-flag-mini" loading="lazy" decoding="async">
+                                                    <img src="{{ row.country.flag_png }}" alt="{{ row.country.localized_name }}" class="country-flag-mini" loading="lazy" decoding="async">
                                                 {% else %}
                                                     <span>{{ row.country.flag_emoji }}</span>
                                                 {% endif %}
-                                                <span class="country-name-mini">{{ row.country.name_common }}</span>
+                                                <span class="country-name-mini">{{ row.country.localized_name }}</span>
                                             </span>
                                         </a>
                                     </td>

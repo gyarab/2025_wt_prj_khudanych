@@ -11,7 +11,12 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 
 from ..models import Country, FlagCollection
-from .search_filters import country_detail_quality_filter, build_country_search_filter
+from .search_filters import (
+    country_detail_quality_filter,
+    build_country_search_filter,
+    build_flag_name_search_filter,
+    get_country_search_rank,
+)
 from .text_utils import normalize_query
 from .pagination_helpers import build_flag_detail_link, CountOnlyPaginator, COUNTRIES_PER_PAGE, GALLERY_PER_PAGE
 
@@ -30,7 +35,15 @@ def territories_list(request):
     ).select_related('region').order_by('name_common')
 
     if normalized_search_query:
-        territory_qs = territory_qs.filter(build_country_search_filter(normalized_search_query))
+        territory_qs = territory_qs.filter(build_country_search_filter(search_query))
+        ranked_territories = []
+        for country in territory_qs:
+            rank = get_country_search_rank(country, search_query)
+            if rank > 0:
+                ranked_territories.append((rank, country))
+
+        ranked_territories.sort(key=lambda item: (-item[0], item[1].name_common))
+        territory_qs = [country for _, country in ranked_territories]
 
     # 2. Standardní Django stránkování (konec falešného CountOnlyPaginatoru)
     paginator = Paginator(territory_qs, COUNTRIES_PER_PAGE)
@@ -42,7 +55,7 @@ def territories_list(request):
         c.type = _('Territory / Dependency')
         c.img = c.flag_png
         c.emoji = c.flag_emoji
-        c.name = c.name_common
+        c.name = c.localized_name
         # Region a Capital si šablona automaticky vytáhne z objektu Country
 
     context = {
@@ -66,10 +79,18 @@ def historical_list(request):
 
     historical_country_qs = Country.objects.filter(status='historical').filter(
         country_detail_quality_filter()
-    ).only('name_common', 'cca3', 'flag_png', 'flag_emoji').order_by('name_common')
+    ).only('name_common', 'name_cs', 'name_de', 'search_name', 'cca3', 'flag_png', 'flag_emoji').order_by('name_common')
 
     if normalized_search_query:
-        historical_country_qs = historical_country_qs.filter(build_country_search_filter(normalized_search_query))
+        historical_country_qs = historical_country_qs.filter(build_country_search_filter(search_query))
+        ranked_historical_countries = []
+        for country in historical_country_qs:
+            rank = get_country_search_rank(country, search_query)
+            if rank > 0:
+                ranked_historical_countries.append((rank, country))
+
+        ranked_historical_countries.sort(key=lambda item: (-item[0], item[1].name_common))
+        historical_country_qs = [country for _, country in ranked_historical_countries]
 
     historical_flag_qs = FlagCollection.objects.filter(
         category='historical',
@@ -77,9 +98,9 @@ def historical_list(request):
     ).only('name', 'name_cs', 'name_de', 'flag_image').order_by('name')
 
     if normalized_search_query:
-        historical_flag_qs = historical_flag_qs.filter(build_country_search_filter(normalized_search_query))
+        historical_flag_qs = historical_flag_qs.filter(build_flag_name_search_filter(search_query))
 
-    total_countries_count = historical_country_qs.count()
+    total_countries_count = len(historical_country_qs) if isinstance(historical_country_qs, list) else historical_country_qs.count()
     total_flags_count = historical_flag_qs.count()
     total_combined = total_countries_count + total_flags_count
 
@@ -91,7 +112,7 @@ def historical_list(request):
     if start_index < total_countries_count:
         for c in historical_country_qs[start_index:end_index]:
             items_to_display.append({
-                'name': c.name_common,
+                'name': c.localized_name,
                 'img': c.flag_png,
                 'emoji': c.flag_emoji,
                 'link': reverse('country_detail', kwargs={'cca3': c.cca3}),

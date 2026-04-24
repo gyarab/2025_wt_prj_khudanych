@@ -5,7 +5,7 @@
     {% get_current_language as LANGUAGE_CODE %}
     {% if LANGUAGE_CODE == 'cs' and territory.name_cs %}{{ territory.name_cs }}
     {% elif LANGUAGE_CODE == 'de' and territory.name_de %}{{ territory.name_de }}
-    {% else %}{{ territory.name_common }}{% endif %} 
+    {% else %}{{ territory.localized_name }}{% endif %}
     - {% trans "Territory Details" %}
 {% endblock %}
 
@@ -20,13 +20,13 @@
 {% else %}
     {% trans "its region" as default_region_label %}
     {% if LANGUAGE_CODE == 'cs' %}
-        {% firstof territory.name_cs territory.name_common as seo_country_name %}
+        {% firstof territory.name_cs territory.localized_name as seo_country_name %}
         {% firstof territory.region_cs territory.region.name default_region_label as seo_region_name %}
     {% elif LANGUAGE_CODE == 'de' %}
-        {% firstof territory.name_de territory.name_common as seo_country_name %}
+        {% firstof territory.name_de territory.localized_name as seo_country_name %}
         {% firstof territory.region_de territory.region.name default_region_label as seo_region_name %}
     {% else %}
-        {% firstof territory.name_common as seo_country_name %}
+        {% firstof territory.localized_name as seo_country_name %}
         {% firstof territory.region.name default_region_label as seo_region_name %}
     {% endif %}
     {% blocktrans with country_name=seo_country_name region_name=seo_region_name asvar fallback_meta_description %}Learn about the history, geography, and flag of {{ country_name }} located in {{ region_name }}.{% endblocktrans %}
@@ -84,16 +84,16 @@
                         {% elif LANGUAGE_CODE == 'de' and territory.name_de %}
                             {{ territory.name_de }}
                         {% else %}
-                            {{ territory.name_common }}
+                            {{ territory.localized_name }}
                         {% endif %}
                     </h1>
                     <p class="mb-0">{{ territory.name_official }}</p>
                 </div>
                 <div class="col-md-4 text-center">
                     {% if territory.flag_svg %}
-                        <img src="{{ territory.flag_svg }}" alt="Flag of {{ territory.name_common }}" class="flag-preview" loading="lazy" decoding="async">
+                        <img src="{{ territory.flag_svg }}" alt="Flag of {{ territory.localized_name }}" class="flag-preview" loading="lazy" decoding="async">
                     {% elif territory.flag_png %}
-                        <img src="{{ territory.flag_png }}" alt="Flag of {{ territory.name_common }}" class="flag-preview" loading="lazy" decoding="async">
+                        <img src="{{ territory.flag_png }}" alt="Flag of {{ territory.localized_name }}" class="flag-preview" loading="lazy" decoding="async">
                     {% endif %}
                 </div>
             </div>
@@ -111,7 +111,7 @@
                         {{ owner_country.flag_emoji }} 
                         {% if LANGUAGE_CODE == 'cs' and owner_country.name_cs %}{{ owner_country.name_cs }}
                         {% elif LANGUAGE_CODE == 'de' and owner_country.name_de %}{{ owner_country.name_de }}
-                        {% else %}{{ owner_country.name_common }}{% endif %}
+                        {% else %}{{ owner_country.localized_name }}{% endif %}
                     </a>
                 </div>
                 {% else %}
