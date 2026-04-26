@@ -704,3 +704,9 @@ msgstr "Spiele das legendäre Wildwest-Kartenspiel direkt in deinem Browser."
 
 msgid "Partner"
 msgstr "Partner"
+
+msgid "My Project"
+msgstr "Mein Projekt"
+
+msgid "Test your geography skills in this fast-paced, interactive world map game."
+msgstr "Teste dein Geografiewissen in diesem rasanten, interaktiven Weltkartenspiel."
