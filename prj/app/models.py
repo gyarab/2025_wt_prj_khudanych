@@ -133,6 +133,26 @@ class Country(models.Model):
     independent = models.BooleanField(default=True, verbose_name=_("Independent"))
     un_member = models.BooleanField(default=False, verbose_name=_("UN Member"))
     
+    # --- TRANSLATIONS & DESCRIPTIONS ---
+    name_cs = models.CharField(max_length=200, blank=True, default='', verbose_name=_("Name (Czech)"))
+    name_de = models.CharField(max_length=200, blank=True, default='', verbose_name=_("Name (German)"))
+    
+    capital_cs = models.CharField(max_length=200, blank=True, default='', verbose_name=_("Capital (Czech)"))
+    capital_de = models.CharField(max_length=200, blank=True, default='', verbose_name=_("Capital (German)"))
+
+    region_cs = models.CharField(max_length=100, blank=True, default='', verbose_name=_("Region (Czech)"))
+    region_de = models.CharField(max_length=100, blank=True, default='', verbose_name=_("Region (German)"))
+
+    subregion_cs = models.CharField(max_length=100, blank=True, default='', verbose_name=_("Subregion (Czech)"))
+    subregion_de = models.CharField(max_length=100, blank=True, default='', verbose_name=_("Subregion (German)"))
+
+    system_of_government_cs = models.CharField(max_length=200, blank=True, default='', verbose_name=_("System of Government (Czech)"))
+    system_of_government_de = models.CharField(max_length=200, blank=True, default='', verbose_name=_("System of Government (German)"))
+
+    description = models.TextField(blank=True, verbose_name=_("Description (EN/Default)"))
+    description_cs = models.TextField(blank=True, verbose_name=_("Description (Czech)"))
+    description_de = models.TextField(blank=True, verbose_name=_("Description (German)"))
+
     STATUS_CHOICES = [
         ('sovereign', _('Sovereign State')),
         ('territory', _('Territory')),
@@ -174,6 +194,18 @@ class Country(models.Model):
             models.Index(fields=['region']),
             models.Index(fields=['population']),
         ]
+        constraints = [
+            # 1. Pravidlo: Pokud NEJSI nezávislý, MUSÍŠ mít vlastníka
+            models.CheckConstraint(
+                check=models.Q(independent=True) | models.Q(owner__isnull=False),
+                name='dependency_must_have_owner'
+            ),
+            # 2. Pravidlo: Pokud JSI nezávislý stát, NESMÍŠ mít vlastníka
+            models.CheckConstraint(
+                check=models.Q(independent=False) | models.Q(owner__isnull=True),
+                name='independent_country_has_no_owner'
+            )
+        ]
     
     def __str__(self):
         return f"{self.flag_emoji} {self.name_common}"
@@ -185,6 +217,15 @@ class Country(models.Model):
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse('country_detail', kwargs={'cca3': self.cca3})
+
+    @property
+    def localized_name(self):
+        cur_lang = (translation.get_language() or '').split('-')[0]
+        if cur_lang == 'cs' and self.name_cs:
+            return self.name_cs
+        if cur_lang == 'de' and self.name_de:
+            return self.name_de
+        return self.name_common
     
     @property
     def languages_display(self):
@@ -238,6 +279,7 @@ class FlagCollection(models.Model):
     CATEGORY_VALUES = (
         'country',
         'dependency',
+        'micronation',
         'city',
         'region',
         'historical',
@@ -247,6 +289,7 @@ class FlagCollection(models.Model):
     CATEGORY_CHOICES = [
         ('country', _('Country')),
         ('dependency', _('Dependency')),
+        ('micronation', _('Micronation')),
         ('city', _('Obec / Město')),
         ('region', _('Region / Subdivision')),
         ('historical', _('Historical')),
@@ -289,15 +332,21 @@ class FlagCollection(models.Model):
         constraints = [
             models.CheckConstraint(
                 name='flagcollection_category_valid',
-                condition=models.Q(category__in=(
+                check=models.Q(category__in=(
                     'country',
                     'dependency',
+                    'micronation',
                     'city',
                     'region',
                     'historical',
                     'international',
                 )),
             ),
+            # 3. Pravidlo: Vlajky hlavních států a závislých území MUSÍ mít vazbu na tabulku Country
+            models.CheckConstraint(
+                name='country_and_dependency_must_link_to_country_model',
+                check=~models.Q(category__in=['country', 'dependency']) | models.Q(country__isnull=False)
+            )
         ]
 
     def __str__(self):

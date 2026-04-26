@@ -2,8 +2,13 @@
 Eligibility validation logic for country and territory detail pages.
 """
 
+import logging
+
 from ..models import Country
 import flag_search_core
+
+
+logger = logging.getLogger(__name__)
 
 
 TERRITORY_OWNER_BY_CCA3 = {
@@ -78,7 +83,15 @@ def get_territory_owner_country(territory: Country):
     if not owner_cca3:
         # Last resort: Rust-based substring search
         text = f"{territory.name_common or ''} {territory.name_official or ''}"
-        owner_cca3 = flag_search_core.identify_owner_cca3(text)
+        rust_owner_resolver = getattr(flag_search_core, 'identify_owner_cca3', None)
+        if callable(rust_owner_resolver):
+            owner_cca3 = rust_owner_resolver(text)
+        else:
+            logger.warning(
+                "flag_search_core.identify_owner_cca3 is unavailable; "
+                "skipping Rust owner resolution for territory %s",
+                territory.cca3,
+            )
 
     if owner_cca3:
         owner = Country.objects.filter(cca3=owner_cca3).first()

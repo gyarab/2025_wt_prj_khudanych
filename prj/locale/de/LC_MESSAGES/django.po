@@ -131,6 +131,33 @@ msgstr "Souveräner Staat"
 msgid "Territory"
 msgstr "Territorium"
 
+msgid "About territory"
+msgstr "Über das Gebiet"
+
+msgid "About country"
+msgstr "Über das Land"
+
+msgid "Territory and Sovereignty"
+msgstr "Gebiet und Souveränität"
+
+msgid "Dependency of"
+msgstr "Abhängiges Gebiet von"
+
+msgid "Not available"
+msgstr "Nicht verfügbar"
+
+msgid "Description is not yet available in your language."
+msgstr "Die Beschreibung ist in Ihrer Sprache noch nicht verfügbar."
+
+msgid "Back to Countries"
+msgstr "Zurück zu den Ländern"
+
+msgid "Codes & Identifiers"
+msgstr "Codes & Identifikatoren"
+
+msgid "Additional Flags & Symbols"
+msgstr "Weitere Flaggen & Symbole"
+
 msgid "Historical"
 msgstr "Historisch"
 
@@ -257,6 +284,9 @@ msgstr "Hauptterritorium"
 
 msgid "Territory / Dependency"
 msgstr "Territorium / Abhängigkeit"
+
+msgid "Dependencies & Territories"
+msgstr "Abhängige Gebiete"
 
 msgid "Global Leaderboards"
 msgstr "Globale Ranglisten"
@@ -662,3 +692,15 @@ msgstr "&copy; 2026 Just Enough Flags."
 
 msgid "Search territories..."
 msgstr "Territorien suchen..."
+
+msgid "Partners"
+msgstr "Partner"
+
+msgid "Bang! Online"
+msgstr "Bang! Online"
+
+msgid "Play the legendary wild west card game directly in your browser."
+msgstr "Spiele das legendäre Wildwest-Kartenspiel direkt in deinem Browser."
+
+msgid "Partner"
+msgstr "Partner"

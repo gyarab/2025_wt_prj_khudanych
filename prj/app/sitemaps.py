@@ -1,17 +1,31 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from .models import FlagCollection
+from .models import Country, FlagCollection
 
-class FlagCollectionSitemap(Sitemap):
+
+class CountrySitemap(Sitemap):
     i18n = True
     changefreq = "weekly"
     priority = 0.8
 
     def items(self):
-        return FlagCollection.objects.all()
+        return Country.objects.all()
+
+    def lastmod(self, obj):
+        return obj.updated_at
+
+
+class FlagSitemap(Sitemap):
+    i18n = True
+    changefreq = "monthly"
+    priority = 0.6
+
+    def items(self):
+        return FlagCollection.objects.filter(is_public=True)
 
     def lastmod(self, obj):
         return obj.created_at
+
 
 class StaticViewSitemap(Sitemap):
     i18n = True

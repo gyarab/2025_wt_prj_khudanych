@@ -14,6 +14,7 @@ This package refactors the monolithic views.py into modular, focused components:
 
 # Import all views that need to be exposed to urls.py
 from .main_views import (
+    robots_txt,
     profile_view,
     profile_edit,
     render_homepage,
@@ -42,6 +43,7 @@ from .search_apis import (
 
 __all__ = [
     # Main views
+    'robots_txt',
     'profile_view',
     'profile_edit',
     'render_homepage',

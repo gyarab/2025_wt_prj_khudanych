@@ -276,6 +276,28 @@
         font-size: 0.9rem;
     }
 
+    /* Partners Section */
+    .partner-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        transition: all 0.25s ease;
+    }
+
+    .partner-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+    }
+
+    .partner-link {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .partner-link:hover {
+        color: inherit;
+    }
+
     /* CTA Section */
     .cta-section {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -340,7 +362,6 @@
         transition: all 0.25s ease;
         border: 1px solid transparent;
         padding: 0.7rem 1.5rem;
-        /* OPRAVA: Zákaz ořezávání a smršťování na tabletu */
         white-space: nowrap;
         flex-shrink: 0;
     }
@@ -539,11 +560,11 @@
                                         <a href="{% url 'country_detail' country.cca3 %}" class="country-link">
                                             <span class="country-identity">
                                                 {% if country.flag_png %}
-                                                    <img src="{{ country.flag_png }}" alt="{{ country.name_common }}" class="country-flag-mini" loading="lazy" decoding="async">
+                                                    <img src="{{ country.flag_png }}" alt="{{ country.localized_name }}" class="country-flag-mini" loading="lazy" decoding="async">
                                                 {% else %}
                                                     <span>{{ country.flag_emoji }}</span>
                                                 {% endif %}
-                                                <span class="country-name-mini">{{ country.name_common }}</span>
+                                                <span class="country-name-mini">{{ country.localized_name }}</span>
                                             </span>
                                         </a>
                                     </td>
@@ -577,11 +598,11 @@
                                         <a href="{% url 'country_detail' country.cca3 %}" class="country-link">
                                             <span class="country-identity">
                                                 {% if country.flag_png %}
-                                                    <img src="{{ country.flag_png }}" alt="{{ country.name_common }}" class="country-flag-mini" loading="lazy" decoding="async">
+                                                    <img src="{{ country.flag_png }}" alt="{{ country.localized_name }}" class="country-flag-mini" loading="lazy" decoding="async">
                                                 {% else %}
                                                     <span>{{ country.flag_emoji }}</span>
                                                 {% endif %}
-                                                <span class="country-name-mini">{{ country.name_common }}</span>
+                                                <span class="country-name-mini">{{ country.localized_name }}</span>
                                             </span>
                                         </a>
                                     </td>
@@ -615,11 +636,11 @@
                                         <a href="{% url 'country_detail' row.country.cca3 %}" class="country-link">
                                             <span class="country-identity">
                                                 {% if row.country.flag_png %}
-                                                    <img src="{{ row.country.flag_png }}" alt="{{ row.country.name_common }}" class="country-flag-mini" loading="lazy" decoding="async">
+                                                    <img src="{{ row.country.flag_png }}" alt="{{ row.country.localized_name }}" class="country-flag-mini" loading="lazy" decoding="async">
                                                 {% else %}
                                                     <span>{{ row.country.flag_emoji }}</span>
                                                 {% endif %}
-                                                <span class="country-name-mini">{{ row.country.name_common }}</span>
+                                                <span class="country-name-mini">{{ row.country.localized_name }}</span>
                                             </span>
                                         </a>
                                     </td>
@@ -670,6 +691,37 @@
     </div>
 </section>
 {% endif %}
+
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title">{% trans "Partners" %}</h2>
+        <div class="gradient-underline"></div>
+
+        {% get_current_language as LANGUAGE_CODE %}
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-4">
+                <div class="card partner-card h-100">
+                    <a
+                        href="{% if LANGUAGE_CODE == 'cs' %}https://bang.honzaa.cz/cs{% else %}https://bang.honzaa.cz/en{% endif %}"
+                        class="partner-link card-body d-block h-100"
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                    >
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="h5 mb-0">
+                                {% trans "Bang! Online" %} <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i>
+                            </h3>
+                            <span class="badge bg-warning text-dark">{% trans "Partner" %}</span>
+                        </div>
+                        <p class="card-text mb-0 text-muted">
+                            {% trans "Play the legendary wild west card game directly in your browser." %}
+                        </p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <section class="container mb-5">
     <div class="cta-section">

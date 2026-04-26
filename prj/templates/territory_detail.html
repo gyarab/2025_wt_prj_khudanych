@@ -1,7 +1,38 @@
 {% extends 'base.html' %}
 {% load i18n humanize %}
 
-{% block title %}{{ territory.name_common }} - {% trans "Territory Details" %}{% endblock %}
+{% block title %}
+    {% get_current_language as LANGUAGE_CODE %}
+    {% if LANGUAGE_CODE == 'cs' and territory.name_cs %}{{ territory.name_cs }}
+    {% elif LANGUAGE_CODE == 'de' and territory.name_de %}{{ territory.name_de }}
+    {% else %}{{ territory.localized_name }}{% endif %}
+    - {% trans "Territory Details" %}
+{% endblock %}
+
+{% block meta_description %}
+{% get_current_language as LANGUAGE_CODE %}
+{% if LANGUAGE_CODE == 'cs' and territory.description_cs %}
+<meta name="description" content="{{ territory.description_cs|striptags|truncatechars:160 }}">
+{% elif LANGUAGE_CODE == 'de' and territory.description_de %}
+<meta name="description" content="{{ territory.description_de|striptags|truncatechars:160 }}">
+{% elif territory.description %}
+<meta name="description" content="{{ territory.description|striptags|truncatechars:160 }}">
+{% else %}
+    {% trans "its region" as default_region_label %}
+    {% if LANGUAGE_CODE == 'cs' %}
+        {% firstof territory.name_cs territory.localized_name as seo_country_name %}
+        {% firstof territory.region_cs territory.region.name default_region_label as seo_region_name %}
+    {% elif LANGUAGE_CODE == 'de' %}
+        {% firstof territory.name_de territory.localized_name as seo_country_name %}
+        {% firstof territory.region_de territory.region.name default_region_label as seo_region_name %}
+    {% else %}
+        {% firstof territory.localized_name as seo_country_name %}
+        {% firstof territory.region.name default_region_label as seo_region_name %}
+    {% endif %}
+    {% blocktrans with country_name=seo_country_name region_name=seo_region_name asvar fallback_meta_description %}Learn about the history, geography, and flag of {{ country_name }} located in {{ region_name }}.{% endblocktrans %}
+<meta name="description" content="{{ fallback_meta_description|truncatechars:160 }}">
+{% endif %}
+{% endblock %}
 
 {% block head %}
 <style>
@@ -41,18 +72,28 @@
 {% block content %}
 {% get_current_language as LANGUAGE_CODE %}
 <div class="container py-3">
+    
     <div class="territory-header">
         <div class="container">
             <div class="row align-items-center g-3">
                 <div class="col-md-8">
-                    <h1 class="display-6 mb-2">{{ territory.flag_emoji }} {{ territory.name_common }}</h1>
+                    <h1 class="display-6 mb-2">
+                        {{ territory.flag_emoji }} 
+                        {% if LANGUAGE_CODE == 'cs' and territory.name_cs %}
+                            {{ territory.name_cs }}
+                        {% elif LANGUAGE_CODE == 'de' and territory.name_de %}
+                            {{ territory.name_de }}
+                        {% else %}
+                            {{ territory.localized_name }}
+                        {% endif %}
+                    </h1>
                     <p class="mb-0">{{ territory.name_official }}</p>
                 </div>
                 <div class="col-md-4 text-center">
                     {% if territory.flag_svg %}
-                        <img src="{{ territory.flag_svg }}" alt="Flag of {{ territory.name_common }}" class="flag-preview" loading="lazy" decoding="async">
+                        <img src="{{ territory.flag_svg }}" alt="Flag of {{ territory.localized_name }}" class="flag-preview" loading="lazy" decoding="async">
                     {% elif territory.flag_png %}
-                        <img src="{{ territory.flag_png }}" alt="Flag of {{ territory.name_common }}" class="flag-preview" loading="lazy" decoding="async">
+                        <img src="{{ territory.flag_png }}" alt="Flag of {{ territory.localized_name }}" class="flag-preview" loading="lazy" decoding="async">
                     {% endif %}
                 </div>
             </div>
@@ -60,30 +101,33 @@
     </div>
 
     <div class="detail-card">
-        <h2 class="section-heading">{% trans "Territory and Sovereignty" %}</h2>
+        <h2 class="section-heading"><i class="bi bi-globe"></i> {% trans "Territory and Sovereignty" %}</h2>
         <div class="row g-3">
             <div class="col-md-6">
                 {% if owner_country %}
                 <div class="alert alert-info mb-2" role="alert">
                     <strong><i class="bi bi-flag"></i> {% trans "Dependency of" %}:</strong>
                     <a href="{% url 'country_detail' owner_country.cca3 %}" class="alert-link">
-                        {{ owner_country.flag_emoji }} {{ owner_country.name_common }}
+                        {{ owner_country.flag_emoji }} 
+                        {% if LANGUAGE_CODE == 'cs' and owner_country.name_cs %}{{ owner_country.name_cs }}
+                        {% elif LANGUAGE_CODE == 'de' and owner_country.name_de %}{{ owner_country.name_de }}
+                        {% else %}{{ owner_country.localized_name }}{% endif %}
                     </a>
                 </div>
                 {% else %}
-                <p class="mb-1"><strong>{% trans "Owner Country" %}:</strong> Not available</p>
+                <p class="mb-1"><strong>{% trans "Owner Country" %}:</strong> {% trans "Not available" %}</p>
                 {% endif %}
             </div>
             <div class="col-md-6">
                 <p class="mb-0"><strong>{% trans "Region" %}:</strong> 
-                    {% if LANGUAGE_CODE == 'cs' and main_flag.description.region_cs %}
-                        {{ main_flag.description.region_cs }}
-                    {% elif LANGUAGE_CODE == 'de' and main_flag.description.region_de %}
-                        {{ main_flag.description.region_de }}
+                    {% if LANGUAGE_CODE == 'cs' and territory.region_cs %}
+                        {{ territory.region_cs }}
+                    {% elif LANGUAGE_CODE == 'de' and territory.region_de %}
+                        {{ territory.region_de }}
                     {% elif territory.region %}
                         {{ territory.region.name }}
                     {% else %}
-                        Not available
+                        {% trans "Not available" %}
                     {% endif %}
                 </p>
             </div>
@@ -91,62 +135,150 @@
     </div>
 
     <div class="detail-card">
-        <h2 class="section-heading">{% trans "Basic Information" %}</h2>
+        <h2 class="section-heading"><i class="bi bi-info-circle"></i> {% trans "Basic Information" %}</h2>
+        
         <div class="row g-3">
             <div class="col-md-6">
-                <p class="mb-1"><strong>{% trans "Capital" %}:</strong> 
-                    {% if LANGUAGE_CODE == 'cs' and main_flag.description.capital_cs %}
-                        {{ main_flag.description.capital_cs }}
-                    {% elif LANGUAGE_CODE == 'de' and main_flag.description.capital_de %}
-                        {{ main_flag.description.capital_de }}
+                <p class="mb-2"><strong>{% trans "Capital" %}:</strong> 
+                    {% if LANGUAGE_CODE == 'cs' and territory.capital_cs %}
+                        {{ territory.capital_cs }}
+                    {% elif LANGUAGE_CODE == 'de' and territory.capital_de %}
+                        {{ territory.capital_de }}
+                    {% elif territory.capital %}
+                        {{ territory.capital }}
                     {% else %}
-                        {{ territory.capital|default:'Not available' }}
+                        {% trans "Not available" %}
                     {% endif %}
                 </p>
-                <p class="mb-0"><strong>{% trans "Population" %}:</strong> 
+                <p class="mb-2"><strong>{% trans "Population" %}:</strong> 
                     {% if territory.population %}
                         {{ territory.population|floatformat:0|intcomma }}
-                    {% elif main_flag.population %}
-                        {{ main_flag.population|floatformat:0|intcomma }}
                     {% else %}
-                        Not available
+                        {% trans "Not available" %}
                     {% endif %}
                 </p>
             </div>
             <div class="col-md-6">
-                <p class="mb-1"><strong>{% trans "Area" %}:</strong> 
+                <p class="mb-2"><strong>{% trans "Area" %}:</strong> 
                     {% if territory.area_km2 %}
                         {{ territory.area_km2|floatformat:0|intcomma }} km²
-                    {% elif territory.area %}
-                        {{ territory.area|floatformat:0|intcomma }} km²
-                    {% elif main_flag.area_km2 %}
-                        {{ main_flag.area_km2|floatformat:0|intcomma }} km²
                     {% else %}
-                        Not available
+                        {% trans "Not available" %}
                     {% endif %}
                 </p>
-                <p class="mb-0"><strong>{% trans "Subregion" %}:</strong> {{ territory.subregion|default:'Not available' }}</p>
+                <p class="mb-2"><strong>{% trans "Subregion" %}:</strong> 
+                    {% if LANGUAGE_CODE == 'cs' and territory.subregion_cs %}
+                        {{ territory.subregion_cs }}
+                    {% elif LANGUAGE_CODE == 'de' and territory.subregion_de %}
+                        {{ territory.subregion_de }}
+                    {% elif territory.subregion %}
+                        {{ territory.subregion }}
+                    {% else %}
+                        {% trans "Not available" %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <hr class="my-3 text-muted">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <p class="mb-2"><strong>{% trans "Currencies" %}:</strong> 
+                    {% if territory.currencies_display %}
+                        {{ territory.currencies_display }}
+                    {% else %}
+                        {% trans "Not available" %}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p class="mb-2"><strong>{% trans "Languages" %}:</strong> 
+                    {% if territory.languages_display %}
+                        {{ territory.languages_display }}
+                    {% else %}
+                        {% trans "Not available" %}
+                    {% endif %}
+                </p>
             </div>
         </div>
     </div>
 
-    {% if main_flag and main_flag.description %}
+    {% if territory.description or territory.description_cs or territory.description_de %}
     <div class="detail-card">
-        <h2 class="section-heading"><i class="bi bi-book"></i> {% trans "About" %} {{ territory.name_common }}</h2>
-        
-        {% with desc=main_flag.description %}
-            {% if LANGUAGE_CODE == 'en' and desc.en %}
-                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
-            {% elif LANGUAGE_CODE == 'cs' and desc.cs %}
-                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.cs }}</p>
-            {% elif LANGUAGE_CODE == 'de' and desc.de %}
-                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.de }}</p>
-            {% elif desc.en %}
-                <p style="line-height: 1.8; color: #2d3748; text-align: justify;">{{ desc.en }}</p>
+        <h2 class="section-heading"><i class="bi bi-book"></i>
+        {% if territory.status == 'territory' %}
+            {% trans "About territory" %}
+        {% else %}
+            {% trans "About country" %}
+        {% endif %}
+        </h2>
+        <p style="line-height: 1.8; color: #2d3748; text-align: justify;" class="mb-0">
+            {% if LANGUAGE_CODE == 'cs' and territory.description_cs %}
+                {{ territory.description_cs }}
+            {% elif LANGUAGE_CODE == 'de' and territory.description_de %}
+                {{ territory.description_de }}
+            {% elif territory.description %}
+                {{ territory.description }}
+            {% else %}
+                <span class="text-muted"><i>{% trans "Description is not yet available in your language." %}</i></span>
             {% endif %}
-        {% endwith %}
+        </p>
     </div>
     {% endif %}
+
+    <div class="detail-card">
+        <h2 class="section-heading"><i class="bi bi-upc-scan"></i> {% trans "Codes & Identifiers" %}</h2>
+        <div class="row g-3 text-center">
+            <div class="col-4">
+                <p class="mb-1 text-muted small">{% trans "ISO 3166-1 Alpha-2" %}</p>
+                <p class="mb-0 fw-bold text-primary">{{ territory.cca2 }}</p>
+            </div>
+            <div class="col-4">
+                <p class="mb-1 text-muted small">{% trans "ISO 3166-1 Alpha-3" %}</p>
+                <p class="mb-0 fw-bold text-primary">{{ territory.cca3 }}</p>
+            </div>
+            <div class="col-4">
+                <p class="mb-1 text-muted small">{% trans "Flag Emoji" %}</p>
+                <p class="mb-0 fs-4">{{ territory.flag_emoji }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if additional_flags %}
+    <div class="detail-card">
+        <h2 class="section-heading"><i class="bi bi-images"></i> {% trans "Additional Flags & Symbols" %}</h2>
+        <div class="row g-3 mt-1">
+            {% for flag in additional_flags %}
+            <div class="col-6 col-md-3 text-center">
+                <a href="{{ flag.get_absolute_url }}">
+                    <img src="{{ flag.flag_image }}" class="img-fluid border rounded mb-2 shadow-sm" alt="{{ flag.localized_name }}">
+                </a>
+                <p class="small text-muted mb-0">{{ flag.localized_name }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if page_obj.has_other_pages %}
+        <div class="mt-4">
+            <ul class="pagination justify-content-center mb-0">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-4 mb-5">
+        <a href="{% url 'territories' %}" class="btn btn-outline-secondary px-4 py-2">
+            <i class="bi bi-arrow-left"></i> {% trans "Back to Countries" %}
+        </a>
+    </div>
 
 </div>
 {% endblock %}

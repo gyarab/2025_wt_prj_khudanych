@@ -129,6 +129,33 @@ msgstr "Suverénní stát"
 msgid "Territory"
 msgstr "Území"
 
+msgid "About territory"
+msgstr "O území"
+
+msgid "About country"
+msgstr "O státu"
+
+msgid "Territory and Sovereignty"
+msgstr "Území a suverenita"
+
+msgid "Dependency of"
+msgstr "Závislé území státu"
+
+msgid "Not available"
+msgstr "Není k dispozici"
+
+msgid "Description is not yet available in your language."
+msgstr "Popis zatím není ve vašem jazyce k dispozici."
+
+msgid "Back to Countries"
+msgstr "Zpět na přehled zemí"
+
+msgid "Codes & Identifiers"
+msgstr "Kódy a identifikátory"
+
+msgid "Additional Flags & Symbols"
+msgstr "Další vlajky a symboly"
+
 msgid "Historical"
 msgstr "Historický"
 
@@ -258,6 +285,9 @@ msgstr "Území / Závislost"
 
 msgid "Territories & Dependencies"
 msgstr "Území a závislosti"
+
+msgid "Dependencies & Territories"
+msgstr "Závislá území"
 
 msgid "Global Leaderboards"
 msgstr "Světové žebříčky"
@@ -657,3 +687,15 @@ msgstr "&copy; 2026 Just Enough Flags."
 
 msgid "Search territories..."
 msgstr "Hledat území..."
+
+msgid "Partners"
+msgstr "Partneři"
+
+msgid "Bang! Online"
+msgstr "Bang! Online"
+
+msgid "Play the legendary wild west card game directly in your browser."
+msgstr "Zahrajte si legendární karetní hru z divokého západu přímo ve svém prohlížeči."
+
+msgid "Partner"
+msgstr "Partner"

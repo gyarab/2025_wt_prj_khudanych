@@ -96,18 +96,24 @@
     <div class="passport-header mb-4">
         <h1 class="h3 mb-1">{{ flag.localized_name }}</h1>
         <p class="mb-0">{% trans "Digital Passport" %}</p>
-        {% if flag.category == 'dependency' and flag.country %}
+        {% if flag.category == 'dependency' and linked_country %}
         <div class="mt-3">
             <span class="badge rounded-pill text-bg-light border text-dark px-3 py-2">
-                {% if flag.country.status == 'territory' %}
-                    <a href="{% url 'territory_detail' flag.country.cca3 %}" class="text-decoration-none text-dark">
-                        {% trans "Dependency of" %}: {{ flag.country.name_common }}
+                {% if linked_country.status == 'territory' %}
+                    <a href="{% url 'territory_detail' linked_country.cca3 %}" class="text-decoration-none text-dark">
+                        {% trans "Dependency of" %}: {{ linked_country.localized_name }}
                     </a>
                 {% else %}
-                    <a href="{% url 'country_detail' flag.country.cca3 %}" class="text-decoration-none text-dark">
-                        {% trans "Dependency of" %}: {{ flag.country.name_common }}
+                    <a href="{% url 'country_detail' linked_country.cca3 %}" class="text-decoration-none text-dark">
+                        {% trans "Dependency of" %}: {{ linked_country.localized_name }}
                     </a>
                 {% endif %}
+            </span>
+        </div>
+        {% elif flag.category == 'dependency' and not linked_country %}
+        <div class="mt-3">
+            <span class="badge rounded-pill text-bg-light border text-dark px-3 py-2">
+                {% trans "No linked country record" %}
             </span>
         </div>
         {% endif %}
@@ -246,6 +252,17 @@
         </div>
     </div>
 </div>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    "name": "{{ flag.localized_name|escapejs }}",
+    "description": "{% if localized_description %}{{ localized_description|striptags|escapejs }}{% else %}{% blocktrans with flag_name=flag.localized_name %}Official details and symbolism of the flag {{ flag_name }}.{% endblocktrans %}{% endif %}",
+    "contentUrl": "{% if flag.image_file %}{{ request.scheme }}://{{ request.get_host }}{{ flag.image_file.url }}{% else %}{{ flag.flag_image }}{% endif %}",
+    "url": "{{ request.build_absolute_uri }}"
+}
+</script>
 {% endblock %}
 
 {% block scripts %}

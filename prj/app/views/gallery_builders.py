@@ -39,7 +39,7 @@ def collect_gallery_querysets(category, search_query=''):
         country_filter = Q(status__in=allowed_statuses)
 
         if normalized_search_query:
-            country_filter &= build_country_search_filter(normalized_search_query)
+            country_filter &= build_country_search_filter(search_query)
 
         country_qs = Country.objects.filter(country_filter).filter(
             country_detail_quality_filter()
@@ -53,7 +53,7 @@ def collect_gallery_querysets(category, search_query=''):
             fc_filter &= Q(category=category)
         
         if normalized_search_query:
-            fc_filter &= build_flag_name_search_filter(normalized_search_query)
+            fc_filter &= build_flag_name_search_filter(search_query)
 
         flag_qs = FlagCollection.objects.filter(fc_filter).only(
             'name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug'
