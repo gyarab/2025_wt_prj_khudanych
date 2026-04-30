@@ -1,24 +1,21 @@
 Just Enough Flags
+
 Copyright (c) 2026 Serhii Khudanych
 All Rights Reserved.
 
-Source-Available Notice
-
+SOURCE-AVAILABLE NOTICE
 This repository is made publicly visible solely for educational, portfolio,
 and code-review purposes.
 
-No Open Source License Grant
-
+NO OPEN SOURCE LICENSE GRANT
 No permission or license is granted to use, copy, modify, merge, publish,
 distribute, sublicense, sell, deploy, host, or otherwise exploit this software,
 in whole or in part, except as expressly stated below.
 
-Permitted Use
+PERMITTED USE
+- You may view the source code for personal, non-commercial evaluation.
 
-You may view the source code for personal, non-commercial evaluation.
-
-Prohibited Without Prior Written Permission
-
+PROHIBITED WITHOUT PRIOR WRITTEN PERMISSION
 Without prior written permission from the copyright holder (Serhii Khudanych),
 you may not:
 
@@ -28,20 +25,17 @@ you may not:
    or private service.
 4. Remove or alter copyright and ownership notices.
 
-Commercial Rights Reservation
-
+COMMERCIAL RIGHTS RESERVATION
 All commercial rights are exclusively reserved by Serhii Khudanych, including
 but not limited to monetization via advertising, subscriptions, freemium,
 licensing, and paid hosting.
 
-Third-Party Components
-
+THIRD-PARTY COMPONENTS
 This notice applies only to original project code and materials owned by the
 copyright holder. Third-party dependencies, libraries, data, fonts, and other
 assets are subject to their own licenses and terms.
 See THIRD_PARTY_NOTICES.md.
 
-Contact
-
+CONTACT
 For licensing, commercial use, redistribution, or hosting permissions, contact:
 Serhii Khudanych.
