@@ -1,106 +1,136 @@
-# 🌍 Just Enough Flags
+# Just Enough Flags
 
-[![Django](https://img.shields.io/badge/Framework-Django-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
-[![Bootstrap](https://img.shields.io/badge/Style-Bootstrap_5-7952B3?logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
-[![Wikidata](https://img.shields.io/badge/Data-Wikidata-990000?logo=wikidata&logoColor=white)](https://www.wikidata.org/)
+[![Django](https://img.shields.io/badge/Django-5.x-0C4B33?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Data](https://img.shields.io/badge/Data-Wikidata%20%2B%20Wikimedia%20Commons-006699)](https://www.wikidata.org/)
+[![License: Source-Available](https://img.shields.io/badge/License-Source--Available-red.svg)](LICENSE)
 
-A comprehensive, database-driven geography and vexillology web application. Explore **4,600+ flags** from sovereign states, historical entities, international organizations, territories, and cities — all synchronized live from Wikidata.
+A modern Django web app for geography and vexillology.
+It combines country metadata with a large flag catalog and searchable galleries across countries, territories, historical entities, and international organizations.
 
----
+## Why This Project
 
-## 📖 Odborný článek (Technical Overview)
+- Large and diverse flag dataset with practical browsing views
+- Real ETL workflow from Wikidata SPARQL
+- Local seed pipeline for base country data
+- Multilingual UI foundations (EN, CS, DE)
+- Authentication-ready architecture (including Google provider via Allauth)
 
-Projekt **Just Enough Flags** představuje moderní webovou aplikaci sloužící jako komplexní databáze světových států a jejich vlajek. Z pohledu vexilologie a geografie platforma agreguje klíčová data (hlavní města, populaci, rozlohu, regiony) a efektivně je prezentuje prostřednictvím striktního oddělení přístupových práv.
-
-### 👥 Uživatelské Role a Funkcionalita
-
-*   **Anonymní návštěvník:** Prohlížení veřejného obsahu, vyhledávání v galerii a zobrazení detailů zemí bez nutnosti registrace.
-*   **Registrovaný uživatel:** Autentizace přes standardní účet nebo **Google OAuth**. Přístup k prvkům **gamifikace** – uživatelé sbírají "hvězdičky" za prozkoumané vlajky a mohou se zapojit do komunity skrze hodnocení a komentáře.
-*   **Administrátor:** Plná správa katalogu, demografických statistik a uživatelských účtů prostřednictvím dedikovaného rozhraní.
-
----
-
-## 🛠️ Tech Stack
-
-- **Backend:** Python 3.x, Django 5.x
-- **Frontend:** HTML5, CSS3, Bootstrap 5, JavaScript
-- **Database:** PostgreSQL / SQLite
-- **Authentication:** Django Allauth (Social Login via Google)
-- **Data Source:** Wikidata SPARQL API
-
----
-
-## ✨ Key Features
-
-| Feature | Description |
-|:---|:---|
-| 🏳️ **Massive Gallery** | 4,600+ flags with high-quality SVG/PNG previews. |
-| 📜 **Historical Context** | Flags of former states (e.g., USSR, Ottoman Empire) and 900+ more. |
-| 🤝 **International Orgs** | EU, NATO, UN, and other global entities. |
-| 🎮 **Gamification** | Level up your profile by exploring new flags and regions. |
-| 🔍 **Advanced Search** | Accent-insensitive, smart search logic for easy discovery. |
-| 📱 **Fully Responsive** | Optimized for mobile, tablet, and desktop viewing. |
-
----
-
-## 📊 System Design
-
-### User Flow & Wireframes
-The application is designed with a focus on intuitive navigation and clear user journeys.
+## System Visuals
 
 | User Flow | Wireframes |
 | :---: | :---: |
 | ![User Flow](docs/assets/user-flow.jpg) | ![Wireframes](docs/assets/wireframes.jpg) |
 
-### Database Architecture (ERD)
 ![Entity-relationship diagram](docs/assets/FixedER.png)
 
----
+## Tech Stack
 
-## 🚀 Quick Start
+- Backend: Python, Django
+- Frontend: Django templates, Bootstrap 5, Bootstrap Icons, JavaScript
+- Styling/Font: Poppins (Google Fonts)
+- Database: PostgreSQL (project default in settings)
+- Data ingestion: Wikidata SPARQL + custom management commands
 
-### 1. Prerequisites
-Ensure you have Python 3.10+ and `pip` installed.
+## Quick Start
 
-### 2. Installation & Setup
+### 1. Clone
+
 ```bash
-# Clone the repository
-git clone https://github.com/your-repo/2025_wt_prj_khudanych.git
+git clone https://github.com/gyarab/2025_wt_prj_khudanych.git
 cd 2025_wt_prj_khudanych
+```
 
-# Set up virtual environment
-python -m venv venv
-# Windows:
-.\venv\Scripts\activate
-# Unix/macOS:
-source venv/bin/activate
+### 2. Environment
 
-# Install dependencies
-pip install -r requirements.txt
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
-# Database setup
+Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r prj/requirements.txt
+```
+
+Optional dev dependencies:
+
+```bash
+pip install -r prj/requirements-dev.txt
+```
+
+### 4. Configure environment variables
+
+Create `prj/.env` with at least:
+
+```env
+DJANGO_ENV=development
+DJANGO_SECRET_KEY=replace_with_your_secret
+DJANGO_DEBUG=1
+
+DB_NAME=your_db
+DB_USER=your_user
+DB_PASSWORD=your_password
+DB_HOST=127.0.0.1
+DB_PORT=5432
+```
+
+### 5. Migrate and run
+
+```bash
 cd prj
 python manage.py migrate
-```
-
-### 3. Data Population
-The project includes custom management commands to fetch data directly from Wikidata.
-```bash
-# Phase 1: 195 sovereign states + major territories
-python manage.py populate_wikidata
-
-# Phase 2: Historical, international, and extra flags
-python manage.py populate_extra
-```
-
-### 4. Run Development Server
-```bash
 python manage.py runserver
 ```
-Visit `http://127.0.0.1:8000` to see the application in action.
 
----
+Open: http://127.0.0.1:8000
 
-**Autor:** Serhii Khudanych  
-**Třída:** 2.F  
-**License:** [MIT](LICENSE)
+## Data Pipeline (Current Commands)
+
+```bash
+cd prj
+
+# Base countries from local countries.json (mledoze/countries source)
+python manage.py setup_base_countries
+
+# Fetch and upsert flags and metadata from Wikidata / Wikimedia Commons
+python manage.py fetch_wikidata_flags --limit-per-category 3000
+
+# Sync selected values and rebuild normalized search text
+python manage.py sync_countries
+python manage.py backfill_flag_search_names
+```
+
+## Data Source and Asset Provenance
+
+- Primary flags/metadata pipeline: Wikidata + Wikimedia Commons file paths
+- Base country seed: local `countries.json` sourced from `mledoze/countries`
+- Additional country flag URLs for base seed: `flagcdn.com`
+
+Important: third-party data and media are not re-licensed by the project license.
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution and compliance notes.
+
+## License
+
+This repository is publicly visible solely for educational, portfolio, and code-review purposes.
+The source code is not open source and no license grant is provided beyond the permissions stated in [LICENSE](LICENSE).
+
+Permitted use is limited to personal, non-commercial evaluation.
+Without prior written permission from Serhii Khudanych, you may not use, copy, modify, merge, publish, distribute, sublicense, sell, deploy, host, or otherwise exploit this software, in whole or in part.
+
+Serhii Khudanych retains all commercial rights, including monetization via advertising, subscriptions, freemium, licensing, and paid hosting.
+
+- License text: [LICENSE](LICENSE)
+- Third-party notices: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+
+## Author
+
+Serhii Khudanych  
+Class: 2.F
