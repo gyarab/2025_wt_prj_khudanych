@@ -63,6 +63,7 @@ def territories_list(request):
         'page_obj': page_obj,
         'search_query': search_query,
         'search_api_url': reverse('territories_search_api'),
+        'search_status': 'territory',
         'search_placeholder': _('Search territories...'),
         'page_title': _('Territories & Dependencies'),
         'compact_territory_cards': True,

@@ -7,6 +7,7 @@ from django.views.generic import RedirectView
 from django.contrib.sitemaps.views import sitemap
 from app import views as app_views
 from app.sitemaps import CountrySitemap, FlagSitemap, StaticViewSitemap
+from app.apis import api
 from django.views.static import serve
 
 sitemaps = {
@@ -17,6 +18,7 @@ sitemaps = {
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', api.urls),
     path('favicon.ico', RedirectView.as_view(url='/static/app/logo.svg')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', app_views.robots_txt),

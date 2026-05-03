@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n humanize %}
+{% load i18n humanize static %}
 
 {% block title %}{% trans "Countries" %} - {% trans "Just Enough Flags" %}{% endblock %}
 
@@ -18,6 +18,12 @@
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         margin-bottom: 2rem;
+    }
+
+    .search-helper {
+        margin-top: 0.5rem;
+        color: #718096;
+        font-size: 0.9rem;
     }
 
     .filter-btn {
@@ -136,10 +142,13 @@
 
 <div class="container mb-5">
     <div class="search-section">
-        <form method="get" action="" id="countries-search-form">
+        <form method="get" action="" id="countries-search-form" data-search-api="/api/countries/search/" data-search-status="{{ search_status|default:'' }}" data-min-query-length="2">
             <div class="row g-3 align-items-end">
                 <div class="{% if regions %}col-md-8{% else %}col-12{% endif %}">
                     {% include 'includes/_search_bar.html' with search_input_id='search' search_query_name='q' search_placeholder=search_placeholder|default:default_search_placeholder search_query=search_query|default:'' search_input_class='form-control' show_search_button=True %}
+                    <div class="search-helper">
+                        {% trans "Type at least 2 letters to search." %}
+                    </div>
                 </div>
                 {% if regions %}
                 <div class="col-md-4">
@@ -149,7 +158,7 @@
                     <select class="form-select" id="region" name="region">
                         <option value="">{% trans "All Regions" %}</option>
                         {% for region in regions %}
-                            <option value="{{ region.slug }}" {% if selected_region == region.slug %}selected{% endif %}>
+                            <option value="{{ region.slug }}" data-region-id="{{ region.id }}" {% if selected_region == region.slug %}selected{% endif %}>
                                 {{ region.name }}
                             </option>
                         {% endfor %}
@@ -162,7 +171,7 @@
         </form>
     </div>
 
-    <div class="row g-4 countries-grid" id="countries-grid">
+    <div class="row g-4 countries-grid" id="countries-grid" data-empty-message="{% trans "No countries found matching your search." %}" data-flag-label="{% trans "Flag of" %}" data-compact-cards="{% if compact_territory_cards %}1{% else %}0{% endif %}">
         {% for item in page_obj %}
         <div class="col-6 col-md-4 col-lg-3 country-card-col">
             {% if item.link %}
@@ -234,165 +243,14 @@
             {% endif %}
         </ul>
     </nav>
-    <p class="text-center text-muted small">
+    <p class="text-center text-muted small" data-pagination-info>
         {% blocktrans with page=page_obj.number total_pages=page_obj.paginator.num_pages %}Page {{ page }} of {{ total_pages }}{% endblocktrans %}
     </p>
     {% endif %}
 </div>
 
-<script>
-(function() {
-    const form = document.getElementById('countries-search-form');
-    const searchInput = document.getElementById('search');
-    const regionSelect = document.getElementById('region');
-    const countriesGrid = document.getElementById('countries-grid');
-    const paginationBlock = document.querySelector('nav[aria-label="Countries pagination"]');
-    const searchApiUrl = "{{ search_api_url }}";
+{% endblock %}
 
-    if (!form || !searchInput || !countriesGrid) {
-        return;
-    }
-
-    // Store initial page cards
-    const initialCards = Array.from(countriesGrid.querySelectorAll('.country-card-col')).map(card => card.cloneNode(true));
-    
-    // Prevent form submission
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
-    });
-    
-    function escapeHtml(value) {
-        return String(value || '').replace(/[&<>'\"]/g, function(ch) {
-            return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[ch];
-        });
-    }
-    
-    function renderCountries(items) {
-        if (!items.length) {
-            countriesGrid.innerHTML = '<div class="col-12"><p class="text-center text-muted py-5">{% trans "No countries found matching your search." %}</p></div>';
-            return;
-        }
-        
-        countriesGrid.innerHTML = items.map(function(item) {
-            const name = escapeHtml(item.localized_name || item.name);
-            const capital = escapeHtml(item.capital || '');
-            const img = item.img ? escapeHtml(item.img) : '';
-            const emoji = escapeHtml(item.emoji || '🏳️');
-            const link = item.link ? escapeHtml(item.link) : '';
-            const cardInner = `
-                    <div class="country-grid-card d-flex flex-column m-0 h-100"
-                         data-flag-detail-link="${link}"
-                         data-flag-image-src="${img}">
-                        <div class="flex-shrink-0">
-                            ${img
-                                ? `<img src="${img}" alt="{% trans 'Flag of' %} ${name}" class="flag-thumbnail flex-shrink-0" loading="lazy" decoding="async">`
-                                : `<span class="flag-thumbnail flex-shrink-0 d-flex align-items-center justify-content-center" style="font-size: 4rem;">${emoji}</span>`}
-                        </div>
-                        <div class="country-card-body flex-grow-1 mt-auto{% if compact_territory_cards %} compact-territory{% endif %}">
-                            <h3 class="country-title">${name}</h3>
-                            ${capital ? `<div class="info-badge"><i class="bi bi-building"></i> ${capital}</div>` : ''}
-                        </div>
-                    </div>
-            `;
-            
-            return `
-                <div class="col-6 col-md-4 col-lg-3 country-card-col">
-                    ${link ? `<a href="${link}" class="text-decoration-none d-block h-100">${cardInner}</a>` : `<div class="text-decoration-none d-block h-100">${cardInner}</div>`}
-                </div>
-            `;
-        }).join('');
-
-        if (window.FlagImageCache && typeof window.FlagImageCache.scan === 'function') {
-            window.FlagImageCache.scan(countriesGrid);
-        }
-    }
-    
-    function restoreInitialPage() {
-        countriesGrid.innerHTML = '';
-        initialCards.forEach(card => countriesGrid.appendChild(card.cloneNode(true)));
-        if (paginationBlock) {
-            paginationBlock.classList.remove('d-none');
-        }
-    }
-    
-    let requestId = 0;
-    let activeController = null;
-    
-    async function applySearch() {
-        const query = searchInput.value.trim();
-        
-        if (query.length < 1) {
-            if (activeController) {
-                activeController.abort();
-                activeController = null;
-            }
-            restoreInitialPage();
-            return;
-        }
-        
-        // Hide pagination during live search
-        if (paginationBlock) {
-            paginationBlock.classList.add('d-none');
-        }
-        
-        const currentRequest = ++requestId;
-        const region = regionSelect.value;
-        const params = new URLSearchParams({ q: query });
-        if (region) {
-            params.append('region', region);
-        }
-        
-        if (activeController) {
-            activeController.abort();
-        }
-        activeController = new AbortController();
-        
-        try {
-            const response = await fetch(`${searchApiUrl}?${params.toString()}`, {
-                signal: activeController.signal,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            });
-            
-            if (!response.ok || currentRequest !== requestId) {
-                return;
-            }
-            
-            const data = await response.json();
-            if (currentRequest !== requestId) {
-                return;
-            }
-            
-            renderCountries(data.items || []);
-        } catch (error) {
-            // Ignore aborted requests
-            if (error.name !== 'AbortError') {
-                console.error('Search error:', error);
-            }
-        }
-    }
-    
-    // Debounced search on input
-    let timer = null;
-    searchInput.addEventListener('input', function() {
-        if (timer) {
-            clearTimeout(timer);
-        }
-        timer = setTimeout(function() {
-            applySearch();
-        }, 220);
-    });
-    
-    // Trigger search on region change
-    regionSelect.addEventListener('change', function() {
-        if (searchInput.value.trim().length >= 1) {
-            applySearch();
-        }
-    });
-    
-    // Apply search if there's already a query
-    if (searchInput.value.trim().length >= 1) {
-        applySearch();
-    }
-})();
-</script>
+{% block scripts %}
+<script src="{% static 'app/js/search-enhanced.js' %}" defer></script>
 {% endblock %}

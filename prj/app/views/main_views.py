@@ -189,6 +189,7 @@ def countries_list(request):
         'selected_region': region_filter,
         'search_query': search_query,
         'search_api_url': reverse('countries_search_api'),
+        'search_status': 'sovereign',
         'search_placeholder': _('Search countries...'),
         'page_title': _('Sovereign Countries'),
     }

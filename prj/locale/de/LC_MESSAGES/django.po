@@ -198,6 +198,10 @@ msgstr "Internationale Organisation"
 msgid "Region / Subdivision"
 msgstr "Region / Unterteilung"
 
+# Templates - Search helper
+msgid "Type at least 2 letters to search."
+msgstr "Geben Sie mindestens 2 Buchstaben ein, um zu suchen."
+
 msgid "Category"
 msgstr "Kategorie"
 
