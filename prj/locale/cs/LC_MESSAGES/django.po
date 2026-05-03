@@ -196,6 +196,10 @@ msgstr "Mezinárodní organizace"
 msgid "Region / Subdivision"
 msgstr "Region / Subdivize"
 
+# Templates - Search helper
+msgid "Type at least 2 letters to search."
+msgstr "Zadejte alespoň 2 písmena pro vyhledávání."
+
 msgid "Category"
 msgstr "Kategorie"
 
