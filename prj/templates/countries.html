@@ -142,13 +142,11 @@
 
 <div class="container mb-5">
     <div class="search-section">
-        <form method="get" action="" id="countries-search-form" data-search-api="/api/countries/search/" data-search-status="{{ search_status|default:'' }}" data-min-query-length="2">
+        <form method="get" action="" id="countries-search-form" data-search-status="{{ search_status|default:'' }}" data-min-query-length="2">
             <div class="row g-3 align-items-end">
                 <div class="{% if regions %}col-md-8{% else %}col-12{% endif %}">
-                    {% include 'includes/_search_bar.html' with search_input_id='search' search_query_name='q' search_placeholder=search_placeholder|default:default_search_placeholder search_query=search_query|default:'' search_input_class='form-control' show_search_button=True %}
-                    <div class="search-helper">
-                        {% trans "Type at least 2 letters to search." %}
-                    </div>
+                    {% trans "Search countries..." as search_label_text %}
+                    {% include 'includes/_search_bar.html' with search_label=search_label_text search_label_icon="bi bi-search" search_input_id='search' search_query_name='q' search_placeholder=search_placeholder|default:default_search_placeholder search_query=search_query|default:'' search_input_class='form-control' show_search_button=True search_api_url=search_api_url search_mode='grid' search_grid_id='countries-grid' search_template='countries' search_min_length=2 search_status=search_status %}
                 </div>
                 {% if regions %}
                 <div class="col-md-4">
@@ -168,10 +166,13 @@
                     <input type="hidden" id="region" name="region" value="{{ selected_region|default:'' }}">
                 {% endif %}
             </div>
+            <div class="search-helper">
+                {% trans "Type at least 2 letters to search." %}
+            </div>
         </form>
     </div>
 
-    <div class="row g-4 countries-grid" id="countries-grid" data-empty-message="{% trans "No countries found matching your search." %}" data-flag-label="{% trans "Flag of" %}" data-compact-cards="{% if compact_territory_cards %}1{% else %}0{% endif %}">
+    <div class="row g-4 countries-grid" id="countries-grid" data-empty-message="{% trans "No countries found matching your search." %}" data-flag-label="{% trans "Flag of" %}" data-fallback-emoji="🏳️" data-compact-cards="{% if compact_territory_cards %}1{% else %}0{% endif %}">
         {% for item in page_obj %}
         <div class="col-6 col-md-4 col-lg-3 country-card-col">
             {% if item.link %}
@@ -214,7 +215,7 @@
     </div>
 
     {% if page_obj.has_other_pages %}
-    <nav class="mt-4" aria-label="Countries pagination">
+    <nav class="mt-4" aria-label="Countries pagination" data-pagination-block>
         <ul class="pagination justify-content-center flex-wrap">
             {% if page_obj.has_previous %}
             <li class="page-item">

@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpRequest
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse
+from django.utils import translation
 from ninja import NinjaAPI, Query
 from ninja.errors import HttpError
 
@@ -194,6 +195,7 @@ def search_countries(
     limit: int = Query(50, ge=1, le=200),
     status: Optional[str] = Query(None),
     region: Optional[int] = Query(None),
+    lang: Optional[str] = Query(None),
 ):
     """
     Search countries by name.
@@ -203,7 +205,11 @@ def search_countries(
     - limit: Max results to return (default 50, max 200)
     - status: Filter by status ('sovereign', 'territory', 'historical')
     - region: Filter by region ID
+    - lang: Optional language code for localization
     """
+    if lang:
+        translation.activate(lang)
+        
     if len(q) < 1:
         return SearchResponseSchema(items=[], total=0, truncated=False)
     
@@ -292,6 +298,83 @@ def get_country_detail(request: HttpRequest, cca3: str):
     
     # Add nested flags to serialization
     return _serialize_country_detail(country, list(flags))
+
+
+# ==================== FLAG ENDPOINTS ====================
+
+@api.get(
+    '/flags/search/',
+    response=SearchResponseSchema,
+    tags=['Flags'],
+    summary='Search flags',
+    description='Search for flags in the collection by name'
+)
+def search_flags(
+    request: HttpRequest,
+    q: str = Query(..., min_length=1, max_length=200),
+    limit: int = Query(50, ge=1, le=200),
+    category: Optional[str] = Query(None),
+    lang: Optional[str] = Query(None),
+):
+    """
+    Search flag collection by name.
+    
+    Query parameters:
+    - q: Search query (required, min 1 char)
+    - limit: Max results to return (default 50, max 200)
+    - category: Filter by category (use 'all' for no filter)
+    - lang: Optional language code for localization
+    """
+    if lang:
+        translation.activate(lang)
+        
+    if len(q) < 1:
+        return SearchResponseSchema(items=[], total=0, truncated=False)
+    
+    # Simple search for now, matching country search style
+    from django.db.models import Q
+    qs = FlagCollection.objects.filter(
+        Q(name__icontains=q) | Q(search_name__icontains=q) | Q(name_cs__icontains=q) | Q(name_de__icontains=q),
+        is_public=True
+    ).only('name', 'name_cs', 'name_de', 'flag_image', 'category', 'slug', 'country', 'wikidata_id')
+    
+    if category and category != 'all':
+        qs = qs.filter(category=category)
+    
+    count = qs.count()
+    
+    # Sort by relevance: name starts with q, then name contains q
+    q_lower = q.lower()
+    results = list(qs[:limit * 4])  # Fetch more to ensure accurate ranking
+    
+    def get_rank(f):
+        names_to_check = [n.lower() for n in [f.name, getattr(f, 'search_name', ''), getattr(f, 'name_cs', ''), getattr(f, 'name_de', '')] if n]
+        
+        if any(n == q_lower for n in names_to_check):
+            return 100
+        if any(n.startswith(q_lower) for n in names_to_check):
+            return 50
+        return 10
+        
+    results.sort(key=get_rank, reverse=True)
+    results = results[:limit]
+    
+    items = []
+    for flag in results:
+        items.append({
+            'name': flag.name,
+            'localized_name': flag.localized_name,
+            'img': flag.flag_image,
+            'emoji': '', # FlagCollection doesn't have emoji field
+            'link': flag.get_smart_url(),
+            'category': flag.category,
+        })
+    
+    return SearchResponseSchema(
+        items=items,
+        total=count,
+        truncated=count > limit,
+    )
 
 
 # ==================== ADMIN ENDPOINTS (Protected) ====================

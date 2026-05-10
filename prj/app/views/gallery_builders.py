@@ -90,6 +90,7 @@ def flags_gallery(request):
             link = reverse('country_detail', kwargs={'cca3': c.cca3}) if c.status != 'territory' else reverse('territory_detail', kwargs={'cca3': c.cca3})
             items_to_display.append({
                 'name': c.name_common,
+                'localized_name': c.localized_name,
                 'img': c.flag_png,
                 'emoji': c.flag_emoji,
                 'link': link,

@@ -19,16 +19,38 @@ from .eligibility import is_country_detail_eligible, is_territory_detail_eligibl
 from .text_utils import normalize_query
 
 
+def _get_page_params(request, default_size=60, max_size=200):
+    try:
+        page = int(request.GET.get('page', 1))
+    except (TypeError, ValueError):
+        page = 1
+    if page < 1:
+        page = 1
+
+    try:
+        page_size = int(request.GET.get('page_size', default_size))
+    except (TypeError, ValueError):
+        page_size = default_size
+    if page_size < 1:
+        page_size = default_size
+    if page_size > max_size:
+        page_size = max_size
+
+    return page, page_size
+
+
 def flags_search_api(request):
     """Global gallery search endpoint used by instant client-side search."""
     category = request.GET.get('category', 'all')
     search_query = (request.GET.get('q') or '').strip()
     normalized_search_query = normalize_query(search_query)
 
+    page, page_size = _get_page_params(request)
+
     if len(search_query) < 1:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
 
-    max_items = 200
+    max_items = page * page_size
     items = []
 
     show_countries = category in ('all', 'country', 'dependency', 'historical')
@@ -102,10 +124,15 @@ def flags_search_api(request):
                 break
 
     total = len(items)
+    start = (page - 1) * page_size
+    end = start + page_size
+    paged_items = items[start:end] if start < total else []
 
     return JsonResponse({
-        'items': items,
+        'items': paged_items,
         'total': total,
+        'page': page,
+        'page_size': page_size,
         'truncated': total >= max_items,
     })
 
@@ -238,10 +265,12 @@ def historical_search_api(request):
     search_query = (request.GET.get('q') or '').strip()
     normalized_search_query = normalize_query(search_query)
 
+    page, page_size = _get_page_params(request)
+
     if len(search_query) < 1:
         return JsonResponse({'items': [], 'total': 0, 'truncated': False})
 
-    max_items = 200
+    max_items = page * page_size
     items = []
 
     country_qs = Country.objects.filter(status='historical').filter(
@@ -289,8 +318,14 @@ def historical_search_api(request):
             })
 
     total = len(items)
+    start = (page - 1) * page_size
+    end = start + page_size
+    paged_items = items[start:end] if start < total else []
+
     return JsonResponse({
-        'items': items,
+        'items': paged_items,
         'total': total,
+        'page': page,
+        'page_size': page_size,
         'truncated': total >= max_items,
     })

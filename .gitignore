@@ -36,6 +36,7 @@ db.sqlite3
 staticfiles/
 media/
 prj/media/
+data.json
 
 # --- i18n compiled translations ---
 *.mo

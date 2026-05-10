@@ -13,6 +13,15 @@
         placeholder="{{ search_placeholder|default:'' }}"
         value="{{ search_query|default:'' }}"
         autocomplete="off"
+        {% if search_api_url %}data-api-url="{{ search_api_url }}"{% endif %}
+        {% if search_mode %}data-search-mode="{{ search_mode }}"{% endif %}
+        {% if search_grid_id %}data-grid-id="{{ search_grid_id }}"{% endif %}
+        {% if search_template %}data-search-template="{{ search_template }}"{% endif %}
+        {% if search_card_type %}data-card-type="{{ search_card_type }}"{% endif %}
+        {% if search_page_size %}data-page-size="{{ search_page_size }}"{% endif %}
+        {% if search_min_length %}data-min-length="{{ search_min_length }}"{% endif %}
+        {% if search_status %}data-search-status="{{ search_status }}"{% endif %}
+        {% if search_category %}data-search-category="{{ search_category }}"{% endif %}
     >
     {% if show_search_button %}
     <button class="btn btn-outline-secondary" type="submit">

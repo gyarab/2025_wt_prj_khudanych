@@ -62,7 +62,7 @@ def territories_list(request):
         'countries': page_obj,
         'page_obj': page_obj,
         'search_query': search_query,
-        'search_api_url': reverse('territories_search_api'),
+        'search_api_url': '/api/countries/search/',
         'search_status': 'territory',
         'search_placeholder': _('Search territories...'),
         'page_title': _('Territories & Dependencies'),
