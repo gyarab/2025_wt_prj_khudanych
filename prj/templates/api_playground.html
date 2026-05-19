@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}API Playground - {% trans "Just Enough Flags" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5"><i class="bi bi-terminal"></i> API Playground</h1>
+            <p class="lead text-muted">Testování asynchronního fetch() volání proti lokálnímu Django-Ninja API.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Vyhledat stát</h5>
+                    <div class="mb-3">
+                        <label for="searchInput" class="form-label">Název (např. ger, cze)</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Zadejte název...">
+                    </div>
+                    <button id="fetchBtn" class="btn btn-primary w-100">
+                        <i class="bi bi-cloud-download"></i> Odeslat Fetch Request
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-4" id="resultUI">
+                </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm h-100 bg-dark text-light">
+                <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                    <span class="font-monospace text-success" id="requestUrl">Čekám na požadavek...</span>
+                    <span class="badge bg-secondary" id="responseStatus">Status: N/A</span>
+                </div>
+                <div class="card-body overflow-auto" style="max-height: 500px;">
+                    <pre><code id="jsonOutput" class="text-light">Zatím žádná data...</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const fetchBtn = document.getElementById('fetchBtn');
+        const searchInput = document.getElementById('searchInput');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const resultUI = document.getElementById('resultUI');
+        const requestUrlDisplay = document.getElementById('requestUrl');
+        const responseStatusDisplay = document.getElementById('responseStatus');
+
+        fetchBtn.addEventListener('click', function() {
+            const query = searchInput.value.trim() || 'a'; // Fallback na 'a', pokud je prázdné
+            const url = `/api/countries/search/?q=${encodeURIComponent(query)}&limit=5`;
+            
+            // UI Update před requestem
+            fetchBtn.disabled = true;
+            fetchBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Načítám...';
+            requestUrlDisplay.textContent = `GET ${url}`;
+            responseStatusDisplay.textContent = 'Status: Pending';
+            responseStatusDisplay.className = 'badge bg-warning text-dark';
+            jsonOutput.textContent = 'Čekám na vyřešení Promise...';
+            resultUI.innerHTML = '';
+
+            // Asynchronní volání API
+            fetch(url)
+                .then(response => {
+                    // První Promise: reprezentuje přijetí HTTP hlaviček
+                    responseStatusDisplay.textContent = `Status: ${response.status} ${response.statusText}`;
+                    responseStatusDisplay.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    // response.json() vrací druhou Promise, která se vyřeší, až se stáhne a naparsuje celé tělo (body)
+                    return response.json(); 
+                })
+                .then(data => {
+                    // Zde je druhá Promise vyřešena, máme k dispozici surový JS objekt
+                    
+                    // 1. Zobrazení surového JSONu (krásně formátovaného)
+                    jsonOutput.textContent = JSON.stringify(data, null, 2);
+
+                    // 2. Zpracování a vizualizace dat (DOM manipulace)
+                    if (data.items && data.items.length > 0) {
+                        let html = '<h5 class="mb-3">Nalezené státy:</h5><div class="list-group">';
+                        data.items.forEach(item => {
+                            html += `
+                                <div class="list-group-item d-flex align-items-center">
+                                    <span class="fs-2 me-3">${item.emoji}</span>
+                                    <div>
+                                        <h6 class="mb-0">${item.name}</h6>
+                                        <small class="text-muted">Hlavní město: ${item.capital || 'N/A'}</small>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        resultUI.innerHTML = html;
+                    } else {
+                        resultUI.innerHTML = '<div class="alert alert-info">Žádné státy nenalezeny.</div>';
+                    }
+                })
+                .catch(error => {
+                    // Catch zachytí jak chybu sítě (odmítnutí první Promise), tak vyhozený Error uvnitř .then()
+                    jsonOutput.textContent = `Došlo k chybě:\n${error}`;
+                    console.error('Fetch error:', error);
+                })
+                .finally(() => {
+                    // Finally blok se spustí vždy, bez ohledu na to, zda Promises prošly nebo selhaly
+                    fetchBtn.disabled = false;
+                    fetchBtn.innerHTML = '<i class="bi bi-cloud-download"></i> Odeslat Fetch Request';
+                });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.urls import path
+from .views.main_views import api_playground
 from . import views
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path('flags/search-api/', views.flags_search_api, name="flags_search_api"),
     path('flags/<str:category>/<slug:slug>/', views.flag_detail, name="flag_detail"),
     path('about/', views.render_about, name="about"),
+    path('api-playground/', api_playground, name='api_playground'),
 ]

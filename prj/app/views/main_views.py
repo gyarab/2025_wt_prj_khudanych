@@ -376,3 +376,9 @@ def flag_detail(request, category, slug):
 def render_about(request):
     """About page"""
     return render(request, 'about.html')
+
+def api_playground(request):
+    """View pro školní úkol: API Playground s čistým JS fetch()."""
+    return render(request, 'api_playground.html', {
+        'page_title': 'API Playground'
+    })
