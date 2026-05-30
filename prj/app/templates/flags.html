@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Country Flags{% endblock %}
+
+{% block content %}
+    <h1>Country Flags</h1>
+    <ul>
+        {% for flag in flags %}
+            <li>
+                <h2>{{ flag.name }}</h2>
+                <img src="{{ flag.image_url }}" alt="{{ flag.name }} flag" width="200">
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
