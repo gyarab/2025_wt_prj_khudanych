@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CountryFlag
+from .models import Country
 
 # Register your models here.
-admin.site.register(CountryFlag)
+admin.site.register(Country)

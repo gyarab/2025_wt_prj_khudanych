@@ -1,0 +1,5002 @@
+[
+    {
+        "model": "app.country",
+        "pk": "ABW",
+        "fields": {
+            "cca2": "AW",
+            "name_common": "Aruba",
+            "name_official": "Aruba",
+            "capital": "Oranjestad",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 180,
+            "flag_svg": "https://flagcdn.com/aw.svg",
+            "flag_png": "https://flagcdn.com/w320/aw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 457,
+            "downvotes": 68
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "AFG",
+        "fields": {
+            "cca2": "AF",
+            "name_common": "Afghanistan",
+            "name_official": "Islamic Republic of Afghanistan",
+            "capital": "Kabul",
+            "region": "Asia",
+            "subregion": "Southern Asia",
+            "population": 0,
+            "area_km2": 652230,
+            "flag_svg": "https://flagcdn.com/af.svg",
+            "flag_png": "https://flagcdn.com/w320/af.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 371,
+            "downvotes": 83
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "AGO",
+        "fields": {
+            "cca2": "AO",
+            "name_common": "Angola",
+            "name_official": "Republic of Angola",
+            "capital": "Luanda",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 1246700,
+            "flag_svg": "https://flagcdn.com/ao.svg",
+            "flag_png": "https://flagcdn.com/w320/ao.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 377,
+            "downvotes": 23
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "AIA",
+        "fields": {
+            "cca2": "AI",
+            "name_common": "Anguilla",
+            "name_official": "Anguilla",
+            "capital": "The Valley",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 91,
+            "flag_svg": "https://flagcdn.com/ai.svg",
+            "flag_png": "https://flagcdn.com/w320/ai.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 204,
+            "downvotes": 100
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ALA",
+        "fields": {
+            "cca2": "AX",
+            "name_common": "Åland Islands",
+            "name_official": "Åland Islands",
+            "capital": "Mariehamn",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 1580,
+            "flag_svg": "https://flagcdn.com/ax.svg",
+            "flag_png": "https://flagcdn.com/w320/ax.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 59,
+            "downvotes": 64
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ALB",
+        "fields": {
+            "cca2": "AL",
+            "name_common": "Albania",
+            "name_official": "Republic of Albania",
+            "capital": "Tirana",
+            "region": "Europe",
+            "subregion": "Southeast Europe",
+            "population": 0,
+            "area_km2": 28748,
+            "flag_svg": "https://flagcdn.com/al.svg",
+            "flag_png": "https://flagcdn.com/w320/al.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 296,
+            "downvotes": 27
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "AND",
+        "fields": {
+            "cca2": "AD",
+            "name_common": "Andorra",
+            "name_official": "Principality of Andorra",
+            "capital": "Andorra la Vella",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 468,
+            "flag_svg": "https://flagcdn.com/ad.svg",
+            "flag_png": "https://flagcdn.com/w320/ad.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 305,
+            "downvotes": 0
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ARE",
+        "fields": {
+            "cca2": "AE",
+            "name_common": "United Arab Emirates",
+            "name_official": "United Arab Emirates",
+            "capital": "Abu Dhabi",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 83600,
+            "flag_svg": "https://flagcdn.com/ae.svg",
+            "flag_png": "https://flagcdn.com/w320/ae.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 39,
+            "downvotes": 15
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ARG",
+        "fields": {
+            "cca2": "AR",
+            "name_common": "Argentina",
+            "name_official": "Argentine Republic",
+            "capital": "Buenos Aires",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 2780400,
+            "flag_svg": "https://flagcdn.com/ar.svg",
+            "flag_png": "https://flagcdn.com/w320/ar.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 18,
+            "downvotes": 90
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ARM",
+        "fields": {
+            "cca2": "AM",
+            "name_common": "Armenia",
+            "name_official": "Republic of Armenia",
+            "capital": "Yerevan",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 29743,
+            "flag_svg": "https://flagcdn.com/am.svg",
+            "flag_png": "https://flagcdn.com/w320/am.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 394,
+            "downvotes": 82
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ASM",
+        "fields": {
+            "cca2": "AS",
+            "name_common": "American Samoa",
+            "name_official": "American Samoa",
+            "capital": "Pago Pago",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 199,
+            "flag_svg": "https://flagcdn.com/as.svg",
+            "flag_png": "https://flagcdn.com/w320/as.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 179,
+            "downvotes": 36
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ATA",
+        "fields": {
+            "cca2": "AQ",
+            "name_common": "Antarctica",
+            "name_official": "Antarctica",
+            "capital": "",
+            "region": "Antarctic",
+            "subregion": "",
+            "population": 0,
+            "area_km2": 14000000,
+            "flag_svg": "https://flagcdn.com/aq.svg",
+            "flag_png": "https://flagcdn.com/w320/aq.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 117,
+            "downvotes": 3
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ATF",
+        "fields": {
+            "cca2": "TF",
+            "name_common": "French Southern and Antarctic Lands",
+            "name_official": "Territory of the French Southern and Antarctic Lands",
+            "capital": "Port-aux-Français",
+            "region": "Antarctic",
+            "subregion": "",
+            "population": 0,
+            "area_km2": 7747,
+            "flag_svg": "https://flagcdn.com/tf.svg",
+            "flag_png": "https://flagcdn.com/w320/tf.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 444,
+            "downvotes": 29
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ATG",
+        "fields": {
+            "cca2": "AG",
+            "name_common": "Antigua and Barbuda",
+            "name_official": "Antigua and Barbuda",
+            "capital": "Saint John's",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 442,
+            "flag_svg": "https://flagcdn.com/ag.svg",
+            "flag_png": "https://flagcdn.com/w320/ag.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 238,
+            "downvotes": 74
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "AUS",
+        "fields": {
+            "cca2": "AU",
+            "name_common": "Australia",
+            "name_official": "Commonwealth of Australia",
+            "capital": "Canberra",
+            "region": "Oceania",
+            "subregion": "Australia and New Zealand",
+            "population": 0,
+            "area_km2": 7692024,
+            "flag_svg": "https://flagcdn.com/au.svg",
+            "flag_png": "https://flagcdn.com/w320/au.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 52,
+            "downvotes": 8
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "AUT",
+        "fields": {
+            "cca2": "AT",
+            "name_common": "Austria",
+            "name_official": "Republic of Austria",
+            "capital": "Vienna",
+            "region": "Europe",
+            "subregion": "Central Europe",
+            "population": 0,
+            "area_km2": 83871,
+            "flag_svg": "https://flagcdn.com/at.svg",
+            "flag_png": "https://flagcdn.com/w320/at.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 161,
+            "downvotes": 61
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "AZE",
+        "fields": {
+            "cca2": "AZ",
+            "name_common": "Azerbaijan",
+            "name_official": "Republic of Azerbaijan",
+            "capital": "Baku",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 86600,
+            "flag_svg": "https://flagcdn.com/az.svg",
+            "flag_png": "https://flagcdn.com/w320/az.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 49,
+            "downvotes": 11
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BDI",
+        "fields": {
+            "cca2": "BI",
+            "name_common": "Burundi",
+            "name_official": "Republic of Burundi",
+            "capital": "Gitega",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 27834,
+            "flag_svg": "https://flagcdn.com/bi.svg",
+            "flag_png": "https://flagcdn.com/w320/bi.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 112,
+            "downvotes": 56
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BEL",
+        "fields": {
+            "cca2": "BE",
+            "name_common": "Belgium",
+            "name_official": "Kingdom of Belgium",
+            "capital": "Brussels",
+            "region": "Europe",
+            "subregion": "Western Europe",
+            "population": 0,
+            "area_km2": 30528,
+            "flag_svg": "https://flagcdn.com/be.svg",
+            "flag_png": "https://flagcdn.com/w320/be.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 279,
+            "downvotes": 91
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BEN",
+        "fields": {
+            "cca2": "BJ",
+            "name_common": "Benin",
+            "name_official": "Republic of Benin",
+            "capital": "Porto-Novo",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 112622,
+            "flag_svg": "https://flagcdn.com/bj.svg",
+            "flag_png": "https://flagcdn.com/w320/bj.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 236,
+            "downvotes": 86
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BFA",
+        "fields": {
+            "cca2": "BF",
+            "name_common": "Burkina Faso",
+            "name_official": "Burkina Faso",
+            "capital": "Ouagadougou",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 272967,
+            "flag_svg": "https://flagcdn.com/bf.svg",
+            "flag_png": "https://flagcdn.com/w320/bf.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 457,
+            "downvotes": 33
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BGD",
+        "fields": {
+            "cca2": "BD",
+            "name_common": "Bangladesh",
+            "name_official": "People's Republic of Bangladesh",
+            "capital": "Dhaka",
+            "region": "Asia",
+            "subregion": "Southern Asia",
+            "population": 0,
+            "area_km2": 147570,
+            "flag_svg": "https://flagcdn.com/bd.svg",
+            "flag_png": "https://flagcdn.com/w320/bd.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 216,
+            "downvotes": 50
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BGR",
+        "fields": {
+            "cca2": "BG",
+            "name_common": "Bulgaria",
+            "name_official": "Republic of Bulgaria",
+            "capital": "Sofia",
+            "region": "Europe",
+            "subregion": "Southeast Europe",
+            "population": 0,
+            "area_km2": 110879,
+            "flag_svg": "https://flagcdn.com/bg.svg",
+            "flag_png": "https://flagcdn.com/w320/bg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 380,
+            "downvotes": 57
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BHR",
+        "fields": {
+            "cca2": "BH",
+            "name_common": "Bahrain",
+            "name_official": "Kingdom of Bahrain",
+            "capital": "Manama",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 765,
+            "flag_svg": "https://flagcdn.com/bh.svg",
+            "flag_png": "https://flagcdn.com/w320/bh.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 333,
+            "downvotes": 67
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BHS",
+        "fields": {
+            "cca2": "BS",
+            "name_common": "Bahamas",
+            "name_official": "Commonwealth of the Bahamas",
+            "capital": "Nassau",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 13943,
+            "flag_svg": "https://flagcdn.com/bs.svg",
+            "flag_png": "https://flagcdn.com/w320/bs.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 320,
+            "downvotes": 90
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BIH",
+        "fields": {
+            "cca2": "BA",
+            "name_common": "Bosnia and Herzegovina",
+            "name_official": "Bosnia and Herzegovina",
+            "capital": "Sarajevo",
+            "region": "Europe",
+            "subregion": "Southeast Europe",
+            "population": 0,
+            "area_km2": 51209,
+            "flag_svg": "https://flagcdn.com/ba.svg",
+            "flag_png": "https://flagcdn.com/w320/ba.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 100,
+            "downvotes": 88
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BLM",
+        "fields": {
+            "cca2": "BL",
+            "name_common": "Saint Barthélemy",
+            "name_official": "Collectivity of Saint Barthélemy",
+            "capital": "Gustavia",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 21,
+            "flag_svg": "https://flagcdn.com/bl.svg",
+            "flag_png": "https://flagcdn.com/w320/bl.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 403,
+            "downvotes": 72
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SHN",
+        "fields": {
+            "cca2": "SH",
+            "name_common": "Saint Helena, Ascension and Tristan da Cunha",
+            "name_official": "Saint Helena, Ascension and Tristan da Cunha",
+            "capital": "Jamestown",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 394,
+            "flag_svg": "https://flagcdn.com/sh.svg",
+            "flag_png": "https://flagcdn.com/w320/sh.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 481,
+            "downvotes": 60
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BLR",
+        "fields": {
+            "cca2": "BY",
+            "name_common": "Belarus",
+            "name_official": "Republic of Belarus",
+            "capital": "Minsk",
+            "region": "Europe",
+            "subregion": "Eastern Europe",
+            "population": 0,
+            "area_km2": 207600,
+            "flag_svg": "https://flagcdn.com/by.svg",
+            "flag_png": "https://flagcdn.com/w320/by.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 143,
+            "downvotes": 37
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BLZ",
+        "fields": {
+            "cca2": "BZ",
+            "name_common": "Belize",
+            "name_official": "Belize",
+            "capital": "Belmopan",
+            "region": "Americas",
+            "subregion": "Central America",
+            "population": 0,
+            "area_km2": 22966,
+            "flag_svg": "https://flagcdn.com/bz.svg",
+            "flag_png": "https://flagcdn.com/w320/bz.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 205,
+            "downvotes": 24
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BMU",
+        "fields": {
+            "cca2": "BM",
+            "name_common": "Bermuda",
+            "name_official": "Bermuda",
+            "capital": "Hamilton",
+            "region": "Americas",
+            "subregion": "North America",
+            "population": 0,
+            "area_km2": 54,
+            "flag_svg": "https://flagcdn.com/bm.svg",
+            "flag_png": "https://flagcdn.com/w320/bm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 442,
+            "downvotes": 41
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BOL",
+        "fields": {
+            "cca2": "BO",
+            "name_common": "Bolivia",
+            "name_official": "Plurinational State of Bolivia",
+            "capital": "Sucre",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 1098581,
+            "flag_svg": "https://flagcdn.com/bo.svg",
+            "flag_png": "https://flagcdn.com/w320/bo.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 413,
+            "downvotes": 34
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BES",
+        "fields": {
+            "cca2": "BQ",
+            "name_common": "Caribbean Netherlands",
+            "name_official": "Bonaire, Sint Eustatius and Saba",
+            "capital": "Kralendijk",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 328,
+            "flag_svg": "https://flagcdn.com/bq.svg",
+            "flag_png": "https://flagcdn.com/w320/bq.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 30,
+            "downvotes": 44
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BRA",
+        "fields": {
+            "cca2": "BR",
+            "name_common": "Brazil",
+            "name_official": "Federative Republic of Brazil",
+            "capital": "Brasília",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 8515767,
+            "flag_svg": "https://flagcdn.com/br.svg",
+            "flag_png": "https://flagcdn.com/w320/br.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 283,
+            "downvotes": 34
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BRB",
+        "fields": {
+            "cca2": "BB",
+            "name_common": "Barbados",
+            "name_official": "Barbados",
+            "capital": "Bridgetown",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 430,
+            "flag_svg": "https://flagcdn.com/bb.svg",
+            "flag_png": "https://flagcdn.com/w320/bb.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 182,
+            "downvotes": 29
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BRN",
+        "fields": {
+            "cca2": "BN",
+            "name_common": "Brunei",
+            "name_official": "Nation of Brunei, Abode of Peace",
+            "capital": "Bandar Seri Begawan",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 5765,
+            "flag_svg": "https://flagcdn.com/bn.svg",
+            "flag_png": "https://flagcdn.com/w320/bn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 53,
+            "downvotes": 51
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BTN",
+        "fields": {
+            "cca2": "BT",
+            "name_common": "Bhutan",
+            "name_official": "Kingdom of Bhutan",
+            "capital": "Thimphu",
+            "region": "Asia",
+            "subregion": "Southern Asia",
+            "population": 0,
+            "area_km2": 38394,
+            "flag_svg": "https://flagcdn.com/bt.svg",
+            "flag_png": "https://flagcdn.com/w320/bt.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 186,
+            "downvotes": 85
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BVT",
+        "fields": {
+            "cca2": "BV",
+            "name_common": "Bouvet Island",
+            "name_official": "Bouvet Island",
+            "capital": "",
+            "region": "Antarctic",
+            "subregion": "",
+            "population": 0,
+            "area_km2": 49,
+            "flag_svg": "https://flagcdn.com/bv.svg",
+            "flag_png": "https://flagcdn.com/w320/bv.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 38,
+            "downvotes": 20
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "BWA",
+        "fields": {
+            "cca2": "BW",
+            "name_common": "Botswana",
+            "name_official": "Republic of Botswana",
+            "capital": "Gaborone",
+            "region": "Africa",
+            "subregion": "Southern Africa",
+            "population": 0,
+            "area_km2": 582000,
+            "flag_svg": "https://flagcdn.com/bw.svg",
+            "flag_png": "https://flagcdn.com/w320/bw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 385,
+            "downvotes": 85
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CAF",
+        "fields": {
+            "cca2": "CF",
+            "name_common": "Central African Republic",
+            "name_official": "Central African Republic",
+            "capital": "Bangui",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 622984,
+            "flag_svg": "https://flagcdn.com/cf.svg",
+            "flag_png": "https://flagcdn.com/w320/cf.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 493,
+            "downvotes": 23
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CAN",
+        "fields": {
+            "cca2": "CA",
+            "name_common": "Canada",
+            "name_official": "Canada",
+            "capital": "Ottawa",
+            "region": "Americas",
+            "subregion": "North America",
+            "population": 0,
+            "area_km2": 9984670,
+            "flag_svg": "https://flagcdn.com/ca.svg",
+            "flag_png": "https://flagcdn.com/w320/ca.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 313,
+            "downvotes": 91
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CCK",
+        "fields": {
+            "cca2": "CC",
+            "name_common": "Cocos (Keeling) Islands",
+            "name_official": "Territory of the Cocos (Keeling) Islands",
+            "capital": "West Island",
+            "region": "Oceania",
+            "subregion": "Australia and New Zealand",
+            "population": 0,
+            "area_km2": 14,
+            "flag_svg": "https://flagcdn.com/cc.svg",
+            "flag_png": "https://flagcdn.com/w320/cc.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 338,
+            "downvotes": 69
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CHE",
+        "fields": {
+            "cca2": "CH",
+            "name_common": "Switzerland",
+            "name_official": "Swiss Confederation",
+            "capital": "Bern",
+            "region": "Europe",
+            "subregion": "Western Europe",
+            "population": 0,
+            "area_km2": 41284,
+            "flag_svg": "https://flagcdn.com/ch.svg",
+            "flag_png": "https://flagcdn.com/w320/ch.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 408,
+            "downvotes": 78
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CHL",
+        "fields": {
+            "cca2": "CL",
+            "name_common": "Chile",
+            "name_official": "Republic of Chile",
+            "capital": "Santiago",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 756102,
+            "flag_svg": "https://flagcdn.com/cl.svg",
+            "flag_png": "https://flagcdn.com/w320/cl.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 327,
+            "downvotes": 8
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CHN",
+        "fields": {
+            "cca2": "CN",
+            "name_common": "China",
+            "name_official": "People's Republic of China",
+            "capital": "Beijing",
+            "region": "Asia",
+            "subregion": "Eastern Asia",
+            "population": 0,
+            "area_km2": 9706961,
+            "flag_svg": "https://flagcdn.com/cn.svg",
+            "flag_png": "https://flagcdn.com/w320/cn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 440,
+            "downvotes": 40
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CIV",
+        "fields": {
+            "cca2": "CI",
+            "name_common": "Ivory Coast",
+            "name_official": "Republic of Côte d'Ivoire",
+            "capital": "Yamoussoukro",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 322463,
+            "flag_svg": "https://flagcdn.com/ci.svg",
+            "flag_png": "https://flagcdn.com/w320/ci.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 81,
+            "downvotes": 59
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CMR",
+        "fields": {
+            "cca2": "CM",
+            "name_common": "Cameroon",
+            "name_official": "Republic of Cameroon",
+            "capital": "Yaoundé",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 475442,
+            "flag_svg": "https://flagcdn.com/cm.svg",
+            "flag_png": "https://flagcdn.com/w320/cm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 25,
+            "downvotes": 51
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "COD",
+        "fields": {
+            "cca2": "CD",
+            "name_common": "DR Congo",
+            "name_official": "Democratic Republic of the Congo",
+            "capital": "Kinshasa",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 2344858,
+            "flag_svg": "https://flagcdn.com/cd.svg",
+            "flag_png": "https://flagcdn.com/w320/cd.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 482,
+            "downvotes": 85
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "COG",
+        "fields": {
+            "cca2": "CG",
+            "name_common": "Congo",
+            "name_official": "Republic of the Congo",
+            "capital": "Brazzaville",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 342000,
+            "flag_svg": "https://flagcdn.com/cg.svg",
+            "flag_png": "https://flagcdn.com/w320/cg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 284,
+            "downvotes": 23
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "COK",
+        "fields": {
+            "cca2": "CK",
+            "name_common": "Cook Islands",
+            "name_official": "Cook Islands",
+            "capital": "Avarua",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 236,
+            "flag_svg": "https://flagcdn.com/ck.svg",
+            "flag_png": "https://flagcdn.com/w320/ck.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 179,
+            "downvotes": 59
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "COL",
+        "fields": {
+            "cca2": "CO",
+            "name_common": "Colombia",
+            "name_official": "Republic of Colombia",
+            "capital": "Bogotá",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 1141748,
+            "flag_svg": "https://flagcdn.com/co.svg",
+            "flag_png": "https://flagcdn.com/w320/co.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 196,
+            "downvotes": 85
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "COM",
+        "fields": {
+            "cca2": "KM",
+            "name_common": "Comoros",
+            "name_official": "Union of the Comoros",
+            "capital": "Moroni",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 1862,
+            "flag_svg": "https://flagcdn.com/km.svg",
+            "flag_png": "https://flagcdn.com/w320/km.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 414,
+            "downvotes": 64
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CPV",
+        "fields": {
+            "cca2": "CV",
+            "name_common": "Cape Verde",
+            "name_official": "Republic of Cabo Verde",
+            "capital": "Praia",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 4033,
+            "flag_svg": "https://flagcdn.com/cv.svg",
+            "flag_png": "https://flagcdn.com/w320/cv.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 307,
+            "downvotes": 74
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CRI",
+        "fields": {
+            "cca2": "CR",
+            "name_common": "Costa Rica",
+            "name_official": "Republic of Costa Rica",
+            "capital": "San José",
+            "region": "Americas",
+            "subregion": "Central America",
+            "population": 0,
+            "area_km2": 51100,
+            "flag_svg": "https://flagcdn.com/cr.svg",
+            "flag_png": "https://flagcdn.com/w320/cr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 240,
+            "downvotes": 23
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CUB",
+        "fields": {
+            "cca2": "CU",
+            "name_common": "Cuba",
+            "name_official": "Republic of Cuba",
+            "capital": "Havana",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 109884,
+            "flag_svg": "https://flagcdn.com/cu.svg",
+            "flag_png": "https://flagcdn.com/w320/cu.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 473,
+            "downvotes": 91
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CUW",
+        "fields": {
+            "cca2": "CW",
+            "name_common": "Curaçao",
+            "name_official": "Country of Curaçao",
+            "capital": "Willemstad",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 444,
+            "flag_svg": "https://flagcdn.com/cw.svg",
+            "flag_png": "https://flagcdn.com/w320/cw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 59,
+            "downvotes": 42
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CXR",
+        "fields": {
+            "cca2": "CX",
+            "name_common": "Christmas Island",
+            "name_official": "Territory of Christmas Island",
+            "capital": "Flying Fish Cove",
+            "region": "Oceania",
+            "subregion": "Australia and New Zealand",
+            "population": 0,
+            "area_km2": 135,
+            "flag_svg": "https://flagcdn.com/cx.svg",
+            "flag_png": "https://flagcdn.com/w320/cx.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 100,
+            "downvotes": 95
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CYM",
+        "fields": {
+            "cca2": "KY",
+            "name_common": "Cayman Islands",
+            "name_official": "Cayman Islands",
+            "capital": "George Town",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 264,
+            "flag_svg": "https://flagcdn.com/ky.svg",
+            "flag_png": "https://flagcdn.com/w320/ky.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 149,
+            "downvotes": 36
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CYP",
+        "fields": {
+            "cca2": "CY",
+            "name_common": "Cyprus",
+            "name_official": "Republic of Cyprus",
+            "capital": "Nicosia",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 9251,
+            "flag_svg": "https://flagcdn.com/cy.svg",
+            "flag_png": "https://flagcdn.com/w320/cy.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 429,
+            "downvotes": 85
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "CZE",
+        "fields": {
+            "cca2": "CZ",
+            "name_common": "Czechia",
+            "name_official": "Czech Republic",
+            "capital": "Prague",
+            "region": "Europe",
+            "subregion": "Central Europe",
+            "population": 0,
+            "area_km2": 78865,
+            "flag_svg": "https://flagcdn.com/cz.svg",
+            "flag_png": "https://flagcdn.com/w320/cz.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 477,
+            "downvotes": 92
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "DEU",
+        "fields": {
+            "cca2": "DE",
+            "name_common": "Germany",
+            "name_official": "Federal Republic of Germany",
+            "capital": "Berlin",
+            "region": "Europe",
+            "subregion": "Western Europe",
+            "population": 0,
+            "area_km2": 357114,
+            "flag_svg": "https://flagcdn.com/de.svg",
+            "flag_png": "https://flagcdn.com/w320/de.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 100,
+            "downvotes": 8
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "DJI",
+        "fields": {
+            "cca2": "DJ",
+            "name_common": "Djibouti",
+            "name_official": "Republic of Djibouti",
+            "capital": "Djibouti",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 23200,
+            "flag_svg": "https://flagcdn.com/dj.svg",
+            "flag_png": "https://flagcdn.com/w320/dj.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 493,
+            "downvotes": 18
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "DMA",
+        "fields": {
+            "cca2": "DM",
+            "name_common": "Dominica",
+            "name_official": "Commonwealth of Dominica",
+            "capital": "Roseau",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 751,
+            "flag_svg": "https://flagcdn.com/dm.svg",
+            "flag_png": "https://flagcdn.com/w320/dm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 328,
+            "downvotes": 79
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "DNK",
+        "fields": {
+            "cca2": "DK",
+            "name_common": "Denmark",
+            "name_official": "Kingdom of Denmark",
+            "capital": "Copenhagen",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 43094,
+            "flag_svg": "https://flagcdn.com/dk.svg",
+            "flag_png": "https://flagcdn.com/w320/dk.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 12,
+            "downvotes": 54
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "DOM",
+        "fields": {
+            "cca2": "DO",
+            "name_common": "Dominican Republic",
+            "name_official": "Dominican Republic",
+            "capital": "Santo Domingo",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 48671,
+            "flag_svg": "https://flagcdn.com/do.svg",
+            "flag_png": "https://flagcdn.com/w320/do.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 467,
+            "downvotes": 96
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "DZA",
+        "fields": {
+            "cca2": "DZ",
+            "name_common": "Algeria",
+            "name_official": "People's Democratic Republic of Algeria",
+            "capital": "Algiers",
+            "region": "Africa",
+            "subregion": "Northern Africa",
+            "population": 0,
+            "area_km2": 2381741,
+            "flag_svg": "https://flagcdn.com/dz.svg",
+            "flag_png": "https://flagcdn.com/w320/dz.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 132,
+            "downvotes": 14
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ECU",
+        "fields": {
+            "cca2": "EC",
+            "name_common": "Ecuador",
+            "name_official": "Republic of Ecuador",
+            "capital": "Quito",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 276841,
+            "flag_svg": "https://flagcdn.com/ec.svg",
+            "flag_png": "https://flagcdn.com/w320/ec.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 338,
+            "downvotes": 2
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "EGY",
+        "fields": {
+            "cca2": "EG",
+            "name_common": "Egypt",
+            "name_official": "Arab Republic of Egypt",
+            "capital": "Cairo",
+            "region": "Africa",
+            "subregion": "Northern Africa",
+            "population": 0,
+            "area_km2": 1002450,
+            "flag_svg": "https://flagcdn.com/eg.svg",
+            "flag_png": "https://flagcdn.com/w320/eg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 117,
+            "downvotes": 76
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ERI",
+        "fields": {
+            "cca2": "ER",
+            "name_common": "Eritrea",
+            "name_official": "State of Eritrea",
+            "capital": "Asmara",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 117600,
+            "flag_svg": "https://flagcdn.com/er.svg",
+            "flag_png": "https://flagcdn.com/w320/er.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 405,
+            "downvotes": 58
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ESH",
+        "fields": {
+            "cca2": "EH",
+            "name_common": "Western Sahara",
+            "name_official": "Sahrawi Arab Democratic Republic",
+            "capital": "El Aaiún",
+            "region": "Africa",
+            "subregion": "Northern Africa",
+            "population": 0,
+            "area_km2": 266000,
+            "flag_svg": "https://flagcdn.com/eh.svg",
+            "flag_png": "https://flagcdn.com/w320/eh.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 17,
+            "downvotes": 72
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ESP",
+        "fields": {
+            "cca2": "ES",
+            "name_common": "Spain",
+            "name_official": "Kingdom of Spain",
+            "capital": "Madrid",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 505992,
+            "flag_svg": "https://flagcdn.com/es.svg",
+            "flag_png": "https://flagcdn.com/w320/es.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 139,
+            "downvotes": 54
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "EST",
+        "fields": {
+            "cca2": "EE",
+            "name_common": "Estonia",
+            "name_official": "Republic of Estonia",
+            "capital": "Tallinn",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 45227,
+            "flag_svg": "https://flagcdn.com/ee.svg",
+            "flag_png": "https://flagcdn.com/w320/ee.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 270,
+            "downvotes": 19
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ETH",
+        "fields": {
+            "cca2": "ET",
+            "name_common": "Ethiopia",
+            "name_official": "Federal Democratic Republic of Ethiopia",
+            "capital": "Addis Ababa",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 1104300,
+            "flag_svg": "https://flagcdn.com/et.svg",
+            "flag_png": "https://flagcdn.com/w320/et.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 250,
+            "downvotes": 11
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "FIN",
+        "fields": {
+            "cca2": "FI",
+            "name_common": "Finland",
+            "name_official": "Republic of Finland",
+            "capital": "Helsinki",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 338424,
+            "flag_svg": "https://flagcdn.com/fi.svg",
+            "flag_png": "https://flagcdn.com/w320/fi.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 28,
+            "downvotes": 39
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "FJI",
+        "fields": {
+            "cca2": "FJ",
+            "name_common": "Fiji",
+            "name_official": "Republic of Fiji",
+            "capital": "Suva",
+            "region": "Oceania",
+            "subregion": "Melanesia",
+            "population": 0,
+            "area_km2": 18272,
+            "flag_svg": "https://flagcdn.com/fj.svg",
+            "flag_png": "https://flagcdn.com/w320/fj.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 292,
+            "downvotes": 16
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "FLK",
+        "fields": {
+            "cca2": "FK",
+            "name_common": "Falkland Islands",
+            "name_official": "Falkland Islands",
+            "capital": "Stanley",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 12173,
+            "flag_svg": "https://flagcdn.com/fk.svg",
+            "flag_png": "https://flagcdn.com/w320/fk.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 493,
+            "downvotes": 69
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "FRA",
+        "fields": {
+            "cca2": "FR",
+            "name_common": "France",
+            "name_official": "French Republic",
+            "capital": "Paris",
+            "region": "Europe",
+            "subregion": "Western Europe",
+            "population": 0,
+            "area_km2": 551695,
+            "flag_svg": "https://flagcdn.com/fr.svg",
+            "flag_png": "https://flagcdn.com/w320/fr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 106,
+            "downvotes": 13
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "FRO",
+        "fields": {
+            "cca2": "FO",
+            "name_common": "Faroe Islands",
+            "name_official": "Faroe Islands",
+            "capital": "Tórshavn",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 1393,
+            "flag_svg": "https://flagcdn.com/fo.svg",
+            "flag_png": "https://flagcdn.com/w320/fo.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 110,
+            "downvotes": 4
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "FSM",
+        "fields": {
+            "cca2": "FM",
+            "name_common": "Micronesia",
+            "name_official": "Federated States of Micronesia",
+            "capital": "Palikir",
+            "region": "Oceania",
+            "subregion": "Micronesia",
+            "population": 0,
+            "area_km2": 702,
+            "flag_svg": "https://flagcdn.com/fm.svg",
+            "flag_png": "https://flagcdn.com/w320/fm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 137,
+            "downvotes": 32
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GAB",
+        "fields": {
+            "cca2": "GA",
+            "name_common": "Gabon",
+            "name_official": "Gabonese Republic",
+            "capital": "Libreville",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 267668,
+            "flag_svg": "https://flagcdn.com/ga.svg",
+            "flag_png": "https://flagcdn.com/w320/ga.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 363,
+            "downvotes": 39
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GBR",
+        "fields": {
+            "cca2": "GB",
+            "name_common": "United Kingdom",
+            "name_official": "United Kingdom of Great Britain and Northern Ireland",
+            "capital": "London",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 242900,
+            "flag_svg": "https://flagcdn.com/gb.svg",
+            "flag_png": "https://flagcdn.com/w320/gb.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 217,
+            "downvotes": 42
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GEO",
+        "fields": {
+            "cca2": "GE",
+            "name_common": "Georgia",
+            "name_official": "Georgia",
+            "capital": "Tbilisi",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 69700,
+            "flag_svg": "https://flagcdn.com/ge.svg",
+            "flag_png": "https://flagcdn.com/w320/ge.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 265,
+            "downvotes": 30
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GGY",
+        "fields": {
+            "cca2": "GG",
+            "name_common": "Guernsey",
+            "name_official": "Bailiwick of Guernsey",
+            "capital": "St. Peter Port",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 78,
+            "flag_svg": "https://flagcdn.com/gg.svg",
+            "flag_png": "https://flagcdn.com/w320/gg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 446,
+            "downvotes": 99
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GHA",
+        "fields": {
+            "cca2": "GH",
+            "name_common": "Ghana",
+            "name_official": "Republic of Ghana",
+            "capital": "Accra",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 238533,
+            "flag_svg": "https://flagcdn.com/gh.svg",
+            "flag_png": "https://flagcdn.com/w320/gh.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 26,
+            "downvotes": 98
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GIB",
+        "fields": {
+            "cca2": "GI",
+            "name_common": "Gibraltar",
+            "name_official": "Gibraltar",
+            "capital": "Gibraltar",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 6,
+            "flag_svg": "https://flagcdn.com/gi.svg",
+            "flag_png": "https://flagcdn.com/w320/gi.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 419,
+            "downvotes": 43
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GIN",
+        "fields": {
+            "cca2": "GN",
+            "name_common": "Guinea",
+            "name_official": "Republic of Guinea",
+            "capital": "Conakry",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 245857,
+            "flag_svg": "https://flagcdn.com/gn.svg",
+            "flag_png": "https://flagcdn.com/w320/gn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 293,
+            "downvotes": 5
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GLP",
+        "fields": {
+            "cca2": "GP",
+            "name_common": "Guadeloupe",
+            "name_official": "Guadeloupe",
+            "capital": "Basse-Terre",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 1628,
+            "flag_svg": "https://flagcdn.com/gp.svg",
+            "flag_png": "https://flagcdn.com/w320/gp.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 191,
+            "downvotes": 95
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GMB",
+        "fields": {
+            "cca2": "GM",
+            "name_common": "Gambia",
+            "name_official": "Republic of the Gambia",
+            "capital": "Banjul",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 10689,
+            "flag_svg": "https://flagcdn.com/gm.svg",
+            "flag_png": "https://flagcdn.com/w320/gm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 317,
+            "downvotes": 67
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GNB",
+        "fields": {
+            "cca2": "GW",
+            "name_common": "Guinea-Bissau",
+            "name_official": "Republic of Guinea-Bissau",
+            "capital": "Bissau",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 36125,
+            "flag_svg": "https://flagcdn.com/gw.svg",
+            "flag_png": "https://flagcdn.com/w320/gw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 475,
+            "downvotes": 30
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GNQ",
+        "fields": {
+            "cca2": "GQ",
+            "name_common": "Equatorial Guinea",
+            "name_official": "Republic of Equatorial Guinea",
+            "capital": "Malabo",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 28051,
+            "flag_svg": "https://flagcdn.com/gq.svg",
+            "flag_png": "https://flagcdn.com/w320/gq.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 51,
+            "downvotes": 67
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GRC",
+        "fields": {
+            "cca2": "GR",
+            "name_common": "Greece",
+            "name_official": "Hellenic Republic",
+            "capital": "Athens",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 131990,
+            "flag_svg": "https://flagcdn.com/gr.svg",
+            "flag_png": "https://flagcdn.com/w320/gr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 456,
+            "downvotes": 91
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GRD",
+        "fields": {
+            "cca2": "GD",
+            "name_common": "Grenada",
+            "name_official": "Grenada",
+            "capital": "St. George's",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 344,
+            "flag_svg": "https://flagcdn.com/gd.svg",
+            "flag_png": "https://flagcdn.com/w320/gd.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 60,
+            "downvotes": 89
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GRL",
+        "fields": {
+            "cca2": "GL",
+            "name_common": "Greenland",
+            "name_official": "Greenland",
+            "capital": "Nuuk",
+            "region": "Americas",
+            "subregion": "North America",
+            "population": 0,
+            "area_km2": 2166086,
+            "flag_svg": "https://flagcdn.com/gl.svg",
+            "flag_png": "https://flagcdn.com/w320/gl.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 73,
+            "downvotes": 68
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GTM",
+        "fields": {
+            "cca2": "GT",
+            "name_common": "Guatemala",
+            "name_official": "Republic of Guatemala",
+            "capital": "Guatemala City",
+            "region": "Americas",
+            "subregion": "Central America",
+            "population": 0,
+            "area_km2": 108889,
+            "flag_svg": "https://flagcdn.com/gt.svg",
+            "flag_png": "https://flagcdn.com/w320/gt.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 41,
+            "downvotes": 99
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GUF",
+        "fields": {
+            "cca2": "GF",
+            "name_common": "French Guiana",
+            "name_official": "Guiana",
+            "capital": "Cayenne",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 83534,
+            "flag_svg": "https://flagcdn.com/gf.svg",
+            "flag_png": "https://flagcdn.com/w320/gf.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 103,
+            "downvotes": 1
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GUM",
+        "fields": {
+            "cca2": "GU",
+            "name_common": "Guam",
+            "name_official": "Guam",
+            "capital": "Hagåtña",
+            "region": "Oceania",
+            "subregion": "Micronesia",
+            "population": 0,
+            "area_km2": 549,
+            "flag_svg": "https://flagcdn.com/gu.svg",
+            "flag_png": "https://flagcdn.com/w320/gu.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 268,
+            "downvotes": 39
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "GUY",
+        "fields": {
+            "cca2": "GY",
+            "name_common": "Guyana",
+            "name_official": "Co-operative Republic of Guyana",
+            "capital": "Georgetown",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 214969,
+            "flag_svg": "https://flagcdn.com/gy.svg",
+            "flag_png": "https://flagcdn.com/w320/gy.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 179,
+            "downvotes": 6
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "HKG",
+        "fields": {
+            "cca2": "HK",
+            "name_common": "Hong Kong",
+            "name_official": "Hong Kong Special Administrative Region of the People's Republic of China",
+            "capital": "City of Victoria",
+            "region": "Asia",
+            "subregion": "Eastern Asia",
+            "population": 0,
+            "area_km2": 1104,
+            "flag_svg": "https://flagcdn.com/hk.svg",
+            "flag_png": "https://flagcdn.com/w320/hk.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 88,
+            "downvotes": 75
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "HMD",
+        "fields": {
+            "cca2": "HM",
+            "name_common": "Heard Island and McDonald Islands",
+            "name_official": "Heard Island and McDonald Islands",
+            "capital": "",
+            "region": "Antarctic",
+            "subregion": "",
+            "population": 0,
+            "area_km2": 412,
+            "flag_svg": "https://flagcdn.com/hm.svg",
+            "flag_png": "https://flagcdn.com/w320/hm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 222,
+            "downvotes": 4
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "HND",
+        "fields": {
+            "cca2": "HN",
+            "name_common": "Honduras",
+            "name_official": "Republic of Honduras",
+            "capital": "Tegucigalpa",
+            "region": "Americas",
+            "subregion": "Central America",
+            "population": 0,
+            "area_km2": 112492,
+            "flag_svg": "https://flagcdn.com/hn.svg",
+            "flag_png": "https://flagcdn.com/w320/hn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 98,
+            "downvotes": 67
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "HRV",
+        "fields": {
+            "cca2": "HR",
+            "name_common": "Croatia",
+            "name_official": "Republic of Croatia",
+            "capital": "Zagreb",
+            "region": "Europe",
+            "subregion": "Southeast Europe",
+            "population": 0,
+            "area_km2": 56594,
+            "flag_svg": "https://flagcdn.com/hr.svg",
+            "flag_png": "https://flagcdn.com/w320/hr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 64,
+            "downvotes": 1
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "HTI",
+        "fields": {
+            "cca2": "HT",
+            "name_common": "Haiti",
+            "name_official": "Republic of Haiti",
+            "capital": "Port-au-Prince",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 27750,
+            "flag_svg": "https://flagcdn.com/ht.svg",
+            "flag_png": "https://flagcdn.com/w320/ht.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 451,
+            "downvotes": 88
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "HUN",
+        "fields": {
+            "cca2": "HU",
+            "name_common": "Hungary",
+            "name_official": "Hungary",
+            "capital": "Budapest",
+            "region": "Europe",
+            "subregion": "Central Europe",
+            "population": 0,
+            "area_km2": 93028,
+            "flag_svg": "https://flagcdn.com/hu.svg",
+            "flag_png": "https://flagcdn.com/w320/hu.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 298,
+            "downvotes": 58
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "IDN",
+        "fields": {
+            "cca2": "ID",
+            "name_common": "Indonesia",
+            "name_official": "Republic of Indonesia",
+            "capital": "Jakarta",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 1904569,
+            "flag_svg": "https://flagcdn.com/id.svg",
+            "flag_png": "https://flagcdn.com/w320/id.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 222,
+            "downvotes": 56
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "IMN",
+        "fields": {
+            "cca2": "IM",
+            "name_common": "Isle of Man",
+            "name_official": "Isle of Man",
+            "capital": "Douglas",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 572,
+            "flag_svg": "https://flagcdn.com/im.svg",
+            "flag_png": "https://flagcdn.com/w320/im.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 153,
+            "downvotes": 90
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "IND",
+        "fields": {
+            "cca2": "IN",
+            "name_common": "India",
+            "name_official": "Republic of India",
+            "capital": "New Delhi",
+            "region": "Asia",
+            "subregion": "Southern Asia",
+            "population": 0,
+            "area_km2": 3287590,
+            "flag_svg": "https://flagcdn.com/in.svg",
+            "flag_png": "https://flagcdn.com/w320/in.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 472,
+            "downvotes": 43
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "IOT",
+        "fields": {
+            "cca2": "IO",
+            "name_common": "British Indian Ocean Territory",
+            "name_official": "British Indian Ocean Territory",
+            "capital": "Diego Garcia",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 60,
+            "flag_svg": "https://flagcdn.com/io.svg",
+            "flag_png": "https://flagcdn.com/w320/io.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 45,
+            "downvotes": 77
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "IRL",
+        "fields": {
+            "cca2": "IE",
+            "name_common": "Ireland",
+            "name_official": "Republic of Ireland",
+            "capital": "Dublin",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 70273,
+            "flag_svg": "https://flagcdn.com/ie.svg",
+            "flag_png": "https://flagcdn.com/w320/ie.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 392,
+            "downvotes": 41
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "IRN",
+        "fields": {
+            "cca2": "IR",
+            "name_common": "Iran",
+            "name_official": "Islamic Republic of Iran",
+            "capital": "Tehran",
+            "region": "Asia",
+            "subregion": "Southern Asia",
+            "population": 0,
+            "area_km2": 1648195,
+            "flag_svg": "https://flagcdn.com/ir.svg",
+            "flag_png": "https://flagcdn.com/w320/ir.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 490,
+            "downvotes": 30
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "IRQ",
+        "fields": {
+            "cca2": "IQ",
+            "name_common": "Iraq",
+            "name_official": "Republic of Iraq",
+            "capital": "Baghdad",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 438317,
+            "flag_svg": "https://flagcdn.com/iq.svg",
+            "flag_png": "https://flagcdn.com/w320/iq.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 453,
+            "downvotes": 52
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ISL",
+        "fields": {
+            "cca2": "IS",
+            "name_common": "Iceland",
+            "name_official": "Iceland",
+            "capital": "Reykjavik",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 103000,
+            "flag_svg": "https://flagcdn.com/is.svg",
+            "flag_png": "https://flagcdn.com/w320/is.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 477,
+            "downvotes": 20
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ISR",
+        "fields": {
+            "cca2": "IL",
+            "name_common": "Israel",
+            "name_official": "State of Israel",
+            "capital": "Jerusalem",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 20770,
+            "flag_svg": "https://flagcdn.com/il.svg",
+            "flag_png": "https://flagcdn.com/w320/il.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 122,
+            "downvotes": 1
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ITA",
+        "fields": {
+            "cca2": "IT",
+            "name_common": "Italy",
+            "name_official": "Italian Republic",
+            "capital": "Rome",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 301336,
+            "flag_svg": "https://flagcdn.com/it.svg",
+            "flag_png": "https://flagcdn.com/w320/it.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 60,
+            "downvotes": 36
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "JAM",
+        "fields": {
+            "cca2": "JM",
+            "name_common": "Jamaica",
+            "name_official": "Jamaica",
+            "capital": "Kingston",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 10991,
+            "flag_svg": "https://flagcdn.com/jm.svg",
+            "flag_png": "https://flagcdn.com/w320/jm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 150,
+            "downvotes": 80
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "JEY",
+        "fields": {
+            "cca2": "JE",
+            "name_common": "Jersey",
+            "name_official": "Bailiwick of Jersey",
+            "capital": "Saint Helier",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 116,
+            "flag_svg": "https://flagcdn.com/je.svg",
+            "flag_png": "https://flagcdn.com/w320/je.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 483,
+            "downvotes": 77
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "JOR",
+        "fields": {
+            "cca2": "JO",
+            "name_common": "Jordan",
+            "name_official": "Hashemite Kingdom of Jordan",
+            "capital": "Amman",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 89342,
+            "flag_svg": "https://flagcdn.com/jo.svg",
+            "flag_png": "https://flagcdn.com/w320/jo.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 476,
+            "downvotes": 79
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "JPN",
+        "fields": {
+            "cca2": "JP",
+            "name_common": "Japan",
+            "name_official": "Japan",
+            "capital": "Tokyo",
+            "region": "Asia",
+            "subregion": "Eastern Asia",
+            "population": 0,
+            "area_km2": 377930,
+            "flag_svg": "https://flagcdn.com/jp.svg",
+            "flag_png": "https://flagcdn.com/w320/jp.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 166,
+            "downvotes": 77
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "KAZ",
+        "fields": {
+            "cca2": "KZ",
+            "name_common": "Kazakhstan",
+            "name_official": "Republic of Kazakhstan",
+            "capital": "Astana",
+            "region": "Asia",
+            "subregion": "Central Asia",
+            "population": 0,
+            "area_km2": 2724900,
+            "flag_svg": "https://flagcdn.com/kz.svg",
+            "flag_png": "https://flagcdn.com/w320/kz.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 348,
+            "downvotes": 84
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "KEN",
+        "fields": {
+            "cca2": "KE",
+            "name_common": "Kenya",
+            "name_official": "Republic of Kenya",
+            "capital": "Nairobi",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 580367,
+            "flag_svg": "https://flagcdn.com/ke.svg",
+            "flag_png": "https://flagcdn.com/w320/ke.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 457,
+            "downvotes": 49
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "KGZ",
+        "fields": {
+            "cca2": "KG",
+            "name_common": "Kyrgyzstan",
+            "name_official": "Kyrgyz Republic",
+            "capital": "Bishkek",
+            "region": "Asia",
+            "subregion": "Central Asia",
+            "population": 0,
+            "area_km2": 199951,
+            "flag_svg": "https://flagcdn.com/kg.svg",
+            "flag_png": "https://flagcdn.com/w320/kg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 472,
+            "downvotes": 48
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "KHM",
+        "fields": {
+            "cca2": "KH",
+            "name_common": "Cambodia",
+            "name_official": "Kingdom of Cambodia",
+            "capital": "Phnom Penh",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 181035,
+            "flag_svg": "https://flagcdn.com/kh.svg",
+            "flag_png": "https://flagcdn.com/w320/kh.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 126,
+            "downvotes": 20
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "KIR",
+        "fields": {
+            "cca2": "KI",
+            "name_common": "Kiribati",
+            "name_official": "Independent and Sovereign Republic of Kiribati",
+            "capital": "South Tarawa",
+            "region": "Oceania",
+            "subregion": "Micronesia",
+            "population": 0,
+            "area_km2": 811,
+            "flag_svg": "https://flagcdn.com/ki.svg",
+            "flag_png": "https://flagcdn.com/w320/ki.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 332,
+            "downvotes": 94
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "KNA",
+        "fields": {
+            "cca2": "KN",
+            "name_common": "Saint Kitts and Nevis",
+            "name_official": "Federation of Saint Christopher and Nevis",
+            "capital": "Basseterre",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 261,
+            "flag_svg": "https://flagcdn.com/kn.svg",
+            "flag_png": "https://flagcdn.com/w320/kn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 88,
+            "downvotes": 73
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "KOR",
+        "fields": {
+            "cca2": "KR",
+            "name_common": "South Korea",
+            "name_official": "Republic of Korea",
+            "capital": "Seoul",
+            "region": "Asia",
+            "subregion": "Eastern Asia",
+            "population": 0,
+            "area_km2": 100210,
+            "flag_svg": "https://flagcdn.com/kr.svg",
+            "flag_png": "https://flagcdn.com/w320/kr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 85,
+            "downvotes": 17
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "UNK",
+        "fields": {
+            "cca2": "XK",
+            "name_common": "Kosovo",
+            "name_official": "Republic of Kosovo",
+            "capital": "Pristina",
+            "region": "Europe",
+            "subregion": "Southeast Europe",
+            "population": 0,
+            "area_km2": 10908,
+            "flag_svg": "https://flagcdn.com/xk.svg",
+            "flag_png": "https://flagcdn.com/w320/xk.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 408,
+            "downvotes": 16
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "KWT",
+        "fields": {
+            "cca2": "KW",
+            "name_common": "Kuwait",
+            "name_official": "State of Kuwait",
+            "capital": "Kuwait City",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 17818,
+            "flag_svg": "https://flagcdn.com/kw.svg",
+            "flag_png": "https://flagcdn.com/w320/kw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 149,
+            "downvotes": 56
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LAO",
+        "fields": {
+            "cca2": "LA",
+            "name_common": "Laos",
+            "name_official": "Lao People's Democratic Republic",
+            "capital": "Vientiane",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 236800,
+            "flag_svg": "https://flagcdn.com/la.svg",
+            "flag_png": "https://flagcdn.com/w320/la.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 362,
+            "downvotes": 50
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LBN",
+        "fields": {
+            "cca2": "LB",
+            "name_common": "Lebanon",
+            "name_official": "Lebanese Republic",
+            "capital": "Beirut",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 10452,
+            "flag_svg": "https://flagcdn.com/lb.svg",
+            "flag_png": "https://flagcdn.com/w320/lb.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 124,
+            "downvotes": 81
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LBR",
+        "fields": {
+            "cca2": "LR",
+            "name_common": "Liberia",
+            "name_official": "Republic of Liberia",
+            "capital": "Monrovia",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 111369,
+            "flag_svg": "https://flagcdn.com/lr.svg",
+            "flag_png": "https://flagcdn.com/w320/lr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 192,
+            "downvotes": 70
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LBY",
+        "fields": {
+            "cca2": "LY",
+            "name_common": "Libya",
+            "name_official": "State of Libya",
+            "capital": "Tripoli",
+            "region": "Africa",
+            "subregion": "Northern Africa",
+            "population": 0,
+            "area_km2": 1759540,
+            "flag_svg": "https://flagcdn.com/ly.svg",
+            "flag_png": "https://flagcdn.com/w320/ly.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 496,
+            "downvotes": 90
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LCA",
+        "fields": {
+            "cca2": "LC",
+            "name_common": "Saint Lucia",
+            "name_official": "Saint Lucia",
+            "capital": "Castries",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 616,
+            "flag_svg": "https://flagcdn.com/lc.svg",
+            "flag_png": "https://flagcdn.com/w320/lc.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 91,
+            "downvotes": 23
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LIE",
+        "fields": {
+            "cca2": "LI",
+            "name_common": "Liechtenstein",
+            "name_official": "Principality of Liechtenstein",
+            "capital": "Vaduz",
+            "region": "Europe",
+            "subregion": "Western Europe",
+            "population": 0,
+            "area_km2": 160,
+            "flag_svg": "https://flagcdn.com/li.svg",
+            "flag_png": "https://flagcdn.com/w320/li.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 101,
+            "downvotes": 45
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LKA",
+        "fields": {
+            "cca2": "LK",
+            "name_common": "Sri Lanka",
+            "name_official": "Democratic Socialist Republic of Sri Lanka",
+            "capital": "Colombo",
+            "region": "Asia",
+            "subregion": "Southern Asia",
+            "population": 0,
+            "area_km2": 65610,
+            "flag_svg": "https://flagcdn.com/lk.svg",
+            "flag_png": "https://flagcdn.com/w320/lk.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 59,
+            "downvotes": 79
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LSO",
+        "fields": {
+            "cca2": "LS",
+            "name_common": "Lesotho",
+            "name_official": "Kingdom of Lesotho",
+            "capital": "Maseru",
+            "region": "Africa",
+            "subregion": "Southern Africa",
+            "population": 0,
+            "area_km2": 30355,
+            "flag_svg": "https://flagcdn.com/ls.svg",
+            "flag_png": "https://flagcdn.com/w320/ls.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 289,
+            "downvotes": 33
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LTU",
+        "fields": {
+            "cca2": "LT",
+            "name_common": "Lithuania",
+            "name_official": "Republic of Lithuania",
+            "capital": "Vilnius",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 65300,
+            "flag_svg": "https://flagcdn.com/lt.svg",
+            "flag_png": "https://flagcdn.com/w320/lt.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 406,
+            "downvotes": 4
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LUX",
+        "fields": {
+            "cca2": "LU",
+            "name_common": "Luxembourg",
+            "name_official": "Grand Duchy of Luxembourg",
+            "capital": "Luxembourg",
+            "region": "Europe",
+            "subregion": "Western Europe",
+            "population": 0,
+            "area_km2": 2586,
+            "flag_svg": "https://flagcdn.com/lu.svg",
+            "flag_png": "https://flagcdn.com/w320/lu.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 291,
+            "downvotes": 55
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "LVA",
+        "fields": {
+            "cca2": "LV",
+            "name_common": "Latvia",
+            "name_official": "Republic of Latvia",
+            "capital": "Riga",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 64559,
+            "flag_svg": "https://flagcdn.com/lv.svg",
+            "flag_png": "https://flagcdn.com/w320/lv.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 202,
+            "downvotes": 87
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MAC",
+        "fields": {
+            "cca2": "MO",
+            "name_common": "Macau",
+            "name_official": "Macao Special Administrative Region of the People's Republic of China",
+            "capital": "",
+            "region": "Asia",
+            "subregion": "Eastern Asia",
+            "population": 0,
+            "area_km2": 30,
+            "flag_svg": "https://flagcdn.com/mo.svg",
+            "flag_png": "https://flagcdn.com/w320/mo.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 416,
+            "downvotes": 32
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MAF",
+        "fields": {
+            "cca2": "MF",
+            "name_common": "Saint Martin",
+            "name_official": "Saint Martin",
+            "capital": "Marigot",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 53,
+            "flag_svg": "https://flagcdn.com/mf.svg",
+            "flag_png": "https://flagcdn.com/w320/mf.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 10,
+            "downvotes": 96
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MAR",
+        "fields": {
+            "cca2": "MA",
+            "name_common": "Morocco",
+            "name_official": "Kingdom of Morocco",
+            "capital": "Rabat",
+            "region": "Africa",
+            "subregion": "Northern Africa",
+            "population": 0,
+            "area_km2": 446550,
+            "flag_svg": "https://flagcdn.com/ma.svg",
+            "flag_png": "https://flagcdn.com/w320/ma.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 485,
+            "downvotes": 30
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MCO",
+        "fields": {
+            "cca2": "MC",
+            "name_common": "Monaco",
+            "name_official": "Principality of Monaco",
+            "capital": "Monaco",
+            "region": "Europe",
+            "subregion": "Western Europe",
+            "population": 0,
+            "area_km2": 2.02,
+            "flag_svg": "https://flagcdn.com/mc.svg",
+            "flag_png": "https://flagcdn.com/w320/mc.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 297,
+            "downvotes": 56
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MDA",
+        "fields": {
+            "cca2": "MD",
+            "name_common": "Moldova",
+            "name_official": "Republic of Moldova",
+            "capital": "Chișinău",
+            "region": "Europe",
+            "subregion": "Eastern Europe",
+            "population": 0,
+            "area_km2": 33846,
+            "flag_svg": "https://flagcdn.com/md.svg",
+            "flag_png": "https://flagcdn.com/w320/md.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 318,
+            "downvotes": 42
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MDG",
+        "fields": {
+            "cca2": "MG",
+            "name_common": "Madagascar",
+            "name_official": "Republic of Madagascar",
+            "capital": "Antananarivo",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 587041,
+            "flag_svg": "https://flagcdn.com/mg.svg",
+            "flag_png": "https://flagcdn.com/w320/mg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 461,
+            "downvotes": 90
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MDV",
+        "fields": {
+            "cca2": "MV",
+            "name_common": "Maldives",
+            "name_official": "Republic of the Maldives",
+            "capital": "Malé",
+            "region": "Asia",
+            "subregion": "Southern Asia",
+            "population": 0,
+            "area_km2": 300,
+            "flag_svg": "https://flagcdn.com/mv.svg",
+            "flag_png": "https://flagcdn.com/w320/mv.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 491,
+            "downvotes": 85
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MEX",
+        "fields": {
+            "cca2": "MX",
+            "name_common": "Mexico",
+            "name_official": "United Mexican States",
+            "capital": "Mexico City",
+            "region": "Americas",
+            "subregion": "North America",
+            "population": 0,
+            "area_km2": 1964375,
+            "flag_svg": "https://flagcdn.com/mx.svg",
+            "flag_png": "https://flagcdn.com/w320/mx.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 242,
+            "downvotes": 42
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MHL",
+        "fields": {
+            "cca2": "MH",
+            "name_common": "Marshall Islands",
+            "name_official": "Republic of the Marshall Islands",
+            "capital": "Majuro",
+            "region": "Oceania",
+            "subregion": "Micronesia",
+            "population": 0,
+            "area_km2": 181,
+            "flag_svg": "https://flagcdn.com/mh.svg",
+            "flag_png": "https://flagcdn.com/w320/mh.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 434,
+            "downvotes": 80
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MKD",
+        "fields": {
+            "cca2": "MK",
+            "name_common": "North Macedonia",
+            "name_official": "Republic of North Macedonia",
+            "capital": "Skopje",
+            "region": "Europe",
+            "subregion": "Southeast Europe",
+            "population": 0,
+            "area_km2": 25713,
+            "flag_svg": "https://flagcdn.com/mk.svg",
+            "flag_png": "https://flagcdn.com/w320/mk.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 335,
+            "downvotes": 64
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MLI",
+        "fields": {
+            "cca2": "ML",
+            "name_common": "Mali",
+            "name_official": "Republic of Mali",
+            "capital": "Bamako",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 1240192,
+            "flag_svg": "https://flagcdn.com/ml.svg",
+            "flag_png": "https://flagcdn.com/w320/ml.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 248,
+            "downvotes": 22
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MLT",
+        "fields": {
+            "cca2": "MT",
+            "name_common": "Malta",
+            "name_official": "Republic of Malta",
+            "capital": "Valletta",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 316,
+            "flag_svg": "https://flagcdn.com/mt.svg",
+            "flag_png": "https://flagcdn.com/w320/mt.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 404,
+            "downvotes": 77
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MMR",
+        "fields": {
+            "cca2": "MM",
+            "name_common": "Myanmar",
+            "name_official": "Republic of the Union of Myanmar",
+            "capital": "Naypyidaw",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 676578,
+            "flag_svg": "https://flagcdn.com/mm.svg",
+            "flag_png": "https://flagcdn.com/w320/mm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 248,
+            "downvotes": 25
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MNE",
+        "fields": {
+            "cca2": "ME",
+            "name_common": "Montenegro",
+            "name_official": "Montenegro",
+            "capital": "Podgorica",
+            "region": "Europe",
+            "subregion": "Southeast Europe",
+            "population": 0,
+            "area_km2": 13812,
+            "flag_svg": "https://flagcdn.com/me.svg",
+            "flag_png": "https://flagcdn.com/w320/me.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 110,
+            "downvotes": 97
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MNG",
+        "fields": {
+            "cca2": "MN",
+            "name_common": "Mongolia",
+            "name_official": "Mongolia",
+            "capital": "Ulan Bator",
+            "region": "Asia",
+            "subregion": "Eastern Asia",
+            "population": 0,
+            "area_km2": 1564110,
+            "flag_svg": "https://flagcdn.com/mn.svg",
+            "flag_png": "https://flagcdn.com/w320/mn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 383,
+            "downvotes": 59
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MNP",
+        "fields": {
+            "cca2": "MP",
+            "name_common": "Northern Mariana Islands",
+            "name_official": "Commonwealth of the Northern Mariana Islands",
+            "capital": "Saipan",
+            "region": "Oceania",
+            "subregion": "Micronesia",
+            "population": 0,
+            "area_km2": 464,
+            "flag_svg": "https://flagcdn.com/mp.svg",
+            "flag_png": "https://flagcdn.com/w320/mp.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 90,
+            "downvotes": 77
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MOZ",
+        "fields": {
+            "cca2": "MZ",
+            "name_common": "Mozambique",
+            "name_official": "Republic of Mozambique",
+            "capital": "Maputo",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 801590,
+            "flag_svg": "https://flagcdn.com/mz.svg",
+            "flag_png": "https://flagcdn.com/w320/mz.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 315,
+            "downvotes": 1
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MRT",
+        "fields": {
+            "cca2": "MR",
+            "name_common": "Mauritania",
+            "name_official": "Islamic Republic of Mauritania",
+            "capital": "Nouakchott",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 1030700,
+            "flag_svg": "https://flagcdn.com/mr.svg",
+            "flag_png": "https://flagcdn.com/w320/mr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 143,
+            "downvotes": 41
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MSR",
+        "fields": {
+            "cca2": "MS",
+            "name_common": "Montserrat",
+            "name_official": "Montserrat",
+            "capital": "Plymouth",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 102,
+            "flag_svg": "https://flagcdn.com/ms.svg",
+            "flag_png": "https://flagcdn.com/w320/ms.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 168,
+            "downvotes": 85
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MTQ",
+        "fields": {
+            "cca2": "MQ",
+            "name_common": "Martinique",
+            "name_official": "Martinique",
+            "capital": "Fort-de-France",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 1128,
+            "flag_svg": "https://flagcdn.com/mq.svg",
+            "flag_png": "https://flagcdn.com/w320/mq.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 40,
+            "downvotes": 45
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MUS",
+        "fields": {
+            "cca2": "MU",
+            "name_common": "Mauritius",
+            "name_official": "Republic of Mauritius",
+            "capital": "Port Louis",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 2040,
+            "flag_svg": "https://flagcdn.com/mu.svg",
+            "flag_png": "https://flagcdn.com/w320/mu.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 251,
+            "downvotes": 23
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MWI",
+        "fields": {
+            "cca2": "MW",
+            "name_common": "Malawi",
+            "name_official": "Republic of Malawi",
+            "capital": "Lilongwe",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 118484,
+            "flag_svg": "https://flagcdn.com/mw.svg",
+            "flag_png": "https://flagcdn.com/w320/mw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 452,
+            "downvotes": 99
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MYS",
+        "fields": {
+            "cca2": "MY",
+            "name_common": "Malaysia",
+            "name_official": "Malaysia",
+            "capital": "Kuala Lumpur",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 330803,
+            "flag_svg": "https://flagcdn.com/my.svg",
+            "flag_png": "https://flagcdn.com/w320/my.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 477,
+            "downvotes": 11
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "MYT",
+        "fields": {
+            "cca2": "YT",
+            "name_common": "Mayotte",
+            "name_official": "Department of Mayotte",
+            "capital": "Mamoudzou",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 374,
+            "flag_svg": "https://flagcdn.com/yt.svg",
+            "flag_png": "https://flagcdn.com/w320/yt.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 83,
+            "downvotes": 4
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NAM",
+        "fields": {
+            "cca2": "NA",
+            "name_common": "Namibia",
+            "name_official": "Republic of Namibia",
+            "capital": "Windhoek",
+            "region": "Africa",
+            "subregion": "Southern Africa",
+            "population": 0,
+            "area_km2": 825615,
+            "flag_svg": "https://flagcdn.com/na.svg",
+            "flag_png": "https://flagcdn.com/w320/na.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 26,
+            "downvotes": 22
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NCL",
+        "fields": {
+            "cca2": "NC",
+            "name_common": "New Caledonia",
+            "name_official": "New Caledonia",
+            "capital": "Nouméa",
+            "region": "Oceania",
+            "subregion": "Melanesia",
+            "population": 0,
+            "area_km2": 18575,
+            "flag_svg": "https://flagcdn.com/nc.svg",
+            "flag_png": "https://flagcdn.com/w320/nc.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 265,
+            "downvotes": 77
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NER",
+        "fields": {
+            "cca2": "NE",
+            "name_common": "Niger",
+            "name_official": "Republic of Niger",
+            "capital": "Niamey",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 1267000,
+            "flag_svg": "https://flagcdn.com/ne.svg",
+            "flag_png": "https://flagcdn.com/w320/ne.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 472,
+            "downvotes": 93
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NFK",
+        "fields": {
+            "cca2": "NF",
+            "name_common": "Norfolk Island",
+            "name_official": "Territory of Norfolk Island",
+            "capital": "Kingston",
+            "region": "Oceania",
+            "subregion": "Australia and New Zealand",
+            "population": 0,
+            "area_km2": 36,
+            "flag_svg": "https://flagcdn.com/nf.svg",
+            "flag_png": "https://flagcdn.com/w320/nf.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 467,
+            "downvotes": 50
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NGA",
+        "fields": {
+            "cca2": "NG",
+            "name_common": "Nigeria",
+            "name_official": "Federal Republic of Nigeria",
+            "capital": "Abuja",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 923768,
+            "flag_svg": "https://flagcdn.com/ng.svg",
+            "flag_png": "https://flagcdn.com/w320/ng.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 294,
+            "downvotes": 77
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NIC",
+        "fields": {
+            "cca2": "NI",
+            "name_common": "Nicaragua",
+            "name_official": "Republic of Nicaragua",
+            "capital": "Managua",
+            "region": "Americas",
+            "subregion": "Central America",
+            "population": 0,
+            "area_km2": 130373,
+            "flag_svg": "https://flagcdn.com/ni.svg",
+            "flag_png": "https://flagcdn.com/w320/ni.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 78,
+            "downvotes": 78
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NIU",
+        "fields": {
+            "cca2": "NU",
+            "name_common": "Niue",
+            "name_official": "Niue",
+            "capital": "Alofi",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 260,
+            "flag_svg": "https://flagcdn.com/nu.svg",
+            "flag_png": "https://flagcdn.com/w320/nu.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 156,
+            "downvotes": 23
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NLD",
+        "fields": {
+            "cca2": "NL",
+            "name_common": "Netherlands",
+            "name_official": "Kingdom of the Netherlands",
+            "capital": "Amsterdam",
+            "region": "Europe",
+            "subregion": "Western Europe",
+            "population": 0,
+            "area_km2": 41850,
+            "flag_svg": "https://flagcdn.com/nl.svg",
+            "flag_png": "https://flagcdn.com/w320/nl.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 23,
+            "downvotes": 78
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NOR",
+        "fields": {
+            "cca2": "NO",
+            "name_common": "Norway",
+            "name_official": "Kingdom of Norway",
+            "capital": "Oslo",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 323802,
+            "flag_svg": "https://flagcdn.com/no.svg",
+            "flag_png": "https://flagcdn.com/w320/no.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 208,
+            "downvotes": 65
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NPL",
+        "fields": {
+            "cca2": "NP",
+            "name_common": "Nepal",
+            "name_official": "Federal Democratic Republic of Nepal",
+            "capital": "Kathmandu",
+            "region": "Asia",
+            "subregion": "Southern Asia",
+            "population": 0,
+            "area_km2": 147181,
+            "flag_svg": "https://flagcdn.com/np.svg",
+            "flag_png": "https://flagcdn.com/w320/np.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 388,
+            "downvotes": 46
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NRU",
+        "fields": {
+            "cca2": "NR",
+            "name_common": "Nauru",
+            "name_official": "Republic of Nauru",
+            "capital": "Yaren",
+            "region": "Oceania",
+            "subregion": "Micronesia",
+            "population": 0,
+            "area_km2": 21,
+            "flag_svg": "https://flagcdn.com/nr.svg",
+            "flag_png": "https://flagcdn.com/w320/nr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 280,
+            "downvotes": 49
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "NZL",
+        "fields": {
+            "cca2": "NZ",
+            "name_common": "New Zealand",
+            "name_official": "New Zealand",
+            "capital": "Wellington",
+            "region": "Oceania",
+            "subregion": "Australia and New Zealand",
+            "population": 0,
+            "area_km2": 270467,
+            "flag_svg": "https://flagcdn.com/nz.svg",
+            "flag_png": "https://flagcdn.com/w320/nz.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 164,
+            "downvotes": 5
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "OMN",
+        "fields": {
+            "cca2": "OM",
+            "name_common": "Oman",
+            "name_official": "Sultanate of Oman",
+            "capital": "Muscat",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 309500,
+            "flag_svg": "https://flagcdn.com/om.svg",
+            "flag_png": "https://flagcdn.com/w320/om.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 328,
+            "downvotes": 92
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PAK",
+        "fields": {
+            "cca2": "PK",
+            "name_common": "Pakistan",
+            "name_official": "Islamic Republic of Pakistan",
+            "capital": "Islamabad",
+            "region": "Asia",
+            "subregion": "Southern Asia",
+            "population": 0,
+            "area_km2": 881912,
+            "flag_svg": "https://flagcdn.com/pk.svg",
+            "flag_png": "https://flagcdn.com/w320/pk.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 106,
+            "downvotes": 91
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PAN",
+        "fields": {
+            "cca2": "PA",
+            "name_common": "Panama",
+            "name_official": "Republic of Panama",
+            "capital": "Panama City",
+            "region": "Americas",
+            "subregion": "Central America",
+            "population": 0,
+            "area_km2": 75417,
+            "flag_svg": "https://flagcdn.com/pa.svg",
+            "flag_png": "https://flagcdn.com/w320/pa.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 244,
+            "downvotes": 85
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PCN",
+        "fields": {
+            "cca2": "PN",
+            "name_common": "Pitcairn Islands",
+            "name_official": "Pitcairn Group of Islands",
+            "capital": "Adamstown",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 47,
+            "flag_svg": "https://flagcdn.com/pn.svg",
+            "flag_png": "https://flagcdn.com/w320/pn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 55,
+            "downvotes": 51
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PER",
+        "fields": {
+            "cca2": "PE",
+            "name_common": "Peru",
+            "name_official": "Republic of Peru",
+            "capital": "Lima",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 1285216,
+            "flag_svg": "https://flagcdn.com/pe.svg",
+            "flag_png": "https://flagcdn.com/w320/pe.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 383,
+            "downvotes": 34
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PHL",
+        "fields": {
+            "cca2": "PH",
+            "name_common": "Philippines",
+            "name_official": "Republic of the Philippines",
+            "capital": "Manila",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 342353,
+            "flag_svg": "https://flagcdn.com/ph.svg",
+            "flag_png": "https://flagcdn.com/w320/ph.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 193,
+            "downvotes": 7
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PLW",
+        "fields": {
+            "cca2": "PW",
+            "name_common": "Palau",
+            "name_official": "Republic of Palau",
+            "capital": "Ngerulmud",
+            "region": "Oceania",
+            "subregion": "Micronesia",
+            "population": 0,
+            "area_km2": 459,
+            "flag_svg": "https://flagcdn.com/pw.svg",
+            "flag_png": "https://flagcdn.com/w320/pw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 16,
+            "downvotes": 98
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PNG",
+        "fields": {
+            "cca2": "PG",
+            "name_common": "Papua New Guinea",
+            "name_official": "Independent State of Papua New Guinea",
+            "capital": "Port Moresby",
+            "region": "Oceania",
+            "subregion": "Melanesia",
+            "population": 0,
+            "area_km2": 462840,
+            "flag_svg": "https://flagcdn.com/pg.svg",
+            "flag_png": "https://flagcdn.com/w320/pg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 121,
+            "downvotes": 53
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "POL",
+        "fields": {
+            "cca2": "PL",
+            "name_common": "Poland",
+            "name_official": "Republic of Poland",
+            "capital": "Warsaw",
+            "region": "Europe",
+            "subregion": "Central Europe",
+            "population": 0,
+            "area_km2": 312679,
+            "flag_svg": "https://flagcdn.com/pl.svg",
+            "flag_png": "https://flagcdn.com/w320/pl.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 475,
+            "downvotes": 42
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PRI",
+        "fields": {
+            "cca2": "PR",
+            "name_common": "Puerto Rico",
+            "name_official": "Commonwealth of Puerto Rico",
+            "capital": "San Juan",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 8870,
+            "flag_svg": "https://flagcdn.com/pr.svg",
+            "flag_png": "https://flagcdn.com/w320/pr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 423,
+            "downvotes": 36
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PRK",
+        "fields": {
+            "cca2": "KP",
+            "name_common": "North Korea",
+            "name_official": "Democratic People's Republic of Korea",
+            "capital": "Pyongyang",
+            "region": "Asia",
+            "subregion": "Eastern Asia",
+            "population": 0,
+            "area_km2": 120538,
+            "flag_svg": "https://flagcdn.com/kp.svg",
+            "flag_png": "https://flagcdn.com/w320/kp.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 222,
+            "downvotes": 75
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PRT",
+        "fields": {
+            "cca2": "PT",
+            "name_common": "Portugal",
+            "name_official": "Portuguese Republic",
+            "capital": "Lisbon",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 92090,
+            "flag_svg": "https://flagcdn.com/pt.svg",
+            "flag_png": "https://flagcdn.com/w320/pt.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 370,
+            "downvotes": 87
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PRY",
+        "fields": {
+            "cca2": "PY",
+            "name_common": "Paraguay",
+            "name_official": "Republic of Paraguay",
+            "capital": "Asunción",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 406752,
+            "flag_svg": "https://flagcdn.com/py.svg",
+            "flag_png": "https://flagcdn.com/w320/py.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 372,
+            "downvotes": 40
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PSE",
+        "fields": {
+            "cca2": "PS",
+            "name_common": "Palestine",
+            "name_official": "State of Palestine",
+            "capital": "Ramallah",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 6220,
+            "flag_svg": "https://flagcdn.com/ps.svg",
+            "flag_png": "https://flagcdn.com/w320/ps.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 346,
+            "downvotes": 59
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "PYF",
+        "fields": {
+            "cca2": "PF",
+            "name_common": "French Polynesia",
+            "name_official": "French Polynesia",
+            "capital": "Papeetē",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 4167,
+            "flag_svg": "https://flagcdn.com/pf.svg",
+            "flag_png": "https://flagcdn.com/w320/pf.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 246,
+            "downvotes": 34
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "QAT",
+        "fields": {
+            "cca2": "QA",
+            "name_common": "Qatar",
+            "name_official": "State of Qatar",
+            "capital": "Doha",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 11586,
+            "flag_svg": "https://flagcdn.com/qa.svg",
+            "flag_png": "https://flagcdn.com/w320/qa.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 310,
+            "downvotes": 29
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "REU",
+        "fields": {
+            "cca2": "RE",
+            "name_common": "Réunion",
+            "name_official": "Réunion Island",
+            "capital": "Saint-Denis",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 2511,
+            "flag_svg": "https://flagcdn.com/re.svg",
+            "flag_png": "https://flagcdn.com/w320/re.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 404,
+            "downvotes": 79
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ROU",
+        "fields": {
+            "cca2": "RO",
+            "name_common": "Romania",
+            "name_official": "Romania",
+            "capital": "Bucharest",
+            "region": "Europe",
+            "subregion": "Southeast Europe",
+            "population": 0,
+            "area_km2": 238391,
+            "flag_svg": "https://flagcdn.com/ro.svg",
+            "flag_png": "https://flagcdn.com/w320/ro.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 393,
+            "downvotes": 15
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "RUS",
+        "fields": {
+            "cca2": "RU",
+            "name_common": "Russia",
+            "name_official": "Russian Federation",
+            "capital": "Moscow",
+            "region": "Europe",
+            "subregion": "Eastern Europe",
+            "population": 0,
+            "area_km2": 17098242,
+            "flag_svg": "https://flagcdn.com/ru.svg",
+            "flag_png": "https://flagcdn.com/w320/ru.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 138,
+            "downvotes": 34
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "RWA",
+        "fields": {
+            "cca2": "RW",
+            "name_common": "Rwanda",
+            "name_official": "Republic of Rwanda",
+            "capital": "Kigali",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 26338,
+            "flag_svg": "https://flagcdn.com/rw.svg",
+            "flag_png": "https://flagcdn.com/w320/rw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 158,
+            "downvotes": 89
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SAU",
+        "fields": {
+            "cca2": "SA",
+            "name_common": "Saudi Arabia",
+            "name_official": "Kingdom of Saudi Arabia",
+            "capital": "Riyadh",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 2149690,
+            "flag_svg": "https://flagcdn.com/sa.svg",
+            "flag_png": "https://flagcdn.com/w320/sa.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 367,
+            "downvotes": 23
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SDN",
+        "fields": {
+            "cca2": "SD",
+            "name_common": "Sudan",
+            "name_official": "Republic of the Sudan",
+            "capital": "Khartoum",
+            "region": "Africa",
+            "subregion": "Northern Africa",
+            "population": 0,
+            "area_km2": 1886068,
+            "flag_svg": "https://flagcdn.com/sd.svg",
+            "flag_png": "https://flagcdn.com/w320/sd.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 228,
+            "downvotes": 91
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SEN",
+        "fields": {
+            "cca2": "SN",
+            "name_common": "Senegal",
+            "name_official": "Republic of Senegal",
+            "capital": "Dakar",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 196722,
+            "flag_svg": "https://flagcdn.com/sn.svg",
+            "flag_png": "https://flagcdn.com/w320/sn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 57,
+            "downvotes": 64
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SGP",
+        "fields": {
+            "cca2": "SG",
+            "name_common": "Singapore",
+            "name_official": "Republic of Singapore",
+            "capital": "Singapore",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 710,
+            "flag_svg": "https://flagcdn.com/sg.svg",
+            "flag_png": "https://flagcdn.com/w320/sg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 297,
+            "downvotes": 23
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SGS",
+        "fields": {
+            "cca2": "GS",
+            "name_common": "South Georgia",
+            "name_official": "South Georgia and the South Sandwich Islands",
+            "capital": "King Edward Point",
+            "region": "Antarctic",
+            "subregion": "",
+            "population": 0,
+            "area_km2": 3903,
+            "flag_svg": "https://flagcdn.com/gs.svg",
+            "flag_png": "https://flagcdn.com/w320/gs.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 134,
+            "downvotes": 28
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SJM",
+        "fields": {
+            "cca2": "SJ",
+            "name_common": "Svalbard and Jan Mayen",
+            "name_official": "Svalbard og Jan Mayen",
+            "capital": "Longyearbyen",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": -1,
+            "flag_svg": "https://flagcdn.com/sj.svg",
+            "flag_png": "https://flagcdn.com/w320/sj.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 473,
+            "downvotes": 65
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SLB",
+        "fields": {
+            "cca2": "SB",
+            "name_common": "Solomon Islands",
+            "name_official": "Solomon Islands",
+            "capital": "Honiara",
+            "region": "Oceania",
+            "subregion": "Melanesia",
+            "population": 0,
+            "area_km2": 28896,
+            "flag_svg": "https://flagcdn.com/sb.svg",
+            "flag_png": "https://flagcdn.com/w320/sb.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 42,
+            "downvotes": 78
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SLE",
+        "fields": {
+            "cca2": "SL",
+            "name_common": "Sierra Leone",
+            "name_official": "Republic of Sierra Leone",
+            "capital": "Freetown",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 71740,
+            "flag_svg": "https://flagcdn.com/sl.svg",
+            "flag_png": "https://flagcdn.com/w320/sl.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 443,
+            "downvotes": 6
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SLV",
+        "fields": {
+            "cca2": "SV",
+            "name_common": "El Salvador",
+            "name_official": "Republic of El Salvador",
+            "capital": "San Salvador",
+            "region": "Americas",
+            "subregion": "Central America",
+            "population": 0,
+            "area_km2": 21041,
+            "flag_svg": "https://flagcdn.com/sv.svg",
+            "flag_png": "https://flagcdn.com/w320/sv.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 393,
+            "downvotes": 75
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SMR",
+        "fields": {
+            "cca2": "SM",
+            "name_common": "San Marino",
+            "name_official": "Most Serene Republic of San Marino",
+            "capital": "City of San Marino",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 61,
+            "flag_svg": "https://flagcdn.com/sm.svg",
+            "flag_png": "https://flagcdn.com/w320/sm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 425,
+            "downvotes": 1
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SOM",
+        "fields": {
+            "cca2": "SO",
+            "name_common": "Somalia",
+            "name_official": "Federal Republic of Somalia",
+            "capital": "Mogadishu",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 637657,
+            "flag_svg": "https://flagcdn.com/so.svg",
+            "flag_png": "https://flagcdn.com/w320/so.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 96,
+            "downvotes": 25
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SPM",
+        "fields": {
+            "cca2": "PM",
+            "name_common": "Saint Pierre and Miquelon",
+            "name_official": "Saint Pierre and Miquelon",
+            "capital": "Saint-Pierre",
+            "region": "Americas",
+            "subregion": "North America",
+            "population": 0,
+            "area_km2": 242,
+            "flag_svg": "https://flagcdn.com/pm.svg",
+            "flag_png": "https://flagcdn.com/w320/pm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 375,
+            "downvotes": 38
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SRB",
+        "fields": {
+            "cca2": "RS",
+            "name_common": "Serbia",
+            "name_official": "Republic of Serbia",
+            "capital": "Belgrade",
+            "region": "Europe",
+            "subregion": "Southeast Europe",
+            "population": 0,
+            "area_km2": 88361,
+            "flag_svg": "https://flagcdn.com/rs.svg",
+            "flag_png": "https://flagcdn.com/w320/rs.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 333,
+            "downvotes": 0
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SSD",
+        "fields": {
+            "cca2": "SS",
+            "name_common": "South Sudan",
+            "name_official": "Republic of South Sudan",
+            "capital": "Juba",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 619745,
+            "flag_svg": "https://flagcdn.com/ss.svg",
+            "flag_png": "https://flagcdn.com/w320/ss.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 329,
+            "downvotes": 53
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "STP",
+        "fields": {
+            "cca2": "ST",
+            "name_common": "São Tomé and Príncipe",
+            "name_official": "Democratic Republic of São Tomé and Príncipe",
+            "capital": "São Tomé",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 964,
+            "flag_svg": "https://flagcdn.com/st.svg",
+            "flag_png": "https://flagcdn.com/w320/st.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 461,
+            "downvotes": 66
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SUR",
+        "fields": {
+            "cca2": "SR",
+            "name_common": "Suriname",
+            "name_official": "Republic of Suriname",
+            "capital": "Paramaribo",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 163820,
+            "flag_svg": "https://flagcdn.com/sr.svg",
+            "flag_png": "https://flagcdn.com/w320/sr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 466,
+            "downvotes": 36
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SVK",
+        "fields": {
+            "cca2": "SK",
+            "name_common": "Slovakia",
+            "name_official": "Slovak Republic",
+            "capital": "Bratislava",
+            "region": "Europe",
+            "subregion": "Central Europe",
+            "population": 0,
+            "area_km2": 49037,
+            "flag_svg": "https://flagcdn.com/sk.svg",
+            "flag_png": "https://flagcdn.com/w320/sk.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 253,
+            "downvotes": 92
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SVN",
+        "fields": {
+            "cca2": "SI",
+            "name_common": "Slovenia",
+            "name_official": "Republic of Slovenia",
+            "capital": "Ljubljana",
+            "region": "Europe",
+            "subregion": "Central Europe",
+            "population": 0,
+            "area_km2": 20273,
+            "flag_svg": "https://flagcdn.com/si.svg",
+            "flag_png": "https://flagcdn.com/w320/si.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 439,
+            "downvotes": 3
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SWE",
+        "fields": {
+            "cca2": "SE",
+            "name_common": "Sweden",
+            "name_official": "Kingdom of Sweden",
+            "capital": "Stockholm",
+            "region": "Europe",
+            "subregion": "Northern Europe",
+            "population": 0,
+            "area_km2": 450295,
+            "flag_svg": "https://flagcdn.com/se.svg",
+            "flag_png": "https://flagcdn.com/w320/se.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 361,
+            "downvotes": 70
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SWZ",
+        "fields": {
+            "cca2": "SZ",
+            "name_common": "Eswatini",
+            "name_official": "Kingdom of Eswatini",
+            "capital": "Lobamba",
+            "region": "Africa",
+            "subregion": "Southern Africa",
+            "population": 0,
+            "area_km2": 17364,
+            "flag_svg": "https://flagcdn.com/sz.svg",
+            "flag_png": "https://flagcdn.com/w320/sz.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 237,
+            "downvotes": 39
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SXM",
+        "fields": {
+            "cca2": "SX",
+            "name_common": "Sint Maarten",
+            "name_official": "Sint Maarten",
+            "capital": "Philipsburg",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 34,
+            "flag_svg": "https://flagcdn.com/sx.svg",
+            "flag_png": "https://flagcdn.com/w320/sx.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 10,
+            "downvotes": 57
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SYC",
+        "fields": {
+            "cca2": "SC",
+            "name_common": "Seychelles",
+            "name_official": "Republic of Seychelles",
+            "capital": "Victoria",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 452,
+            "flag_svg": "https://flagcdn.com/sc.svg",
+            "flag_png": "https://flagcdn.com/w320/sc.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 468,
+            "downvotes": 58
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "SYR",
+        "fields": {
+            "cca2": "SY",
+            "name_common": "Syria",
+            "name_official": "Syrian Arab Republic",
+            "capital": "Damascus",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 185180,
+            "flag_svg": "https://flagcdn.com/sy.svg",
+            "flag_png": "https://flagcdn.com/w320/sy.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 26,
+            "downvotes": 24
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TCA",
+        "fields": {
+            "cca2": "TC",
+            "name_common": "Turks and Caicos Islands",
+            "name_official": "Turks and Caicos Islands",
+            "capital": "Cockburn Town",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 948,
+            "flag_svg": "https://flagcdn.com/tc.svg",
+            "flag_png": "https://flagcdn.com/w320/tc.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 294,
+            "downvotes": 7
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TCD",
+        "fields": {
+            "cca2": "TD",
+            "name_common": "Chad",
+            "name_official": "Republic of Chad",
+            "capital": "N'Djamena",
+            "region": "Africa",
+            "subregion": "Middle Africa",
+            "population": 0,
+            "area_km2": 1284000,
+            "flag_svg": "https://flagcdn.com/td.svg",
+            "flag_png": "https://flagcdn.com/w320/td.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 48,
+            "downvotes": 85
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TGO",
+        "fields": {
+            "cca2": "TG",
+            "name_common": "Togo",
+            "name_official": "Togolese Republic",
+            "capital": "Lomé",
+            "region": "Africa",
+            "subregion": "Western Africa",
+            "population": 0,
+            "area_km2": 56785,
+            "flag_svg": "https://flagcdn.com/tg.svg",
+            "flag_png": "https://flagcdn.com/w320/tg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 91,
+            "downvotes": 31
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "THA",
+        "fields": {
+            "cca2": "TH",
+            "name_common": "Thailand",
+            "name_official": "Kingdom of Thailand",
+            "capital": "Bangkok",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 513120,
+            "flag_svg": "https://flagcdn.com/th.svg",
+            "flag_png": "https://flagcdn.com/w320/th.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 394,
+            "downvotes": 91
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TJK",
+        "fields": {
+            "cca2": "TJ",
+            "name_common": "Tajikistan",
+            "name_official": "Republic of Tajikistan",
+            "capital": "Dushanbe",
+            "region": "Asia",
+            "subregion": "Central Asia",
+            "population": 0,
+            "area_km2": 143100,
+            "flag_svg": "https://flagcdn.com/tj.svg",
+            "flag_png": "https://flagcdn.com/w320/tj.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 162,
+            "downvotes": 81
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TKL",
+        "fields": {
+            "cca2": "TK",
+            "name_common": "Tokelau",
+            "name_official": "Tokelau",
+            "capital": "Fakaofo",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 12,
+            "flag_svg": "https://flagcdn.com/tk.svg",
+            "flag_png": "https://flagcdn.com/w320/tk.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 293,
+            "downvotes": 12
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TKM",
+        "fields": {
+            "cca2": "TM",
+            "name_common": "Turkmenistan",
+            "name_official": "Turkmenistan",
+            "capital": "Ashgabat",
+            "region": "Asia",
+            "subregion": "Central Asia",
+            "population": 0,
+            "area_km2": 488100,
+            "flag_svg": "https://flagcdn.com/tm.svg",
+            "flag_png": "https://flagcdn.com/w320/tm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 318,
+            "downvotes": 54
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TLS",
+        "fields": {
+            "cca2": "TL",
+            "name_common": "Timor-Leste",
+            "name_official": "Democratic Republic of Timor-Leste",
+            "capital": "Dili",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 14874,
+            "flag_svg": "https://flagcdn.com/tl.svg",
+            "flag_png": "https://flagcdn.com/w320/tl.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 319,
+            "downvotes": 28
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TON",
+        "fields": {
+            "cca2": "TO",
+            "name_common": "Tonga",
+            "name_official": "Kingdom of Tonga",
+            "capital": "Nuku'alofa",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 747,
+            "flag_svg": "https://flagcdn.com/to.svg",
+            "flag_png": "https://flagcdn.com/w320/to.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 410,
+            "downvotes": 33
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TTO",
+        "fields": {
+            "cca2": "TT",
+            "name_common": "Trinidad and Tobago",
+            "name_official": "Republic of Trinidad and Tobago",
+            "capital": "Port of Spain",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 5130,
+            "flag_svg": "https://flagcdn.com/tt.svg",
+            "flag_png": "https://flagcdn.com/w320/tt.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 290,
+            "downvotes": 90
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TUN",
+        "fields": {
+            "cca2": "TN",
+            "name_common": "Tunisia",
+            "name_official": "Tunisian Republic",
+            "capital": "Tunis",
+            "region": "Africa",
+            "subregion": "Northern Africa",
+            "population": 0,
+            "area_km2": 163610,
+            "flag_svg": "https://flagcdn.com/tn.svg",
+            "flag_png": "https://flagcdn.com/w320/tn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 289,
+            "downvotes": 52
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TUR",
+        "fields": {
+            "cca2": "TR",
+            "name_common": "Türkiye",
+            "name_official": "Republic of Türkiye",
+            "capital": "Ankara",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 783562,
+            "flag_svg": "https://flagcdn.com/tr.svg",
+            "flag_png": "https://flagcdn.com/w320/tr.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 157,
+            "downvotes": 90
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TUV",
+        "fields": {
+            "cca2": "TV",
+            "name_common": "Tuvalu",
+            "name_official": "Tuvalu",
+            "capital": "Funafuti",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 26,
+            "flag_svg": "https://flagcdn.com/tv.svg",
+            "flag_png": "https://flagcdn.com/w320/tv.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 482,
+            "downvotes": 46
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TWN",
+        "fields": {
+            "cca2": "TW",
+            "name_common": "Taiwan",
+            "name_official": "Republic of China (Taiwan)",
+            "capital": "Taipei",
+            "region": "Asia",
+            "subregion": "Eastern Asia",
+            "population": 0,
+            "area_km2": 36193,
+            "flag_svg": "https://flagcdn.com/tw.svg",
+            "flag_png": "https://flagcdn.com/w320/tw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 117,
+            "downvotes": 57
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "TZA",
+        "fields": {
+            "cca2": "TZ",
+            "name_common": "Tanzania",
+            "name_official": "United Republic of Tanzania",
+            "capital": "Dodoma",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 945087,
+            "flag_svg": "https://flagcdn.com/tz.svg",
+            "flag_png": "https://flagcdn.com/w320/tz.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 226,
+            "downvotes": 26
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "UGA",
+        "fields": {
+            "cca2": "UG",
+            "name_common": "Uganda",
+            "name_official": "Republic of Uganda",
+            "capital": "Kampala",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 241550,
+            "flag_svg": "https://flagcdn.com/ug.svg",
+            "flag_png": "https://flagcdn.com/w320/ug.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 29,
+            "downvotes": 80
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "UKR",
+        "fields": {
+            "cca2": "UA",
+            "name_common": "Ukraine",
+            "name_official": "Ukraine",
+            "capital": "Kyiv",
+            "region": "Europe",
+            "subregion": "Eastern Europe",
+            "population": 0,
+            "area_km2": 603500,
+            "flag_svg": "https://flagcdn.com/ua.svg",
+            "flag_png": "https://flagcdn.com/w320/ua.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 302,
+            "downvotes": 41
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "UMI",
+        "fields": {
+            "cca2": "UM",
+            "name_common": "United States Minor Outlying Islands",
+            "name_official": "United States Minor Outlying Islands",
+            "capital": "",
+            "region": "Americas",
+            "subregion": "North America",
+            "population": 0,
+            "area_km2": 34.2,
+            "flag_svg": "https://flagcdn.com/um.svg",
+            "flag_png": "https://flagcdn.com/w320/um.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 234,
+            "downvotes": 96
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "URY",
+        "fields": {
+            "cca2": "UY",
+            "name_common": "Uruguay",
+            "name_official": "Oriental Republic of Uruguay",
+            "capital": "Montevideo",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 181034,
+            "flag_svg": "https://flagcdn.com/uy.svg",
+            "flag_png": "https://flagcdn.com/w320/uy.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 347,
+            "downvotes": 31
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "USA",
+        "fields": {
+            "cca2": "US",
+            "name_common": "United States",
+            "name_official": "United States of America",
+            "capital": "Washington D.C.",
+            "region": "Americas",
+            "subregion": "North America",
+            "population": 0,
+            "area_km2": 9372610,
+            "flag_svg": "https://flagcdn.com/us.svg",
+            "flag_png": "https://flagcdn.com/w320/us.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 387,
+            "downvotes": 4
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "UZB",
+        "fields": {
+            "cca2": "UZ",
+            "name_common": "Uzbekistan",
+            "name_official": "Republic of Uzbekistan",
+            "capital": "Tashkent",
+            "region": "Asia",
+            "subregion": "Central Asia",
+            "population": 0,
+            "area_km2": 447400,
+            "flag_svg": "https://flagcdn.com/uz.svg",
+            "flag_png": "https://flagcdn.com/w320/uz.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 390,
+            "downvotes": 69
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "VAT",
+        "fields": {
+            "cca2": "VA",
+            "name_common": "Vatican City",
+            "name_official": "Vatican City State",
+            "capital": "Vatican City",
+            "region": "Europe",
+            "subregion": "Southern Europe",
+            "population": 0,
+            "area_km2": 0.44,
+            "flag_svg": "https://flagcdn.com/va.svg",
+            "flag_png": "https://flagcdn.com/w320/va.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 354,
+            "downvotes": 47
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "VCT",
+        "fields": {
+            "cca2": "VC",
+            "name_common": "Saint Vincent and the Grenadines",
+            "name_official": "Saint Vincent and the Grenadines",
+            "capital": "Kingstown",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 389,
+            "flag_svg": "https://flagcdn.com/vc.svg",
+            "flag_png": "https://flagcdn.com/w320/vc.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 368,
+            "downvotes": 73
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "VEN",
+        "fields": {
+            "cca2": "VE",
+            "name_common": "Venezuela",
+            "name_official": "Bolivarian Republic of Venezuela",
+            "capital": "Caracas",
+            "region": "Americas",
+            "subregion": "South America",
+            "population": 0,
+            "area_km2": 916445,
+            "flag_svg": "https://flagcdn.com/ve.svg",
+            "flag_png": "https://flagcdn.com/w320/ve.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 288,
+            "downvotes": 20
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "VGB",
+        "fields": {
+            "cca2": "VG",
+            "name_common": "British Virgin Islands",
+            "name_official": "Virgin Islands",
+            "capital": "Road Town",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 151,
+            "flag_svg": "https://flagcdn.com/vg.svg",
+            "flag_png": "https://flagcdn.com/w320/vg.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 235,
+            "downvotes": 94
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "VIR",
+        "fields": {
+            "cca2": "VI",
+            "name_common": "United States Virgin Islands",
+            "name_official": "Virgin Islands of the United States",
+            "capital": "Charlotte Amalie",
+            "region": "Americas",
+            "subregion": "Caribbean",
+            "population": 0,
+            "area_km2": 347,
+            "flag_svg": "https://flagcdn.com/vi.svg",
+            "flag_png": "https://flagcdn.com/w320/vi.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 323,
+            "downvotes": 51
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "VNM",
+        "fields": {
+            "cca2": "VN",
+            "name_common": "Vietnam",
+            "name_official": "Socialist Republic of Vietnam",
+            "capital": "Hanoi",
+            "region": "Asia",
+            "subregion": "South-Eastern Asia",
+            "population": 0,
+            "area_km2": 331212,
+            "flag_svg": "https://flagcdn.com/vn.svg",
+            "flag_png": "https://flagcdn.com/w320/vn.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 44,
+            "downvotes": 41
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "VUT",
+        "fields": {
+            "cca2": "VU",
+            "name_common": "Vanuatu",
+            "name_official": "Republic of Vanuatu",
+            "capital": "Port Vila",
+            "region": "Oceania",
+            "subregion": "Melanesia",
+            "population": 0,
+            "area_km2": 12189,
+            "flag_svg": "https://flagcdn.com/vu.svg",
+            "flag_png": "https://flagcdn.com/w320/vu.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 93,
+            "downvotes": 34
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "WLF",
+        "fields": {
+            "cca2": "WF",
+            "name_common": "Wallis and Futuna",
+            "name_official": "Territory of the Wallis and Futuna Islands",
+            "capital": "Mata-Utu",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 142,
+            "flag_svg": "https://flagcdn.com/wf.svg",
+            "flag_png": "https://flagcdn.com/w320/wf.png",
+            "coat_of_arms_svg": "",
+            "is_independent": false,
+            "upvotes": 327,
+            "downvotes": 18
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "WSM",
+        "fields": {
+            "cca2": "WS",
+            "name_common": "Samoa",
+            "name_official": "Independent State of Samoa",
+            "capital": "Apia",
+            "region": "Oceania",
+            "subregion": "Polynesia",
+            "population": 0,
+            "area_km2": 2842,
+            "flag_svg": "https://flagcdn.com/ws.svg",
+            "flag_png": "https://flagcdn.com/w320/ws.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 120,
+            "downvotes": 72
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "YEM",
+        "fields": {
+            "cca2": "YE",
+            "name_common": "Yemen",
+            "name_official": "Republic of Yemen",
+            "capital": "Sana'a",
+            "region": "Asia",
+            "subregion": "Western Asia",
+            "population": 0,
+            "area_km2": 527968,
+            "flag_svg": "https://flagcdn.com/ye.svg",
+            "flag_png": "https://flagcdn.com/w320/ye.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 474,
+            "downvotes": 73
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ZAF",
+        "fields": {
+            "cca2": "ZA",
+            "name_common": "South Africa",
+            "name_official": "Republic of South Africa",
+            "capital": "Pretoria",
+            "region": "Africa",
+            "subregion": "Southern Africa",
+            "population": 0,
+            "area_km2": 1221037,
+            "flag_svg": "https://flagcdn.com/za.svg",
+            "flag_png": "https://flagcdn.com/w320/za.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 436,
+            "downvotes": 92
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ZMB",
+        "fields": {
+            "cca2": "ZM",
+            "name_common": "Zambia",
+            "name_official": "Republic of Zambia",
+            "capital": "Lusaka",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 752612,
+            "flag_svg": "https://flagcdn.com/zm.svg",
+            "flag_png": "https://flagcdn.com/w320/zm.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 318,
+            "downvotes": 12
+        }
+    },
+    {
+        "model": "app.country",
+        "pk": "ZWE",
+        "fields": {
+            "cca2": "ZW",
+            "name_common": "Zimbabwe",
+            "name_official": "Republic of Zimbabwe",
+            "capital": "Harare",
+            "region": "Africa",
+            "subregion": "Eastern Africa",
+            "population": 0,
+            "area_km2": 390757,
+            "flag_svg": "https://flagcdn.com/zw.svg",
+            "flag_png": "https://flagcdn.com/w320/zw.png",
+            "coat_of_arms_svg": "",
+            "is_independent": true,
+            "upvotes": 208,
+            "downvotes": 49
+        }
+    }
+]
