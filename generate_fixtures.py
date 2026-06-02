@@ -42,7 +42,6 @@ def convert():
                 "area_km2": entry.get("area"),
                 "flag_svg": flag_svg,
                 "flag_png": flag_png,
-                "coat_of_arms_svg": "",
                 "is_independent": entry.get("independent") is True,
                 "upvotes": random.randint(10, 500),
                 "downvotes": random.randint(0, 100)
