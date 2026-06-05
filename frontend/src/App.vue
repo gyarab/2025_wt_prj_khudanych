@@ -1,27 +1,32 @@
 <script setup>
-import CountryList from './components/CountryList.vue'
+import { RouterView } from 'vue-router'
+import Navbar from './components/Navbar.vue'
+import Footer from './components/Footer.vue'
 </script>
 
 <template>
-  <main class="container">
-    <h1>Just Enough Flags</h1>
-    <CountryList />
-  </main>
+  <div id="app">
+    <Navbar />
+    <main class="page-content">
+      <RouterView />
+    </main>
+    <Footer />
+  </div>
 </template>
 
 <style>
-:root {
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: #121212;
-  color: #e0e0e0;
-}
-.container {
-  max-width: 1200px;
+/* page-content sits between the sticky navbar and the footer */
+.page-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 2rem 1.5rem 4rem;
 }
-h1 {
-  text-align: center;
-  color: #fff;
+
+@media (max-width: 640px) {
+  .page-content {
+    padding: 1.5rem 1rem 3rem;
+  }
 }
 </style>
