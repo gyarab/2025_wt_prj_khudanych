@@ -48,3 +48,22 @@
     - name: Show compose actions
       ansible.builtin.debug:
         msg: "{{ compose_up.actions | default([]) }}"
+
+    # Diagnostika: dej kontejneru chvíli na start a vypiš posledních pár řádků logu
+    # služby `web`. Pokud Django při startu spadne (migrate/collectstatic/gunicorn),
+    # uvidíš důvod přímo tady v Actions logu (nemusíš na server přes SSH).
+    - name: Wait a few seconds for the web container to settle
+      ansible.builtin.pause:
+        seconds: 8
+
+    - name: Collect recent web logs (diagnostics)
+      ansible.builtin.command:
+        cmd: docker compose --env-file config/production.env -f docker-compose.yml logs --tail=60 --no-color web
+        chdir: "{{ project_dir }}/deploy"
+      register: web_logs
+      changed_when: false
+      failed_when: false
+
+    - name: Show recent web logs
+      ansible.builtin.debug:
+        msg: "{{ web_logs.stdout_lines | default([]) }}"
