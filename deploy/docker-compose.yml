@@ -1,0 +1,72 @@
+# Nasazovací (deployment) stack pro JEF — pro školní server, NE pro lokální vývoj.
+# Lokálně dál stačí `./manage.py runserver` + `pnpm dev` (viz hlavní README).
+#
+# Ansible (playbooks/deploy.yml) tenhle stack pošle na server a tam ho postaví + spustí:
+#   docker compose --env-file config/production.env -f docker-compose.yml up -d --build
+#
+# Dvě webové služby:
+#   web      – Django + gunicorn (REST API, admin, HTML frontend); migrace + collectstatic
+#              běží z entrypointu při startu. SQLite na perzistentním volume.
+#   frontend – nginx = vstupní brána: servíruje Vue SPA (/app/), statiku (/static/),
+#              média (/media/) a zbytek proxuje na `web`. Provoz zvenčí na něj pouští
+#              traefik (HTTPS) přes sdílenou síť `proxy` podle domény ${APP_HOST}.
+services:
+  web:
+    build:
+      context: ..                 # kořen repa (Dockerfile potřebuje prj/, requirements.txt, fixtures/)
+      dockerfile: Dockerfile
+    image: jef-web:latest
+    container_name: jef-web
+    restart: unless-stopped
+    env_file:
+      - config/production.env      # necitlivé nastavení (DEBUG, ALLOWED_HOSTS, cesty k datům, …)
+    volumes:
+      - db_data:/data/db           # SQLite (DJANGO_DB_PATH)
+      - static_data:/data/static   # collectstatic sem zapisuje (DJANGO_STATIC_ROOT)
+      - media_data:/data/media     # média (DJANGO_MEDIA_ROOT)
+    expose:
+      - "8000"                     # jen pro interní síť, ven nepublikujeme
+    networks:
+      - internal
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: jef-frontend:latest
+    container_name: jef-frontend
+    restart: unless-stopped
+    depends_on:
+      - web
+    expose:
+      - "80"                       # ven NEpublikujeme; ingress řeší traefik přes síť `proxy`
+    volumes:
+      - static_data:/srv/static:ro
+      - media_data:/srv/media:ro
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - proxy
+      - internal
+    labels:
+      # Traefik (běží na serveru, sdílená síť `proxy`) podle domény nasměruje provoz
+      # na tenhle nginx. TLS ukončuje traefik (Let's Encrypt) a dovnitř posílá http +
+      # hlavičku X-Forwarded-Proto=https, kterou nginx i Django respektují.
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.jef.rule=Host(`${APP_HOST}`)"
+      - "traefik.http.routers.jef.entrypoints=${TRAEFIK_ENTRYPOINT}"
+      - "traefik.http.routers.jef.tls=true"
+      - "traefik.http.routers.jef.tls.certresolver=${TRAEFIK_CERTRESOLVER}"
+      - "traefik.http.services.jef.loadbalancer.server.port=80"
+
+networks:
+  # Externí síť vytvořená traefikem na serveru — musí existovat předem
+  # (`docker network create proxy`, případně už ji platforma má).
+  proxy:
+    external: true
+  internal: {}
+
+volumes:
+  db_data: {}
+  static_data: {}
+  media_data: {}

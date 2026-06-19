@@ -1,0 +1,50 @@
+---
+# Nasazení JEF na server: pošle zdroják (commitnutý stav), postaví docker image
+# a (re)spustí stack. Migrace + collectstatic běží z entrypointu kontejneru `web`,
+# takže tady je po `compose up` aplikace hotová. Naplnění daty je zvlášť (seed.yml).
+#
+# Spouští se z GitHub Actions (.github/workflows/deploy.yml) nebo ručně z adresáře deploy/:
+#   ansible-playbook playbooks/deploy.yml
+- name: Deploy JEF
+  hosts: web
+  gather_facts: false
+  tasks:
+    # `git archive HEAD` zabalí přesně commitnuté soubory (žádné .venv/, node_modules/,
+    # db.sqlite3). Běží na controlleru (tam, kde je repo), výsledek pak pošleme na server.
+    - name: Create source archive from committed files (on controller)
+      ansible.builtin.command:
+        cmd: git archive --format=tar.gz -o /tmp/jef-src.tar.gz HEAD
+        chdir: "{{ playbook_dir }}/../.."
+      delegate_to: localhost
+      run_once: true
+      changed_when: true
+
+    - name: Ensure project directory exists
+      ansible.builtin.file:
+        path: "{{ project_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Upload and unpack source on the server
+      ansible.builtin.unarchive:
+        src: /tmp/jef-src.tar.gz
+        dest: "{{ project_dir }}"
+        remote_src: false
+
+    - name: Build images and (re)create the stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ project_dir }}/deploy"
+        files:
+          - docker-compose.yml
+        env_files:
+          - config/production.env
+        build: always
+        pull: missing
+        recreate: auto
+        remove_orphans: true
+        state: present
+      register: compose_up
+
+    - name: Show compose actions
+      ansible.builtin.debug:
+        msg: "{{ compose_up.actions | default([]) }}"

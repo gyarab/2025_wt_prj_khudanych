@@ -1,0 +1,51 @@
+# Nasazení JEF na server přes Ansible.
+#
+# Spouští se:
+#   - automaticky při pushi do `main`
+#   - ručně (Actions -> Deploy -> Run workflow)
+# Vždy jen nasadí kód (data zůstávají). Naplnění databáze z fixtures je samostatný
+# workflow „Seed database" (.github/workflows/seed.yml).
+#
+# Jediné tajemství je SSH klíč v repository secrets jako SSH_PRIVATE_KEY
+# (Settings -> Secrets and variables -> Actions). Veřejný klíč musí být v
+# ~/.ssh/authorized_keys uživatele `ansible_user` z deploy/inventory.ini.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Ať se dvě nasazení neperou o server.
+concurrency:
+  group: deploy-jef
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: deploy
+    env:
+      ANSIBLE_PRIVATE_KEY_FILE: ${{ github.workspace }}/.ssh-deploy-key
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Ansible + docker collection
+        run: |
+          python -m pip install --upgrade pip
+          pip install "ansible-core>=2.16,<2.19"
+          ansible-galaxy collection install community.docker
+
+      - name: Write SSH private key from secret
+        run: |
+          install -m 600 /dev/null "$ANSIBLE_PRIVATE_KEY_FILE"
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$ANSIBLE_PRIVATE_KEY_FILE"
+
+      - name: Deploy stack
+        run: ansible-playbook playbooks/deploy.yml

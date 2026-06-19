@@ -10,22 +10,51 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def _env_bool(name, default="0"):
+    """Read a boolean flag from the environment ("1"/"true"/"yes"/"on")."""
+    return os.environ.get(name, default).strip().lower() in ("1", "true", "yes", "on")
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+#
+# Vše níže má rozumný default pro LOKÁLNÍ VÝVOJ (./manage.py runserver), takže se
+# lokálně nic nemění. V produkci (Docker/Ansible) se hodnoty přepíšou přes
+# proměnné prostředí z deploy/config/production.env.
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1sdqov0_!4il35+3hen)ph!7uu&_5)=id2*l^=1u3a*30-mrwr'
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-1sdqov0_!4il35+3hen)ph!7uu&_5)=id2*l^=1u3a*30-mrwr",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Lokálně default zapnuto; v produkci nastav DJANGO_DEBUG=0.
+DEBUG = _env_bool("DJANGO_DEBUG", "1")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    h.strip()
+    for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if h.strip()
+]
+
+# Domény, kterým Django věří pro CSRF (POST z prohlížeče přes HTTPS za traefikem).
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if o.strip()
+]
+
+# Za reverzní proxy (traefik) končí TLS u proxy a dovnitř jde http + hlavička
+# X-Forwarded-Proto: https. Díky tomu Django pozná, že je požadavek bezpečný.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # Application definition
@@ -76,7 +105,9 @@ WSGI_APPLICATION = 'prj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # V produkci leží SQLite na perzistentním volume (DJANGO_DB_PATH),
+        # lokálně zůstává vedle manage.py.
+        'NAME': os.environ.get("DJANGO_DB_PATH", BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -115,4 +146,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+# collectstatic posbírá statiku sem; v produkci je to sdílené volume, ze kterého
+# ji servíruje nginx. Lokálně se nevyužívá (runserver servíruje statiku sám).
+STATIC_ROOT = os.environ.get("DJANGO_STATIC_ROOT", BASE_DIR / 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.environ.get("DJANGO_MEDIA_ROOT", BASE_DIR / 'media')
+
+# Odkaz na Vue SPA. V produkci ji nginx servíruje pod /app/, lokálně běží Vite
+# dev server na :5173. Použitelné v šablonách přes context processor, pokud bude
+# rozcestník odkazovat na Vue frontend.
+VUE_FRONTEND_URL = os.environ.get("VUE_FRONTEND_URL", "http://localhost:5173/")

@@ -1,0 +1,23 @@
+# Build context pro backend image (kořen repa). Pryč s tím, co image nepotřebuje.
+.git/
+.github/
+
+# Virtuální prostředí (u JEF leží v prj/.venv — jinak by se zabalilo do image!).
+**/.venv/
+venv/
+env/
+
+**/__pycache__/
+**/*.pyc
+
+# Lokální SQLite a posbírané statické soubory — v kontejneru vznikají znovu na volume.
+prj/db.sqlite3
+prj/db.sqlite3-journal
+prj/staticfiles/
+prj/media/
+
+# Surová stažená data (mledoze/countries) — do image netřeba, seed nahrává jen countries.json.
+fixtures/countries_raw.json
+
+# Frontend se staví ze samostatného contextu (frontend/Dockerfile), sem nepatří.
+frontend/

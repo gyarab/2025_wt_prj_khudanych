@@ -1,0 +1,47 @@
+---
+# RUČNÍ naplnění databáze ukázkovými daty z fixtures/. POZOR: nejdřív databázi
+# vyprázdní (flush) a teprve pak nahraje fixtures — všechna stávající data zmizí.
+# Proto je seed oddělený od běžného deploye a pouští se vědomě (workflow_dispatch
+# s potvrzením, nebo ručně).
+#
+#   ansible-playbook playbooks/seed.yml
+#
+# Předpokládá, že stack už běží (deploy.yml proběhl) — fixture je zabalený v image
+# kontejneru `web` v /app/fixtures/countries.json (surový countries_raw.json se
+# do image nekopíruje, viz .dockerignore).
+- name: Seed JEF database from fixtures
+  hosts: web
+  gather_facts: false
+  tasks:
+    - name: Flush the database (smaže všechna data, schéma zůstává)
+      community.docker.docker_compose_v2_exec:
+        project_src: "{{ project_dir }}/deploy"
+        files:
+          - docker-compose.yml
+        env_files:
+          - config/production.env
+        service: web
+        argv:
+          - python
+          - manage.py
+          - flush
+          - --noinput
+
+    - name: Load countries fixture
+      community.docker.docker_compose_v2_exec:
+        project_src: "{{ project_dir }}/deploy"
+        files:
+          - docker-compose.yml
+        env_files:
+          - config/production.env
+        service: web
+        argv:
+          - python
+          - manage.py
+          - loaddata
+          - /app/fixtures/countries.json
+      register: loaddata_result
+
+    - name: Show loaddata output
+      ansible.builtin.debug:
+        msg: "{{ loaddata_result.stdout_lines | default([]) }}"
