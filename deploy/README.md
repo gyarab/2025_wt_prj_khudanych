@@ -21,11 +21,11 @@ a provoz zvenčí na ni pouští **traefik** (reverzní proxy na serveru).
  návštěvník ──HTTPS──► │     │  Host(${APP_HOST})                                          │
                        │     ▼                                                             │
                        │  frontend (nginx)                                                 │
-                       │    /app/     →  Vue SPA (build z frontend/)                       │
-                       │    /static/  →  statika Djanga   (volume static_data)             │
-                       │    /media/   →  média            (volume media_data)              │
-                       │    /…        →  proxy ──► web (gunicorn :8000)   [síť `internal`] │
-                       │                          Django: /, /flags, /admin, /api          │
+                       │    /          →  Vue SPA (hlavní frontend, build z frontend/)     │
+                       │    /static/   →  statika Djanga  (volume static_data)             │
+                       │    /media/    →  média           (volume media_data)              │
+                       │    /api,/admin,/playground → proxy ──► web (gunicorn :8000)        │
+                       │                          [síť `internal`]                          │
                        │                          SQLite (volume db_data)                  │
                        └───────────────────────────────────────────────────────────────────┘
 ```
@@ -37,9 +37,9 @@ Dvě služby (viz [docker-compose.yml](docker-compose.yml)):
 | `web` | [../Dockerfile](../Dockerfile) | Django + gunicorn. Při startu pustí `migrate` a `collectstatic` (viz [web-entrypoint.sh](web-entrypoint.sh)). |
 | `frontend` | [../frontend/Dockerfile](../frontend/Dockerfile) | nginx = vstupní brána. Postaví Vue SPA (pnpm) a servíruje statiku/média + proxuje na `web`. |
 
-Dva frontendy nad stejným backendem koexistují tak, že **Django zůstává v kořeni**
-(`/`, `/flags`, `/admin`, `/api`, `/playground`) a **Vue SPA se přesune pod `/app/`**
-(build s `VITE_BASE=/app/`, router používá `import.meta.env.BASE_URL`).
+**Vue SPA je hlavní frontend a běží na rootu `/`** (build s default base `/`, router
+používá `import.meta.env.BASE_URL`). Django si nechává jen `/api`, `/admin` a
+`/playground` plus servírování `/static` a `/media`.
 
 ## Konfigurace
 
