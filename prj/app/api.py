@@ -3,7 +3,7 @@ from ninja import NinjaAPI, Schema
 from ninja.security import django_auth
 from .models import Country
 
-# Inicializace API podle vzoru
+# Inicializace API 
 api = NinjaAPI(title="JEF API", description="REST API pro databázi vlajek Just Enough Flags.")
 
 # ---------- 1. Schémata (Pydantic) ----------

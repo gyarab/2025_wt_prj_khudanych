@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    /* What JS features the output may use, and what built-in types exist. */
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+
+    /* We write ES modules; Vite resolves them like a bundler does. */
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    /* Turn JSX into the modern React 17+ automatic runtime (no `import React`). */
+    "jsx": "react-jsx",
+
+    /* The safety net. Catches the bugs you came here to learn to catch. */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    /* Vite compiles each file alone, so forbid features that need whole-program info. */
+    "isolatedModules": true,
+    "skipLibCheck": true,
+
+    /* Let us `import en from './en.json'` and get a typed object (used by i18n). */
+    "resolveJsonModule": true,
+
+    /* TS only type-checks; Vite/esbuild does the actual compiling. */
+    "noEmit": true,
+
+    /* Lets us write `@/components/Navbar` instead of `../../components/Navbar`.
+       In TS6+ paths resolve relative to this file, so no `baseUrl` is needed. */
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["src", "vite.config.ts"]
+}

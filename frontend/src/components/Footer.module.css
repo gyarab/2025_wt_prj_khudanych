@@ -1,20 +1,14 @@
-<template>
-  <footer class="footer">
-    <div class="footer-inner">
-      <span>© 2026 Just Enough Flags</span>
-      <span class="separator" aria-hidden="true">·</span>
-      <a href="/api/docs" target="_blank">API</a>
-    </div>
-  </footer>
-</template>
+/* Footer.module.css
+   POZOR (důležitá lekce o CSS modulech): scopují se jen TŘÍDY a id.
+   Holý selektor typu `a { ... }` by se NESCOPOVAL a obarvil by VŠECHNY
+   odkazy na webu. Proto i tady místo `a` používáme třídu .footerLink. */
 
-<style scoped>
 .footer {
   border-top: 1px solid var(--border);
   background: var(--surface);
 }
 
-.footer-inner {
+.footerInner {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,10 +22,9 @@
 
 .separator { opacity: 0.4; }
 
-a {
+.footerLink {
   color: var(--text-muted);
   text-decoration: none;
   transition: color var(--duration) var(--ease);
 }
-a:hover { color: var(--text-heading); }
-</style>
+.footerLink:hover { color: var(--text-heading); }

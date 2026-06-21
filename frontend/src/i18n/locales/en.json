@@ -1,0 +1,54 @@
+{
+  "brand": {
+    "name": "Just Enough Flags",
+    "short": "JEF DB",
+    "tagline": "Exploring our beautiful world, one flag at a time.",
+    "copyright": "© 2026 Just Enough Flags"
+  },
+  "nav": {
+    "home": "Home",
+    "countries": "Countries",
+    "apiDocs": "API Docs",
+    "toggle": "Toggle navigation"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "errorTitle": "Something went wrong"
+  },
+  "home": {
+    "heroTitle": "🌍 Discover the World",
+    "heroSubtitle": "Explore a comprehensive database of countries, flags, capitals, and geographic information from around the globe.",
+    "browseCountries": "Browse Countries",
+    "viewFlags": "View Flags",
+    "stats": {
+      "sovereignNations": "Sovereign Nations",
+      "territories": "Territories & Dependencies",
+      "totalCountries": "Countries Tracked",
+      "totalFlags": "Total Flags"
+    },
+    "leaderboards": {
+      "title": "Global Leaderboards",
+      "tabPopulation": "Population",
+      "tabArea": "Area",
+      "tabDensity": "People/km²",
+      "colRank": "#",
+      "colCountry": "Country",
+      "colCapital": "Capital",
+      "colRegion": "Region",
+      "colPopulation": "Population",
+      "colArea": "Area (km²)",
+      "colDensity": "People/km²"
+    },
+    "regions": {
+      "title": "Explore by Region",
+      "countriesCount_one": "{{count}} country",
+      "countriesCount_other": "{{count}} countries"
+    },
+    "cta": {
+      "title": "Ready to Explore?",
+      "description": "Dive into the database and discover fascinating facts about countries around the world.",
+      "button": "Start Exploring"
+    }
+  }
+}

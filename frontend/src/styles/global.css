@@ -1,12 +1,17 @@
 /* ============================================================
    DESIGN SYSTEM — Just Enough Flags
-   Light theme, Inter font, clean & modern
+   Light theme, Inter font, clean & modern.
+   This is GLOBAL CSS: imported once in main.tsx, applies app-wide.
    ============================================================ */
 
-/* --- Google Font Import --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* --- Font ---
+   Inter is loaded (self-hosted) from @fontsource via main.tsx, so there's
+   no @import round-trip to Google here. We just reference it by name below. */
 
-/* --- Design Tokens --- */
+/* --- Design Tokens ---
+   CSS custom properties declared on :root are visible to every element
+   in the document. Change a value here and it updates everywhere it's
+   referenced via var(). This is our single source of truth for the look. */
 :root {
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -85,11 +90,30 @@ a:hover {
   color: var(--accent-hover);
 }
 
-/* --- App Shell --- */
-#app {
+/* --- App Shell ---
+   React mounts everything inside <div id="root">. Making it a full-height
+   flex column lets a sticky footer sit at the bottom even on short pages.
+   (Vue used #app here; React's mount node is #root — that's the only change.) */
+#root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+/* Obsah stránky mezi (budoucím) navbarem a patičkou. flex:1 ho roztáhne,
+   aby patička držela dole i na krátkých stránkách. */
+.page-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+@media (max-width: 640px) {
+  .page-content {
+    padding: 1.5rem 1rem 3rem;
+  }
 }
 
 /* --- Utility Classes --- */
